@@ -14,7 +14,8 @@ function Verification() {
           noValidate
           autoComplete="off"
         >
-          <h>Enter the verification code </h>
+          <h   style={{ fontWeight:"bold", fontSize:"larger" }}>Verification code </h>
+          <p>Enter the verification code that we sent through your email.</p>
           <div>
             <TextField id="outlined-code" size="small" type="text" />
           </div>
