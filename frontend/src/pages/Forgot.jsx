@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import Axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function Forgot() {
   return (
     <div className="background">
-      <div className="reset">
+      <form className="reset" onSubmit={handleSubmit}>
         <div className="container">
           <img
             id="resetpwd"
             style={{ height: "300px", marginTop: "-50px" }}
             src="image/reset.png"
+            alt="Reset Password"
           />
-          <h1 style={{color:"red",fontSize: "15px", marginTop: "-50px" }}>
+          <h1 style={{ color: "red", fontSize: "15px", marginTop: "-50px" }}>
             Forgot your password?
           </h1>
           <br />
@@ -36,29 +38,25 @@ function Forgot() {
                 size="small"
                 label="Email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={Boolean(error)}
+                helperText={error}
               />
             </div>
-            {/* <div>
-              <TextField
-                id="outlined-code"
-                label="Verification Code"
-                size="small"
-                type="text"
-              />
-            </div> */}
           </Box>
           <Button
-              variant="contained"
-              sx={{
-                fontSize: "13px",
-                marginTop: "10px",
-                color: "white",
-                backgroundColor: "red",
-              }}
-              type="submit"
-            >
-              Reset
-            </Button>
+            type="submit"
+            variant="contained"
+            sx={{
+              fontSize: "13px",
+              marginTop: "10px",
+              color: "white",
+              backgroundColor: "red",
+            }}
+          >
+            Reset
+          </Button>
           <p className="switch">
             Return to{" "}
             <Link to="/login" className="signup-switch">
@@ -66,7 +64,7 @@ function Forgot() {
             </Link>
           </p>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

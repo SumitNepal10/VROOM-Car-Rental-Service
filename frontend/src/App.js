@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Reset from "./pages/Reset";
 import Verification from "./pages/Verification";
 
-import { Route, Routes } from "react-router-dom";
+import {Route, Routes } from "react-router-dom";
 import Forgot from "./pages/Forgot";
 import Vehicles from "./pages/Vehicles";
 

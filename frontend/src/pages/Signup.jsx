@@ -1,12 +1,39 @@
 import React from "react";
 import { TextField, Box, Button } from "@mui/material";
-
 import { Link } from "react-router-dom";
+import Axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Axios.post("http://localhost:8000/auth/signup", {
+      username,
+      email,
+      password,
+      phone,
+    })
+      .then((response) => {
+        if (response.data.status) {
+          navigate("/login");
+        } 
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="background">
-      <div className="login">
+      <div className="login" onSubmit={handleSubmit}>
         <div className="image">
           <img
             id="car"
@@ -19,17 +46,17 @@ function Signup() {
           <img
             id="logo"
             src="image/logo.png"
-            style={{ height: "80px", marginTop:"13px" }}
+            style={{ height: "80px", marginTop: "13px" }}
             alt="Logo"
           />
-          <h1 style={{ fontSize: "13px", color: "red" , marginTop:"-10px"}}>
+          <h1 style={{ fontSize: "13px", color: "red", marginTop: "-10px" }}>
             Welcome aboard! Unlock your journey with us
           </h1>
           <form className="signup-form">
             <Box
               component="form"
               sx={{
-                "& .MuiTextField-root": { m: 1, width: "300px"},
+                "& .MuiTextField-root": { m: 1, width: "300px" },
               }}
               noValidate
               autoComplete="off"
@@ -42,6 +69,7 @@ function Signup() {
                     label="Name"
                     type="text"
                     required=""
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
                 <div>
@@ -50,6 +78,7 @@ function Signup() {
                     size="small"
                     label="Email"
                     type="email"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div>
@@ -58,6 +87,7 @@ function Signup() {
                     label="Password"
                     size="small"
                     type="password"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
                 <div>
@@ -66,6 +96,7 @@ function Signup() {
                     label="Phone Number"
                     size="small"
                     type="text"
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
               </div>
@@ -83,7 +114,7 @@ function Signup() {
               }}
               type="submit"
             >
-               Sign up
+              Sign up
             </Button>
             <p className="switch">
               Already have an account?
