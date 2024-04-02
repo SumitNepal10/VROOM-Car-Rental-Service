@@ -4,6 +4,31 @@ import { Link } from "react-router-dom";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+function Forgot() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+
+    Axios.post("http://localhost:8000/auth/forgot", { email })
+      .then((response) => {
+        if (response.data.status) {
+          alert("Check your email for the reset password link");
+          navigate("/login");
+        }
+      })
+      .catch((err) => {
+        setError("An error occurred. Please try again later.");
+        console.error(err);
+      });
+  };
+  
   return (
     <div className="background">
       <form className="reset" onSubmit={handleSubmit}>

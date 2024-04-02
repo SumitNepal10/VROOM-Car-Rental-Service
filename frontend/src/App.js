@@ -20,7 +20,7 @@ function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/verification" element={<Verification />} />
 
-        <Route path="/reset" element={<Reset />} />
+        <Route path="/reset/:token" element={<Reset />} />
         <Route path="/vehicles" element={<Vehicles />} />
       </Routes>
     </>
