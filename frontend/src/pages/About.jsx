@@ -1,21 +1,18 @@
 import React from "react";
 import Navigation from "../components/Navigation";
-import Search from "../components/Search";
-import CarList from "../components/CarList";
+import Introduction from "../components/Introduction";
+import Features from "../components/Features";
 import Footer from "../components/Footer";
 
-
-
-
-function Vehicles() {
+function About() {
   return (
     <>
       <Navigation />
-      <Search />
-      <CarList/>
+      <Introduction />
+      <Features />
       <Footer />
     </>
   );
 }
 
-export default Vehicles;
+export default About;
