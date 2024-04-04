@@ -1,11 +1,37 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { TextField, Box, Button } from "@mui/material";
+import { Link } from "react-router-dom";
+import Axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate()
+
+  Axios.defaults.withCredentials = true;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Axios.post("http://localhost:8000/auth/login", {
+      email,
+      password,
+    })
+      .then((response) => {
+        if (response.data.status) {
+          navigate('/');
+        } 
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="background">
-      <div className="login">
+      <div className="login" onSubmit={handleSubmit}>
         <div className="image">
           <img
             id="car"
@@ -36,19 +62,11 @@ function Login() {
               <div>
                 <div>
                   <TextField
-                    id="outlined-name"
-                    size="small"
-                    label="Name"
-                    type="text"
-                    required=""
-                  />
-                </div>
-                <div>
-                  <TextField
                     id="outlined-mail"
                     size="small"
                     label="Email"
                     type="email"
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div>
@@ -57,6 +75,7 @@ function Login() {
                     label="Password"
                     size="small"
                     type="password"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>
