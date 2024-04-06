@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
@@ -12,30 +13,37 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Link } from "react-router-dom";
 
 function Appbar() {
-  const [value, setValue] = useState(0); // Define state for value
+  const location = useLocation();
+  const { pathname } = location;
+
+  useEffect(() => {
+    console.log("pathname", pathname);
+    if (pathname) {
+      let activeIdx;
+      navItem?.forEach((item, idx) => {
+        if (item?.path === pathname) {
+          activeIdx = idx;
+        }
+      });
+
+      setValue(activeIdx);
+    }
+  }, [pathname]); // Added pathname to the dependency array
+
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue); // Define function to handle tab change
+    console.log("clicked");
+    setValue(newValue);
   };
 
-  function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && <Box p={3}>{children}</Box>}
-      </div>
-    );
-  }
+  const navItem = [
+    { label: "Dashboard", path: "/Dashboard" },
+    { label: "Cars", path: "/ManageCars" },
+    { label: "Bookings", path: "/Bookings" },
+  ];
 
   return (
     <div className="admin-dashboard">
@@ -55,6 +63,7 @@ function Appbar() {
               >
                 <MenuIcon style={{ color: "black" }} />
               </IconButton>
+              <h>Dashboard</h>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <IconButton
@@ -79,23 +88,13 @@ function Appbar() {
                   size="large"
                   edge="end"
                   aria-label="account of current user"
-                  //   aria-controls={menuId}
-                  //   aria-haspopup="true"
-                  //   onClick={handleProfileMenuOpen}
                   color="inherit"
                 >
                   <AccountCircle style={{ color: "black" }} />
                 </IconButton>
               </Box>
               <Box sx={{ display: { xs: "flex", md: "none" } }}>
-                <IconButton
-                  size="large"
-                  aria-label="show more"
-                  //   aria-controls={mobileMenuId}
-                  //   aria-haspopup="true"
-                  //   onClick={handleMobileMenuOpen}
-                  color="inherit"
-                >
+                <IconButton size="large" aria-label="show more" color="inherit">
                   <MoreIcon style={{ color: "black" }} />
                 </IconButton>
               </Box>
@@ -123,27 +122,28 @@ function Appbar() {
             orientation="vertical"
             value={value}
             onChange={handleChange}
-            aria-label="Vertical tabs example"
-            sx={{ borderRight: 1, borderColor: "divider" }}
+            textColor="primary"
+            indicatorColor="red"
+            sx={{
+              borderRight: 1,
+              marginRight: 50,
+              borderColor: "divider",
+            }}
           >
-            <Tab
-              sx={{ marginRight: "50px" }}
-              label="Dashboard"
-              component={Link}
-              to="/Dashboard"
-            />
-            <Tab sx={{ marginRight: "50px" }} label="Cars" />
-            <Tab sx={{ marginRight: "50px" }} label="Bookings" />
+            {navItem?.map((item, idx) => (
+              <Link
+                to={item?.path}
+                key={`nav-tem-${idx}`}
+                style={{ color: value === idx ? "red" : "black" }} // Dynamic color based on the active tab
+              >
+                <Tab
+                  label={item?.label}
+                  onClick={() => setValue(idx)}
+                  sx={{  marginRight: "30px" }}
+                />
+              </Link>
+            ))}
           </Tabs>
-          <TabPanel value={value} index={0}>
-            <Typography component="div"></Typography>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <Typography component="div">Cars</Typography>
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <Typography component="div">Bookings</Typography>
-          </TabPanel>
         </Box>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import Appbar from "../components/Appbar";
-import { Card, CardContent } from "@mui/material";
+import { Card, CardContent, Button } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -45,16 +45,27 @@ const CardComponent = ({ title, value, textColor, backgroundColor }) => (
   </Card>
 );
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(bookingId, renterName, vehicle, date, amount, status) {
+  return { bookingId, renterName, vehicle, date, amount, status };
 }
 
 const rows = [
-  createData("N12345", "Harry Potter", "SUV Electric", "2024-3-19", "NPR 4000"),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
+  createData(
+    "N12345",
+    "Harry Potter",
+    "SUV Electric",
+    "2024-03-19",
+    "NPR 4000",
+    "Paid"
+  ),
+  createData(
+    "N129",
+    "Arya Shrestha",
+    "Honda Civic",
+    "2024-04-07",
+    "NPR 6500",
+    "Pending"
+  ),
 ];
 
 function Dashboard() {
@@ -62,11 +73,16 @@ function Dashboard() {
     <>
       <Appbar />
       <div
+        className="heading"
+      >
+        <h style={{ marginRight: "850px" , fontSize:"20px"}}>Dashboard</h>
+      </div>
+      <div
         className="card-main"
         style={{
           flex: 1,
           display: "flex",
-          marginTop: "-200px",
+          marginTop: "20px",
         }}
       >
         {cardData.map((card, index) => (
@@ -89,21 +105,49 @@ function Dashboard() {
                 <TableCell align="right">Vehicle</TableCell>
                 <TableCell align="right">Date</TableCell>
                 <TableCell align="right">Amount</TableCell>
+                <TableCell align="right">Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
                 <TableRow
-                  key={row.name}
+                  key={row.bookingId}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.bookingId}
                   </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
+                  <TableCell align="right">{row.renterName}</TableCell>
+                  <TableCell align="right">{row.vehicle}</TableCell>
+                  <TableCell align="right">{row.date}</TableCell>
+                  <TableCell align="right">{row.amount}</TableCell>
+                  <TableCell align="right">
+                    {row.status === "Pending" ? (
+                      <div
+                        style={{
+                          backgroundColor: "orange",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          color: "white",
+                          textAlign: "center",
+                        }}
+                      >
+                        Pending
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          backgroundColor: "green",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          color: "white",
+                          textAlign: "center",
+                        }}
+                      >
+                        Paid
+                      </div>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

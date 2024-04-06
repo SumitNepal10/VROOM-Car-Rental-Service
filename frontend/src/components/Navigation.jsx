@@ -1,7 +1,8 @@
-import React, { useState } from "react"; // Import useState
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Tabs, Tab, Box, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Vehicles from "../pages/Vehicles";
 
 const theme = createTheme({
   palette: {
@@ -12,18 +13,42 @@ const theme = createTheme({
 });
 
 function Navigation() {
-  const [value, setValue] = useState("Home");
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Define isLoggedIn state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
+  const { pathname } = location;
+
+  useEffect(() => {
+    console.log("pathname", pathname);
+    if (pathname) {
+      let activeIdx;
+      navItem?.forEach((item, idx) => {
+        if (item?.path === pathname) {
+          activeIdx = idx;
+        }
+      });
+
+      setValue(activeIdx);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
+    console.log("clicked");
     setValue(newValue);
   };
 
-  // Function to handle logout
-  const handleLogout = () => {
-    // Perform logout logic (clear session, etc.)
-    setIsLoggedIn(false); // Update isLoggedIn state
-  };
+  const navItem = [
+    { label: "Home", path: "/" },
+    { label: "Vehicles", path: "/vehicles" },
+    { label: "About", path: "/about" },
+    { label: "Services", path: "/services" },
+    { label: "Contact", path: "/contact" },
+  ];
 
   return (
     <header
@@ -39,38 +64,31 @@ function Navigation() {
         </Link>
         <Box sx={{ width: "100%" }}>
           <ThemeProvider theme={theme}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              textColor="primary"
-              indicatorColor="primary"
-              aria-label="secondary tabs example"
-            >
-              <Tab label="Home" value="Home" component={Link} to="/" />
-              <Tab
-                label="Vehicles"
-                value="Vehicles"
-                component={Link}
-                to="/Vehicles"
-              />
-              <Tab label="About" value="About" component={Link} to="/About" />
-              <Tab label="Services" value="Services" href="#services" />
-              <Tab label="Contact" value="Contact" href="#contact" />
+            <Tabs value={value} onChange={handleChange} textColor="primary">
+              {navItem?.map((item, idx) => (
+                <Link
+                  to={item?.path}
+                  key={`nav-tem-${idx}`}
+                  style={{ color: "black" }} // Corrected color style
+                >
+                  <Tab label={item?.label} onClick={() => setValue(idx)} />
+                </Link>
+              ))}
             </Tabs>
           </ThemeProvider>
         </Box>
+
         {isLoggedIn ? (
           <div>
-            {/* Render user icon when logged in */}
             <img src="user-icon.png" alt="User Icon" />
             <Button onClick={handleLogout}>Logout</Button>
           </div>
         ) : (
           <div className="header-btn">
-            <Link to="sign-up" className="sign-up">
+            <Link to="/sign-up" className="sign-up">
               SignUp
             </Link>
-            <Link to="login" className="sign-in">
+            <Link to="/login" className="sign-in">
               SignIn
             </Link>
           </div>
