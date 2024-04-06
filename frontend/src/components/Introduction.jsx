@@ -25,7 +25,10 @@ function Introduction() {
           padding: "20px",
         }}
       >
-        <div className="introText" style={{ marginTop: "50px", marginLeft:"20px" }}>
+        <div
+          className="introText"
+          style={{ marginTop: "50px", marginLeft: "20px" }}
+        >
           <h style={{ fontSize: "30px" }}>
             Your Trusted Partner for Car Rentals
           </h>
@@ -117,7 +120,7 @@ function Introduction() {
           <Card sx={{ width: 300, border: 0, boxShadow: "none" }}>
             <img
               src="image/home.png"
-              alt="Home Image"
+              // alt="Home Image"
               style={{ width: "300px" }}
             />
           </Card>

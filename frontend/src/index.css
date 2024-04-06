@@ -194,21 +194,45 @@ code {
 .footer p {
   font-size: 14px;
 }
-.sidebar{
+.sidebar {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-.card-main{
+.card-main {
   display: flex;
   margin-left: 250px;
   margin-right: 40px;
-  margin-top: -150px;
-  height:100vh;
+  margin-top: 150px;
+  height: 100vh;
 }
-.table{
+.table {
   display: flex;
   margin-left: 250px;
   margin-right: 40px;
   margin-top: -420px;
+}
+.cars {
+  display: flex;
+  margin-left: 200px;
+  height: 100vh;
+}
+.heading {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 50px;
+  margin-top: -250px;
+}
+.edit-icon:hover {
+  cursor: pointer;
+  color: red; /* Change the color to your desired hover color */
+}
+.delete-icon:hover {
+  cursor: pointer;
+  color: red; /* Change the color to your desired hover color */
+}
+.bookings-table{
+  display: flex;
+  margin-left: 250px;
+  margin-top: 20px;
 }
