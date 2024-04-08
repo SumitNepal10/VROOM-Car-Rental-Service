@@ -10,6 +10,8 @@ import Vehicles from "./pages/Vehicles";
 import Dashboard from "./pages/Dashboard";
 import ManageCars from "./pages/ManageCars";
 import Bookings from "./pages/Bookings";
+import BookCar from "./pages/BookCar";
+import ConfirmBooking from "./pages/ConfirmBooking";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/ManageCars" element={<ManageCars />} />
         <Route path="/Bookings" element={<Bookings />} />
+        <Route path="/BookCar" element={<BookCar />} />
+        <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
       </Routes>
     </>
   );

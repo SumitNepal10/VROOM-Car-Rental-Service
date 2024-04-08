@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Button} from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -53,7 +53,7 @@ function HeroForm() {
           <TextField
             id="outlined-pickup-date"
             label="Pick-up Date"
-            type="date"
+            type="datetime-local"
             variant="outlined"
             size="small"
             sx={{ width: "270px", marginRight: "20px" }}
@@ -66,7 +66,7 @@ function HeroForm() {
           <TextField
             id="outlined-dropoff-date"
             label="Drop-off Date"
-            type="date"
+            type="datetime-local"
             variant="outlined"
             size="small"
             sx={{ width: "270px", marginRight: "20px" }}
@@ -83,9 +83,6 @@ function HeroForm() {
             marginTop: "10px",
             color: "white",
             backgroundColor: "red",
-            // '&:hover': {
-            //   backgroundColor: 'grey',
-            // },
           }}
           type="submit"
         >
@@ -101,7 +98,7 @@ function HeroForm() {
             },
             "& .MuiStepLabel-root": {
               marginTop: "50px",
-              textAlign:"left"
+              textAlign: "left",
             },
             "& .MuiStepConnector-line": {
               borderColor: "red",
@@ -111,7 +108,7 @@ function HeroForm() {
           alternativeLabel
         >
           {steps.map((label, index) => (
-            <Step key={label} completed={index < 4} >
+            <Step key={label} completed={index < 4}>
               <StepLabel
                 StepIconProps={{
                   style: { color: "red" },
@@ -119,7 +116,7 @@ function HeroForm() {
               >
                 <div>
                   {label}
-                  {descriptions[index]  && (
+                  {descriptions[index] && (
                     <p
                       style={{
                         fontSize: "13px",
