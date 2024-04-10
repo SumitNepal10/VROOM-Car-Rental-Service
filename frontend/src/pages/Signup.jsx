@@ -4,16 +4,12 @@ import { Link } from "react-router-dom";
 import Axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
 
 function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Moved from above
 
   const navigate = useNavigate();
 
@@ -28,15 +24,11 @@ function Signup() {
       .then((response) => {
         if (response.data.status) {
           navigate("/login");
-        }
+        } 
       })
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   return (
@@ -94,18 +86,17 @@ function Signup() {
                     id="outlined-password-input"
                     label="Password"
                     size="small"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
+                    type="password"
                     onChange={(e) => setPassword(e.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleTogglePasswordVisibility}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
+                  />
+                </div>
+                <div>
+                  <TextField
+                    id="outlined-phone-number"
+                    label="Phone Number"
+                    size="small"
+                    type="text"
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                   <div>
                     <TextField
@@ -126,6 +117,9 @@ function Signup() {
                 marginTop: "10px",
                 color: "white",
                 backgroundColor: "red",
+                // '&:hover': {
+                //   backgroundColor: 'grey',
+                // },
               }}
               type="submit"
             >

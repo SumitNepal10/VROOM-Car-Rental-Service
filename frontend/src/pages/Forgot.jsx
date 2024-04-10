@@ -20,7 +20,7 @@ function Forgot() {
       .then((response) => {
         if (response.data.status) {
           alert("Check your email for the reset password link");
-          navigate("/login");
+          navigate("/Reset");
         }
       })
       .catch((err) => {
@@ -28,7 +28,7 @@ function Forgot() {
         console.error(err);
       });
   };
-  
+
   return (
     <div className="background">
       <form className="reset" onSubmit={handleSubmit}>

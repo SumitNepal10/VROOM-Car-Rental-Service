@@ -1,11 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navigation from "../components/Navigation";
 import HeroSection from "../components/HeroSection";
 import HeroForm from "../components/HeroForm";
-import Info from "../components/Info";
-import Footer from "../components/Footer";
-
-
+import { Link } from 'react-router-dom';
 
 function Home() {
   return (
@@ -13,8 +10,6 @@ function Home() {
       <Navigation />
       <HeroSection />
       <HeroForm />
-      <Info />
-      <Footer />
     </>
   );
 }

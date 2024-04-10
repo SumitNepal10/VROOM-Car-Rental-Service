@@ -68,7 +68,9 @@ router.post("/forgot", async (req, res) => {
       from: "nepalsumit30@gmail.com",
       to: email,
       subject: "Reset Password",
-      text: `http://localhost:3000/Reset/${token}`,
+      text: `Change the Password`,
+      html: `<p>Follow the following link to change the password</p>
+      <button><a href="http://localhost:3000/reset/${token}">Click Here</a></button>`,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -88,16 +90,33 @@ router.post("/reset/:token", async (req, res) => {
   const { password } = req.body;
 
   try {
-    const decoded = await jwt.verify(token, process.env.KEY);
+    const decoded = jwt.verify(token, process.env.KEY);
     const id = decoded.id;
-    const hashpassword = await bcrypt.hash(password, 10)
-    await User.findByIdAndUpdate({_id: id}, {password: hashpassword})
-    return res.json({status: true, message: "Password updated"})
-
+    const hashpassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate({ _id: id }, { password: hashpassword });
+    return res.json({ status: true, message: "Password updated" });
   } catch (error) {
-    console.log(error)
-    return res.json("Invalid token")
+    console.log(error);
+    return res.json("Invalid token");
   }
+});
+
+const verifyUser = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.json({ status: false, message: "no token" });
+    }
+    const decoded = jwt.verify(token, process.env.KEY);
+    next();
+  } catch (err) {
+    return res.json(err);
+  }
+};
+
+router.get("/verify", verifyUser, (req, res) => {
+  return res.json({ status: true, message: "authorized" });
 });
 
 export { router as UserRouter };

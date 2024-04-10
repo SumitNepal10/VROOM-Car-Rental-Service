@@ -10,13 +10,14 @@ import {
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 
 const cardsData = [
   {
     id: 1,
     image: "image/home.png",
     title: "Hyundai Tucson",
-    subtitle: "NPR 7000/day",
+    subtitle: "110$/day",
     passengers: 5,
     transmission: "Automatic",
     airConditioning: true,
@@ -25,7 +26,7 @@ const cardsData = [
     id: 2,
     image: "image/suv.png",
     title: "Compact SUV Electric",
-    subtitle: "NPR 5500/day",
+    subtitle: "100$/day",
     passengers: 5,
     transmission: "Automatic",
     airConditioning: true,
@@ -34,7 +35,6 @@ const cardsData = [
     id: 3,
     image: "image/suv2.png",
     title: "Compact SUV Hybrid",
-    subtitle: "NPR 5000/day",
     passengers: 5,
     transmission: "Automatic",
     airConditioning: true,
@@ -43,7 +43,6 @@ const cardsData = [
     id: 4,
     image: "image/suv2.png",
     title: "Compact SUV Hybrid",
-    subtitle: "NPR 5000/day",
     passengers: 5,
     transmission: "Automatic",
     airConditioning: true,
@@ -56,19 +55,13 @@ function CarList() {
     <Grid container spacing={5} justifyContent="center" marginTop="-10px">
       {cardsData.map((card) => (
         <Grid item key={card.id}>
-          <Card
-            sx={{
-              height: "100%", // Set a fixed height for the card
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <Card sx={{ maxWidth: 345 }}>
             <CardMedia
-              sx={{ width: 300, height: 200 }}
+              sx={{ width: 345, height: 200 }}
               image={card.image}
               title={card.title}
             />
-            <CardContent sx={{ flexGrow: 1 }}>
+            <CardContent>
               <Typography
                 gutterBottom
                 variant="h5"
@@ -86,7 +79,7 @@ function CarList() {
               </Typography>
               <br></br>
               <Box display="flex" justifyContent="space-between">
-                <Box display="flex">
+                <Box display="flex" alignItems="center">
                   <AcUnitIcon
                     sx={{
                       color: card.airConditioning ? "green" : "red",
@@ -97,16 +90,14 @@ function CarList() {
                     {card.airConditioning ? "Air-Conditioning" : "No AC"}
                   </Box>
                 </Box>
-                <Box display="flex">
+                <Box display="flex" alignItems="center">
                   <GroupsIcon sx={{ marginRight: 1 }} />
                   <Box marginLeft={1}>{card.passengers}</Box>
                 </Box>
               </Box>
               <Box display="flex" justifyContent="space-between">
-                <Box display="flex">
-                  <SettingsIcon
-                    sx={{ color: "gre", marginRight: 1 }} // Did you mean "green" instead of "gre"?
-                  />
+                <Box display="flex" alignItems="center">
+                  <SettingsIcon sx={{ color: "gre", marginRight: 1 }} />
                   <Box marginLeft={1}>{card.transmission}</Box>
                 </Box>
               </Box>
