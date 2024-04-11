@@ -154,18 +154,21 @@ code {
   width: 50%;
   margin-top: -100px;
 }
-.packages {
+.packages,
+.main-cars {
   text-align: center;
   margin-top: 60px;
 }
-.packages h {
+.packages h,
+.main-cars h {
   font-weight: bolder;
   font-size: 25px;
   text-align: center;
   align-items: center;
   color: rgb(53, 53, 97);
 }
-.packages p {
+.packages p,
+.main-cars p {
   font-size: 15px;
   text-align: center;
   align-items: center;
@@ -255,8 +258,9 @@ code {
   flex-direction: column;
   margin-bottom: 50px;
   border-radius: 10px;
-  gap:20px;
+  gap: 20px;
 }
+
 /* .right-card {
   background-color: rgb(237, 237, 237);
   margin-bottom: 20px; 

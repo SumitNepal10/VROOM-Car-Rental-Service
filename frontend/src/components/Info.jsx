@@ -31,6 +31,29 @@ function Info() {
           />
         </div>
       </div>
+
+      <div className="main-cars">
+        <h2>Top Sellers</h2>
+        <p>Explore the city with our top seller cars.</p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CarComponent
+            title="Hyundai SUV"
+            image="/image/suv.png"
+            price="NPR 50,000/day"
+          />
+          <CarComponent
+            title="Hyundai Tucson"
+            image="/image/suv2.png"
+            price="NPR 40,000/day"
+          />
+          <CarComponent
+            title="Compact SUV Electric"
+            image="/image/suv.png"
+            price="NPR 30,000/day"
+          />
+        </div>
+      </div>
+
       <Box
         component="section"
         sx={{
@@ -112,6 +135,48 @@ const CardComponent = ({ title, image, price }) => (
         type="submit"
       >
         BUY
+      </Button>
+    </CardActions>
+  </Card>
+);
+
+const CarComponent = ({ title, image, price }) => (
+  <Card sx={{ maxWidth: 345, margin: "0 10px" }}>
+    <CardActionArea>
+      <CardMedia component="img" height="200" image={image} />
+      <CardContent>
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          style={{ textAlign: "left" }}
+        >
+          {title}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          style={{ textAlign: "left" }}
+        >
+          {price}
+        </Typography>
+      </CardContent>
+    </CardActionArea>
+    <CardActions>
+      <Button
+        variant="contained"
+        sx={{
+          fontSize: "13px",
+          marginTop: "-100px",
+          color: "white",
+          marginLeft: "auto",
+          marginRight: "20px",
+          marginTop: "-64px",
+          backgroundColor: "red",
+        }}
+        type="submit"
+      >
+        RENT
       </Button>
     </CardActions>
   </Card>
