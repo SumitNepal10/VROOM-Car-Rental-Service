@@ -68,9 +68,29 @@ router.post("/forgot", async (req, res) => {
       from: "nepalsumit30@gmail.com",
       to: email,
       subject: "Reset Password",
-      text: `http://localhost:3000/Reset/${token}`,
+      text: `Change the Password`,
+      html: `<p>Follow the following link to change the password</p>
+      <button><a href="http://localhost:3000/reset/${token}">Click Here</a></button>`,
     };
 
+    // var mailOptions = {
+    //   from: "nepalsumit30@gmail.com",
+    //   to: email,
+    //   subject: "Reset Password",
+    //   text: `Change the Password`,
+    //   html: `
+    //     <title>Password Reset</title>
+    //     <body>
+    //       <div style="text-align: center;">
+    //         <h1>Password Reset</h1>
+    //         <p>You've requested to reset your password.</p>
+    //         <p>Click the following link to reset your password:</p>
+    //         <a href="http://localhost:3000/ResetPassword/${token}">Reset Password</a>
+    //       </div>
+    //     </body>
+    //   `,
+    // };
+    
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return res.json({ message: "Error sending email" });
@@ -88,7 +108,7 @@ router.post("/reset/:token", async (req, res) => {
   const { password } = req.body;
 
   try {
-    const decoded = await jwt.verify(token, process.env.KEY);
+    const decoded = jwt.verify(token, process.env.KEY);
     const id = decoded.id;
     const hashpassword = await bcrypt.hash(password, 10)
     await User.findByIdAndUpdate({_id: id}, {password: hashpassword})
