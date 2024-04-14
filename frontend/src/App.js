@@ -12,6 +12,8 @@ import ManageCars from "./pages/ManageCars";
 import Bookings from "./pages/Bookings";
 import BookCar from "./pages/BookCar";
 import ConfirmBooking from "./pages/ConfirmBooking";
+import Contact from "./pages/Contact";
+import Services from "./pages/Services";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
         <Route path="/Bookings" element={<Bookings />} />
         <Route path="/BookCar" element={<BookCar />} />
         <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
+        <Route path="/Services" element={<Services />} />
+        <Route path="/Contact" element={<Contact />} />
       </Routes>
     </>
   );
