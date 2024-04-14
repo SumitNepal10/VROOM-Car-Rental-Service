@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Appbar from "../components/Appbar";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableHead,
@@ -10,12 +11,13 @@ import {
   InputAdornment,
   IconButton,
   Paper,
+  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
 function Bookings() {
   const [searchQuery, setSearchQuery] = useState("");
-
+  // const history = useHistory();
   // Sample bookings data (replace with your actual data)
   const bookingsData = [
     {
@@ -47,6 +49,10 @@ function Bookings() {
       booking.date.includes(searchQuery) ||
       booking.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  // Function to handle view details button click
+  // const handleViewDetails = () => {
+  //   history.push("/Details");
+  // };
 
   return (
     <>
@@ -63,7 +69,7 @@ function Bookings() {
             label="Search"
             variant="outlined"
             size="small"
-            fullWidth
+            width="500px"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
@@ -76,7 +82,7 @@ function Bookings() {
               ),
             }}
           />
-          <Table sx={{width:"1000px"}}>
+          <Table sx={{ width: "1000px" }}>
             <TableHead>
               <TableRow>
                 <TableCell>Booking ID</TableCell>
@@ -85,6 +91,7 @@ function Bookings() {
                 <TableCell>Price</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -95,7 +102,52 @@ function Bookings() {
                   <TableCell>{booking.vehicle}</TableCell>
                   <TableCell>{booking.price}</TableCell>
                   <TableCell>{booking.date}</TableCell>
-                  <TableCell>{booking.status}</TableCell>
+                  <TableCell>
+                    {" "}
+                    {booking.status === "Pending" ? (
+                      <div
+                        style={{
+                          backgroundColor: "orange",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          color: "white",
+                          textAlign: "center",
+                        }}
+                      >
+                        Pending
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          backgroundColor: "green",
+                          padding: "5px 10px",
+                          borderRadius: "5px",
+                          color: "white",
+                          textAlign: "center",
+                        }}
+                      >
+                        Paid
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {" "}
+                    <Link to="/details" style={{ textDecoration: "none" }}>
+                      <Button
+                        style={{
+                          backgroundColor: "#A2C1E0",
+                          padding: "5px 8px",
+                          borderRadius: "5px",
+                          color: "black",
+                          textAlign: "center",
+                          type: "submit",
+                        }}
+                        // onClick={handleViewDetails}
+                      >
+                        View Details
+                      </Button>
+                    </Link>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

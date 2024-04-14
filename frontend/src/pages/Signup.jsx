@@ -107,6 +107,15 @@ function Signup() {
                       ),
                     }}
                   />
+                  <div>
+                    <TextField
+                      id="outlined-phone-number"
+                      label="Phone Number"
+                      size="small"
+                      type="text"
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </Box>

@@ -21,6 +21,7 @@ function Reset() {
     Axios.post(`http://localhost:8000/auth/reset/${token}`, { password })
       .then((response) => {
         if (response.data.status) {
+          alert("Password Changed Sucessfully");
           navigate("/login");
         } else {
           setError("Failed to reset password. Please try again later.");
