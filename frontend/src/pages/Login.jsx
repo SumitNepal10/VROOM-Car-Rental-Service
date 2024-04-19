@@ -1,17 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField, Box, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const navigate = useNavigate()
-
-  Axios.defaults.withCredentials = true;
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,6 +16,10 @@ function Login() {
     })
       .then((response) => {
         if (response.data.status) {
+          const { username } = response.data;
+          console.log(response.data)
+          localStorage.setItem("isLoggedIn", true);
+          localStorage.setItem("username", username);
           navigate('/');
         } 
       })
@@ -92,9 +91,6 @@ function Login() {
                 marginTop: "10px",
                 color: "white",
                 backgroundColor: "red",
-                // '&:hover': {
-                //   backgroundColor: 'grey',
-                // },
               }}
               type="submit"
             >
