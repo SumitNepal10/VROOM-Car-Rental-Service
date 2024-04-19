@@ -26,7 +26,6 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
   const user = await User.findOne({ email });
   if (!user) {
     return res.json({ message: "user is not registered" });
@@ -41,7 +40,7 @@ router.post("/login", async (req, res) => {
     expiresIn: "1h",
   });
   res.cookie("token", token, { httpOnly: true, maxAge: 360000 });
-  return res.json({ status: true, message: "login sucessfull" });
+  return res.json({ status: true, message: "login sucessfull", username: user.username});
 });
 
 router.post("/forgot", async (req, res) => {
