@@ -8,6 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Navigation from "../components/Navigation";
 
 const cardData = [
   {
@@ -71,12 +72,10 @@ const rows = [
 function Dashboard() {
   return (
     <>
+    <header>
+    <Navigation />
+    </header>
       <Appbar />
-      <div
-        className="heading"
-      >
-        <h style={{ marginRight: "850px" , fontSize:"20px"}}>Dashboard</h>
-      </div>
       <div
         className="card-main"
         style={{

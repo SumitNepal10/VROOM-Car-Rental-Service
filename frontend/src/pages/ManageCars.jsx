@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Appbar from "../components/Appbar";
 import AddCar from "../components/AddCar";
 import EditCar from "../components/EditCar";
+import Navigation from "../components/Navigation";
 import {
   Grid,
   Box,
@@ -68,14 +69,11 @@ function ManageCars() {
 
   return (
     <>
+      <header>
+        <Navigation />
+      </header>
       <Appbar />
-      <div
-        className="heading"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <h style={{ marginRight: "700px", fontSize: "20px" }}>Car Inventory</h>
-        <AddCar />
-      </div>
+      <AddCar />
       <div className="cars">
         <Grid container spacing={5} justifyContent="center" marginTop="-10px">
           {cardsData.map((card) => (

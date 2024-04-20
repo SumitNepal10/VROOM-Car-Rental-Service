@@ -9,6 +9,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 
+import Axios from "axios";
+
 function AddCar() {
   const [open, setOpen] = useState(false);
   const [carInfo, setCarInfo] = useState({
@@ -16,7 +18,7 @@ function AddCar() {
     price: "",
     seats: "",
     system: "",
-    airConditioning: false,
+    haveAc: false,
     picture: null,
   });
 
@@ -26,6 +28,40 @@ function AddCar() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("modelName", carInfo.modelName);
+    formData.append("price", carInfo.price);
+    formData.append("seats", carInfo.seats);
+    formData.append("system", carInfo.system);
+    formData.append("haveAc", carInfo.haveAc);
+    formData.append("picture", carInfo.picture);
+
+    try {
+      const response = await Axios.post(
+        "http://localhost:8000/car/addcar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.status) {
+        alert("Car has been added successfully");
+        handleClose();
+      } else {
+        alert("Failed to add car. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding car:", error);
+      alert("Failed to add car. Please try again.");
+    }
   };
 
   const handleInputChange = (event) => {
@@ -39,7 +75,7 @@ function AddCar() {
   const handleSwitchChange = () => {
     setCarInfo({
       ...carInfo,
-      airConditioning: !carInfo.airConditioning,
+      haveAc: !carInfo.haveAc,
     });
   };
 
@@ -49,13 +85,6 @@ function AddCar() {
       ...carInfo,
       picture: file,
     });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // You can perform additional validation or submit data to backend here
-    console.log(carInfo);
-    handleClose();
   };
 
   return (
@@ -133,9 +162,9 @@ function AddCar() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={carInfo.airConditioning}
+                      checked={carInfo.haveAc}
                       onChange={handleSwitchChange}
-                      name="airConditioning"
+                      name="haveAc"
                     />
                   }
                   label="Air Conditioning"
