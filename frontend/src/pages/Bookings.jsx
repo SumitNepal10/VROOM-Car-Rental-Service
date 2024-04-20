@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Appbar from "../components/Appbar";
 import { Link } from "react-router-dom";
+import Navigation from "../components/Navigation";
 import {
   Table,
   TableHead,
@@ -56,13 +57,10 @@ function Bookings() {
 
   return (
     <>
+      <header>
+        <Navigation />
+      </header>
       <Appbar />
-      <div
-        className="heading"
-        // style={{ display: "flex", alignItems: "center" }}
-      >
-        <h style={{ marginRight: "900px", fontSize: "20px" }}>Bookings</h>
-      </div>
       <div className="bookings-table">
         <Paper>
           <TextField

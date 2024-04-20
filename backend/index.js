@@ -3,10 +3,13 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-dotenv.config();
 import { UserRouter } from "./routes/user.js";
+import { carRoute } from "./routes/car.js";
 
+dotenv.config();
 const app = express();
+app.use(cookieParser());
+
 app.use(express.json());
 app.use(
   cors({
@@ -14,11 +17,24 @@ app.use(
     credentials: true,
   })
 );
-app.use(cookieParser());
+
 app.use("/auth", UserRouter);
+app.use("/car", carRoute);
 
-mongoose.connect("mongodb://0.0.0.0:27017/test");
+// Connect to MongoDB
+mongoose
+  .connect(process.env.DB_URL, {
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+    process.exit(1);
+  });
 
-app.listen(process.env.PORT, () => {
-  console.log("Server is running");
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

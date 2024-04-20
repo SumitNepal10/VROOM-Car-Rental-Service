@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -104,11 +103,11 @@ function Appbar() {
       </div>
       <div className="sidebar">
         <div style={{ justifyContent: "center" }}>
-          <img
+          {/* <img
             style={{ marginLeft: "60px", width: "100px" }}
             src="image/logo.png"
             alt="Logo"
-          ></img>
+          ></img> */}
         </div>
         <Box
           sx={{
@@ -134,7 +133,7 @@ function Appbar() {
               <Link
                 to={item?.path}
                 key={`nav-tem-${idx}`}
-                style={{ color: value === idx ? "red" : "black" }} // Dynamic color based on the active tab
+                style={{ color: value === idx ? "red" : "black" }} 
               >
                 <Tab
                   label={item?.label}

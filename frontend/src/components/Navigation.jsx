@@ -47,6 +47,11 @@ function Navigation() {
     { label: "Contact", path: "/contact" },
   ];
 
+  // if user is logged in show the dashboard
+  if (isLoggedIn) {
+    navItem.push({label: "Dashboard", path: "/Dashboard"})
+  }
+
   return (
     <header
       style={{
