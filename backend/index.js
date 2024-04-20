@@ -26,7 +26,7 @@ mongoose
   .connect(process.env.DB_URL, {
   })
   .then(() => {
-    console.log("Connected to MongoDB");
+    console.log(`Connected to MongoDB${process.env.DB_URL}`);
   })
   .catch((error) => {
     console.error("MongoDB connection error:", error);

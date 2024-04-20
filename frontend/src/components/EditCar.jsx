@@ -11,6 +11,7 @@ import Grid from "@mui/material/Grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from "@mui/material/Box";
+import Axios from "axios";
 
 function EditCar() {
   const [open, setOpen] = useState(false);
@@ -65,8 +66,15 @@ function EditCar() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // You can perform additional validation or submit data to backend here
-    console.log(carInfo);
+    Axios.post("http://localhost:8000/car/editCar", {})
+      .then((response) => {
+        if (response.data.status) {
+          window.location.reload();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     handleClose();
   };
 
