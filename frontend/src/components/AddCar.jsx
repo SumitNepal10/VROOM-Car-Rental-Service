@@ -13,6 +13,7 @@ import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
+  const userName = localStorage.getItem("username");
   const [carInfo, setCarInfo] = useState({
     modelName: "",
     price: "",
@@ -28,6 +29,7 @@ function AddCar() {
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
   };
 
   const handleSubmit = async (e) => {
@@ -40,6 +42,7 @@ function AddCar() {
     formData.append("system", carInfo.system);
     formData.append("haveAc", carInfo.haveAc);
     formData.append("picture", carInfo.picture);
+    formData.append("user", userName);
 
     try {
       const response = await Axios.post(

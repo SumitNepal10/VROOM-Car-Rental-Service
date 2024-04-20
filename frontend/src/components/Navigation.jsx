@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tabs, Tab, Box, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -12,10 +12,9 @@ const theme = createTheme({
 });
 
 function Navigation() {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
-  const location = useLocation();
-  const { pathname } = location;
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn");
@@ -31,11 +30,12 @@ function Navigation() {
     setUsername("");
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("username");
+    navigate("/");
   };
 
   const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (newValue) => {
     setValue(newValue);
   };
 
