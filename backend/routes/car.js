@@ -1,7 +1,6 @@
 import Car from "../models/Car.js";
 import express from "express";
 import multer from "multer";
-import { fileURLToPath } from "url";
 
 const carRouter = express.Router();
 
@@ -73,5 +72,9 @@ carRouter.get("/getCars/:username", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+carRouter.post("/editCar", async (req, res) => {
+  return res.json({status: true})
+})
 
 export { carRouter as carRoute };
