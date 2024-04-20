@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Appbar from "../components/Appbar";
 import AddCar from "../components/AddCar";
 import EditCar from "../components/EditCar";
@@ -14,59 +15,28 @@ import {
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
-// import EditIcon from "@mui/icons-material/Edit";
-// import DeleteIcon from "@mui/icons-material/Delete";
 
 function ManageCars() {
-  const cardsData = [
-    {
-      id: 1,
-      image: "image/home.png",
-      title: "Hyundai Tucson",
-      subtitle: "NPR 7000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      id: 2,
-      image: "image/suv.png",
-      title: "Compact SUV Electric",
-      subtitle: "NPR 5500/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      id: 3,
-      image: "image/suv2.png",
-      title: "Compact SUV Hybrid",
-      subtitle: "NPR 5000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      id: 4,
-      image: "image/suv2.png",
-      title: "Compact SUV Hybrid",
-      subtitle: "NPR 5000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    // Add more card data as needed
-  ];
-  // const [dialogOpen, setDialogOpen] = useState(false);
+  const [carsData, setCarsData] = useState([]);
 
-  // const handleOpenDialog = () => {
-  //   setDialogOpen(true);
-  // };
+  useEffect(() => {
+    // Fetch username from localStorage
+    const username = localStorage.getItem("username");
 
-  // const handleCloseDialog = () => {
-  //   setDialogOpen(false);
-  // };
+    // Fetch cars data for the logged-in user
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/car/getCars/${username}`
+        );
+        setCarsData(response.data);
+      } catch (error) {
+        console.error("Error fetching cars data:", error);
+      }
+    };
 
+    fetchData();
+  }, []);
   return (
     <>
       <header>
@@ -76,25 +46,18 @@ function ManageCars() {
       <AddCar />
       <div className="cars">
         <Grid container spacing={5} justifyContent="center" marginTop="-10px">
-          {cardsData.map((card) => (
-            <Grid item key={card.id}>
+          {carsData.map((car) => (
+            <Grid item key={car._id}>
               <Card
                 sx={{
-                  height: "100%", // Set a fixed height for the card
+                  maxWidth: 345,
                   display: "flex",
                   flexDirection: "column",
+                  borderRadius: 8,
+                  boxShadow: "0px 4px 8px rgba(38, 50, 56, 0.08)",
                 }}
               >
                 <EditCar />
-
-                {/* <Box display="flex" justifyContent="flex-end" padding={1}>
-                  <Box sx={{ marginRight: 1 }}>
-                    <EditIcon />
-                  </Box>
-                  <Box>
-                    <DeleteIcon />
-                  </Box>
-                </Box> */}
                 <Box
                   display="flex"
                   justifyContent="space-between"
@@ -103,8 +66,8 @@ function ManageCars() {
                 >
                   <CardMedia
                     sx={{ width: 300, height: 150 }}
-                    image={card.image}
-                    title={card.title}
+                    image={`data:${car.picture.contentType};base64,${car.picture.data}`}
+                    title={car.modelName}
                   />
                 </Box>
                 <CardContent sx={{ flexGrow: 1 }}>
@@ -117,37 +80,37 @@ function ManageCars() {
                       fontSize: "17px",
                     }}
                   >
-                    {card.title}
+                    {car.modelName}
                   </Typography>
                   <Typography
                     variant="subtitle1"
                     color="text.secondary"
                     sx={{ fontWeight: "bold" }}
                   >
-                    {card.subtitle}
+                    {car.price}
                   </Typography>
                   <br />
                   <Box display="flex" justifyContent="space-between">
                     <Box display="flex">
                       <AcUnitIcon
                         sx={{
-                          color: card.airConditioning ? "green" : "red",
+                          color: car.haveAc ? "green" : "red",
                           marginRight: 1,
                         }}
                       />
                       <Box marginLeft={1}>
-                        {card.airConditioning ? "Air-Conditioning" : "No AC"}
+                        {car.haveAc ? "Air-Conditioning" : "No AC"}
                       </Box>
                     </Box>
                     <Box display="flex">
                       <GroupsIcon sx={{ marginRight: 1 }} />
-                      <Box marginLeft={1}>{card.passengers}</Box>
+                      <Box marginLeft={1}>{car.seats}</Box>
                     </Box>
                   </Box>
                   <Box display="flex" justifyContent="space-between">
                     <Box display="flex">
                       <SettingsIcon sx={{ marginRight: 1 }} />
-                      <Box marginLeft={1}>{card.transmission}</Box>
+                      <Box marginLeft={1}>{car.system}</Box>
                     </Box>
                   </Box>
                 </CardContent>
