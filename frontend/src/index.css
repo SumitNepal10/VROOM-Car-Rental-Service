@@ -116,6 +116,17 @@ code {
   display: grid;
   align-items: center;
 }
+.bgimage {
+  width: 100%;
+  min-height: 50vh;
+  background-image: url(../public/image/home.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #eeeff1;
+  background-size: cover;
+  display: grid;
+  align-items: center;
+}
 .step {
   width: 80%;
   margin-left: 10%;
@@ -207,7 +218,7 @@ code {
   display: flex;
   margin-left: 250px;
   margin-right: 40px;
-  margin-top: 150px;
+  /* margin-top: -80px; */
   height: 100vh;
 }
 .table {
@@ -238,7 +249,7 @@ code {
 .bookings-table {
   display: flex;
   margin-left: 250px;
-  margin-top: 20px;
+  margin-top: -90px;
 }
 .main-booking {
   display: flex;
@@ -261,11 +272,48 @@ code {
   border-radius: 10px;
   gap: 20px;
 }
+.containerDash {
+  display: flex;
+  margin-top: 20px;
+  padding: 0 80px;
+  gap: 30px;
+}
 
-/* .right-card {
-  background-color: rgb(237, 237, 237);
-  margin-bottom: 20px; 
-  padding: 20px;
-  border-radius: 10px;
+.cardOne {
+  flex: 0 0 30%;
+  height:fit-content;
+}
+
+.cardTwo {
   flex: 1;
-} */
+  height:"500px";
+  padding-bottom: 20px;
+}
+.profilePictureContainer {
+  text-align: center;
+  padding-top: 20px;
+}
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.profileOptions {
+  display: flex;
+  align-items: center;
+  /* justify-content: center;  */
+  margin-left: 250px;
+  width: 100%; 
+  margin-top: 10px;
+}
+
+.profileOptions p {
+  margin-left: 10px;
+}
+.profileOptions{
+  color:black;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -14,6 +14,7 @@ import BookCar from "./pages/BookCar";
 import ConfirmBooking from "./pages/ConfirmBooking";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
+import UserDashboard from "./pages/UserDashboard";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
+        <Route path="/UserDashboard" element={<UserDashboard />} />
       </Routes>
     </>
   );
