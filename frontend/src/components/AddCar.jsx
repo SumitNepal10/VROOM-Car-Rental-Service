@@ -13,7 +13,7 @@ import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
-  const userName = localStorage.getItem("username");
+  const userName = "admin";
   const [carInfo, setCarInfo] = useState({
     modelName: "",
     price: "",
