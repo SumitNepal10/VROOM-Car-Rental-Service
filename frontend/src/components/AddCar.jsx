@@ -100,8 +100,9 @@ function AddCar() {
             fontSize: "15px",
             color: "white",
             backgroundColor: "red",
-            marginRight: "10px",
-            marginTop: "20px",
+            marginRight: "0px",
+            marginTop: "-250px",
+            marginLeft:"1000px"
           }}
         >
           Add vehicle

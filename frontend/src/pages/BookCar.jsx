@@ -123,7 +123,7 @@ function BookCar() {
                       <SettingsIcon sx={{ color: "green", marginRight: 1 }} />
                       <Typography>{card.transmission}</Typography>
                     </Box>
-                    <Link to="ConfirmBooking">
+                    <Link to="/ConfirmBooking">
                       <Button
                         variant="contained"
                         sx={{
