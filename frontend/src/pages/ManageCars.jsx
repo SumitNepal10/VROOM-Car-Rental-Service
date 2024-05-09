@@ -20,8 +20,7 @@ function ManageCars() {
   const [carsData, setCarsData] = useState([]);
 
   useEffect(() => {
-    // Fetch username from localStorage
-    const username = localStorage.getItem("username");
+    const username = "admin";
 
     // Fetch cars data for the logged-in user
     const fetchData = async () => {

@@ -71,7 +71,7 @@ router.post("/forgot", async (req, res) => {
     });
 
     const mailOptions = {
-      from: "nepalsumit30@gmail.com",
+      from: process.env.email,
       to: email,
       subject: "Reset Your Password",
       text: `Reset Your Password`,
