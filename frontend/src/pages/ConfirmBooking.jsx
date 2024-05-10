@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
+import { useParams } from "react-router-dom";
+import axios from 'axios';
 import {
   Card,
   CardContent,
@@ -15,7 +16,6 @@ import {
   Container,
   IconButton,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
 } from "@mui/material";
@@ -30,6 +30,9 @@ function ConfirmBooking() {
     agreeToTerms: false,
     driverLicense: null,
   });
+
+  const {carId} = useParams();
+  console.log(carId);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCarImage, setSelectedCarImage] = useState("");
