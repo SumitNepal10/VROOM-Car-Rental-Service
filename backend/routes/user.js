@@ -115,4 +115,15 @@ router.post("/reset/:token", async (req, res) => {
   }
 });
 
+// Fetch all users
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find(); 
+    return res.json(users);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
 export { router as UserRouter };

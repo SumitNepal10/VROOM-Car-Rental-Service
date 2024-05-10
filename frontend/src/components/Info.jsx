@@ -131,7 +131,6 @@ const CardComponent = ({ title, image, price, carId }) => {
   const handleRentClick = () => {
     navigate(`/ConfirmBooking/${carId}`); 
   };
-  console.log(carId);
 
   return (
     <Card sx={{ maxWidth: 345, margin: "10px" }}>
