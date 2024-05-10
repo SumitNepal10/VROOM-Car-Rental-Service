@@ -11,18 +11,13 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("http://localhost:8000/auth/login", {
-      email,
-      password,
-    })
+    Axios.post("http://localhost:8000/auth/login", { email, password })
       .then((response) => {
         if (response.data.status) {
-          const { username } = response.data;
+          const { username, isAdmin } = response.data;
           localStorage.setItem("isLoggedIn", true);
           localStorage.setItem("username", username);
-          if (email.endsWith("@admin.com")) {
-            localStorage.setItem("isAdmin", true);
-          }
+          localStorage.setItem("isAdmin", isAdmin || false);
           navigate("/");
         } else {
           setError("Login failed. Please check your email and password.");
@@ -30,7 +25,7 @@ function Login() {
       })
       .catch((err) => {
         setError("An error occurred during login. Please try again.");
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -53,22 +48,17 @@ function Login() {
             alt="Logo"
           />
           <h1 style={{ fontSize: "13px", color: "red", marginTop: "-10px" }}>
-            Welcome aboard! Unlock your journey with us
+            Welcome aboard! Unlock your journey with us.
           </h1>
           <form className="signup-form" onSubmit={handleSubmit}>
-            <Box
-              sx={{
-                "& .MuiTextField-root": { m: 1, width: "300px" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
+            <Box sx={{ "& .MuiTextField-root": { m: 1, width: "300px" } }}>
               <div>
                 <TextField
                   id="outlined-mail"
                   size="small"
                   label="Email"
                   type="email"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
@@ -76,6 +66,7 @@ function Login() {
                   label="Password"
                   size="small"
                   type="password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>

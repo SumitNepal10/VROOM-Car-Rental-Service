@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import { Button, CardActionArea, CardActions } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+} from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
+
+import { useNavigate } from "react-router-dom";
 
 const Info = () => {
   const [carsData, setCarsData] = useState([]);
-  const username = "admin";
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/car/getCars/${username}`
+        "http://localhost:8000/car/getCars/admin"
       );
       setCarsData(response.data);
     } catch (error) {
@@ -24,8 +29,8 @@ const Info = () => {
   };
 
   useEffect(() => {
-    fetchData(); 
-  }, []); 
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -33,7 +38,6 @@ const Info = () => {
         <h2>Tour Packages</h2>
         <p>Choose us for your unforgettable journeys.</p>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          {/* Tour packages*/}
           <CardComponent
             title="Pokhara"
             image="/image/pokhara.jpg"
@@ -55,15 +59,25 @@ const Info = () => {
       <div className="main-cars">
         <h2>Top Sellers</h2>
         <p>Explore the city with our top seller cars.</p>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          {}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            marginLeft: "150px",
+            gap: "10px",
+            maxWidth: "1300px",
+          }}
+        >
           {carsData.map((car) => (
-            <CarComponent
-              key={car.id} // Unique key for each item in the list
+            <CardComponent
+              key={car.id}
               title={car.modelName}
               image={`data:${car.picture.contentType};base64,${car.picture.data}`}
               price={`NPR ${car.price}/day`}
+              carId={car.carId}
             />
+ 
           ))}
         </div>
       </div>
@@ -78,16 +92,15 @@ const Info = () => {
         }}
       >
         <div
-          className="introText"
           style={{
             display: "flex",
-            gap: "300px",
-            justifyContent: "normal",
+            justifyContent: "space-between",
+            alignItems: "center",
             marginTop: "50px",
-            marginLeft: "20px",
+            padding: "0 20px",
           }}
         >
-          <h1 style={{ fontSize: "25px", marginLeft: "100px" }}>
+          <h1 style={{ fontSize: "25px" }}>
             Call us for further information. Customer care is here to help you
             anytime.
           </h1>
@@ -112,77 +125,53 @@ const Info = () => {
   );
 };
 
-const CardComponent = ({ title, image, price }) => (
-  <Card sx={{ maxWidth: 345, margin: "0 10px" }}>
-    <CardActionArea>
-      <CardMedia component="img" height="200" image={image} />
-      <CardContent>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{ textAlign: "left" }}
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          style={{ textAlign: "left" }}
-        >
-          {price}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-    <CardActions>
-      <Button
-        variant="contained"
-        sx={{
-          fontSize: "13px",
-          color: "white",
-          marginLeft: "auto",
-          backgroundColor: "red",
-        }}
-        type="submit"
-      >
-        BUY
-      </Button>
-    </CardActions>
-  </Card>
-);
+const CardComponent = ({ title, image, price, carId }) => {
+  const navigate = useNavigate(); 
 
-const CarComponent = ({ title, image, price }) => (
-  <Card sx={{ maxWidth: 345, margin: "0 10px" }}>
-    <CardActionArea>
-      <CardMedia component="img" height="200" image={image} />
-      <CardContent>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{ textAlign: "left" }}
+  const handleRentClick = () => {
+    navigate(`/ConfirmBooking/${carId}`); 
+  };
+  console.log(carId);
+
+  return (
+    <Card sx={{ maxWidth: 345, margin: "10px" }}>
+      <CardActionArea>
+        <CardMedia component="img" height="200" image={image} />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            style={{ textAlign: "left" }}
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            style={{ textAlign: "left" }}
+          >
+            {price}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button
+          variant="contained"
+          sx={{
+            fontSize: "13px",
+            color: "white",
+            marginLeft: "auto",
+            backgroundColor: "red",
+          }}
+          type="button"
+          onClick={handleRentClick}
         >
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          style={{ textAlign: "left" }}
-        >
-          {price}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-    <CardActions>
-      <Button
-        variant="contained"
-        sx={{ fontSize: "13px", marginLeft: "auto", backgroundColor: "red" }}
-        type="submit"
-      >
-        RENT
-      </Button>
-    </CardActions>
-  </Card>
-);
+          RENT
+        </Button>
+      </CardActions>
+    </Card>
+  );
+};
 
 export default Info;
