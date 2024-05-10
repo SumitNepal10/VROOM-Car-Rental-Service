@@ -17,6 +17,29 @@ function Navigation() {
   const location = useLocation();
   const { pathname } = location;
 
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [isAdmin, setIsAdmin] = useState(
+    localStorage.getItem("isAdmin") === "true"
+  );
+
+  const [selectedTab, setSelectedTab] = useState(0);
+  const navItem = [
+    { label: "Home", path: "/" },
+    { label: "Vehicles", path: "/vehicles" },
+    { label: "About", path: "/about" },
+    { label: "Services", path: "/services" },
+    { label: "Contact", path: "/contact" },
+  ];
+
+  const adminItem =
+    isLoggedIn && isAdmin ? [{ label: "Dashboard", path: "/dashboard" }] : [];
+
+  const combinedNavItem = [...navItem, ...adminItem];
   useEffect(() => {
     console.log("pathname", pathname);
     if (pathname) {
@@ -28,8 +51,9 @@ function Navigation() {
       });
 
       setValue(activeIdx);
+
     }
-  }, []);
+  }, [currentPath, navItem]);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -56,13 +80,14 @@ function Navigation() {
         display: "flex",
         justifyContent: "space-between",
         backgroundColor: "rgba(255, 255, 255, 0.5)",
+        padding: "10px",
       }}
     >
-      <div style={{ width: "100%", display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
         <Link to="/" className="logo">
-          <img className="home-logo" src="image/logo.png" alt="logo" />
+          <img className="home-logo" src="/image/logo.png" alt="logo" />
         </Link>
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ flex: 1 }}>
           <ThemeProvider theme={theme}>
             <Tabs value={value} onChange={handleChange} textColor="primary">
               {navItem?.map((item, idx) => (
@@ -73,10 +98,12 @@ function Navigation() {
                 >
                   <Tab label={item?.label} onClick={() => setValue(idx)} />
                 </Link>
+
               ))}
             </Tabs>
           </ThemeProvider>
         </Box>
+
 
         {isLoggedIn ? (
           <div>
@@ -93,6 +120,7 @@ function Navigation() {
             </Link>
           </div>
         )}
+
       </div>
     </header>
   );
