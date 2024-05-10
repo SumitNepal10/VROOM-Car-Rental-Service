@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tabs, Tab, Box, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Vehicles from "../pages/Vehicles";
 
 const theme = createTheme({
   palette: {
@@ -13,32 +12,30 @@ const theme = createTheme({
 });
 
 function Navigation() {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const location = useLocation();
-  const { pathname } = location;
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    console.log("pathname", pathname);
-    if (pathname) {
-      let activeIdx;
-      navItem?.forEach((item, idx) => {
-        if (item?.path === pathname) {
-          activeIdx = idx;
-        }
-      });
-
-      setValue(activeIdx);
+    const loggedIn = localStorage.getItem("isLoggedIn");
+    const storedUsername = localStorage.getItem("username");
+    if (loggedIn && storedUsername) {
+      setIsLoggedIn(true);
+      setUsername(storedUsername);
     }
   }, []);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setUsername("");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    navigate("/");
   };
 
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    console.log("clicked");
+  const handleChange = (newValue) => {
     setValue(newValue);
   };
 
@@ -49,6 +46,11 @@ function Navigation() {
     { label: "Services", path: "/services" },
     { label: "Contact", path: "/contact" },
   ];
+
+  // if user is logged in show the dashboard
+  if (isLoggedIn) {
+    navItem.push({label: "Dashboard", path: "/Dashboard"})
+  }
 
   return (
     <header
@@ -68,8 +70,8 @@ function Navigation() {
               {navItem?.map((item, idx) => (
                 <Link
                   to={item?.path}
-                  key={`nav-tem-${idx}`}
-                  style={{ color: "black" }} // Corrected color style
+                  key={`nav-item-${idx}`}
+                  style={{ color: "black" }}
                 >
                   <Tab label={item?.label} onClick={() => setValue(idx)} />
                 </Link>
@@ -80,8 +82,9 @@ function Navigation() {
 
         {isLoggedIn ? (
           <div>
-            <img src="user-icon.png" alt="User Icon" />
-            <Button onClick={handleLogout}>Logout</Button>
+            {/* <img src="image/user-icon.jpg" alt="User Icon" /> */}
+            <span>Hello {username}</span>
+            <Button className="header-btn" onClick={handleLogout}>Logout</Button>
           </div>
         ) : (
           <div className="header-btn">
