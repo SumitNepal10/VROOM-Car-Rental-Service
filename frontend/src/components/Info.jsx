@@ -76,6 +76,7 @@ const Info = () => {
               image={`data:${car.picture.contentType};base64,${car.picture.data}`}
               price={`NPR ${car.price}/day`}
               carId={car.carId}
+              status={car.status}
             />
  
           ))}
@@ -125,7 +126,7 @@ const Info = () => {
   );
 };
 
-const CardComponent = ({ title, image, price, carId }) => {
+const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate(); 
 
   const handleRentClick = () => {
@@ -152,6 +153,19 @@ const CardComponent = ({ title, image, price, carId }) => {
           >
             {price}
           </Typography>
+            {/* Status Box */}
+            <Box
+                sx={{
+                  marginTop: "10px",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  backgroundColor: status === "Rented" ? "red" : "green",
+                  color: "white",
+                  textAlign: "center",
+                }}
+              >
+                {status === "Rented" ? "Rented" : "Available"}
+              </Box>
         </CardContent>
       </CardActionArea>
       <CardActions>

@@ -8,6 +8,7 @@ const CarSchema = new mongoose.Schema({
   haveAc: { type: Boolean, required: true, unique: false },
   user: { type: String, required: true, unique: false },
   carId: { type: String, required: true, unique: false },
+  status: { type: String, required: true, unique: false },
   picture: {
     data: Buffer, 
     contentType: String, 
