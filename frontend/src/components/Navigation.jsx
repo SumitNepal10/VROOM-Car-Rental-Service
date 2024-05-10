@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Tabs, Tab, Box, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Vehicles from "../pages/Vehicles";
 
 const theme = createTheme({
   palette: {
@@ -12,9 +13,9 @@ const theme = createTheme({
 });
 
 function Navigation() {
-  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
-  const currentPath = location.pathname;
+  const { pathname } = location;
 
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
@@ -40,21 +41,38 @@ function Navigation() {
 
   const combinedNavItem = [...navItem, ...adminItem];
   useEffect(() => {
-    const index = navItem.findIndex((item) => item.path === currentPath);
-    if (index !== -1) {
-      setSelectedTab(index);
+    console.log("pathname", pathname);
+    if (pathname) {
+      let activeIdx;
+      navItem?.forEach((item, idx) => {
+        if (item?.path === pathname) {
+          activeIdx = idx;
+        }
+      });
+
+      setValue(activeIdx);
+
     }
   }, [currentPath, navItem]);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUsername("");
-    setIsAdmin(false);
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("username");
-    localStorage.removeItem("isAdmin");
-    navigate("/");
   };
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    console.log("clicked");
+    setValue(newValue);
+  };
+
+  const navItem = [
+    { label: "Home", path: "/" },
+    { label: "Vehicles", path: "/vehicles" },
+    { label: "About", path: "/about" },
+    { label: "Services", path: "/services" },
+    { label: "Contact", path: "/contact" },
+  ];
 
   return (
     <header
@@ -71,53 +89,38 @@ function Navigation() {
         </Link>
         <Box sx={{ flex: 1 }}>
           <ThemeProvider theme={theme}>
-            <Tabs
-              value={selectedTab}
-              onChange={(e, newValue) => setSelectedTab(newValue)}
-              textColor="primary"
-              indicatorColor="primary"
-            >
-              {combinedNavItem.map((item, idx) => (
-                <Tab
-                  component={Link}
-                  to={item.path}
-                  key={`nav-item-${idx}`}
-                  label={item.label}
-                  onClick={() => setSelectedTab(idx)}
-                />
+            <Tabs value={value} onChange={handleChange} textColor="primary">
+              {navItem?.map((item, idx) => (
+                <Link
+                  to={item?.path}
+                  key={`nav-tem-${idx}`}
+                  style={{ color: "black" }} // Corrected color style
+                >
+                  <Tab label={item?.label} onClick={() => setValue(idx)} />
+                </Link>
+
               ))}
             </Tabs>
           </ThemeProvider>
         </Box>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {isLoggedIn ? (
-            <>
-              <span>Hello, {username}</span>
-              <Button
-                className="header-btn"
-                onClick={handleLogout}
-                variant="contained"
-                color="primary"
-              >
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/sign-up"
-                className="sign-up"
-                style={{ marginRight: "10px" }}
-              >
-                Sign Up
-              </Link>
-              <Link to="/login" className="sign-in">
-                Sign In
-              </Link>
-            </>
-          )}
-        </div>
+
+        {isLoggedIn ? (
+          <div>
+            <img src="user-icon.png" alt="User Icon" />
+            <Button onClick={handleLogout}>Logout</Button>
+          </div>
+        ) : (
+          <div className="header-btn">
+            <Link to="/sign-up" className="sign-up">
+              SignUp
+            </Link>
+            <Link to="/login" className="sign-in">
+              SignIn
+            </Link>
+          </div>
+        )}
+
       </div>
     </header>
   );
