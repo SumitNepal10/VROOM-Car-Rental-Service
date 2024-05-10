@@ -22,7 +22,7 @@ carRouter.post("/addcar", upload.single("picture"), async (req, res) => {
     );
 
     const carId = counter.seq; // The next carId
-    const { modelName, price, seats, system, haveAc, user } = req.body;
+    const { modelName, price, seats, system, haveAc, user, status } = req.body;
     const pictureData = req.file.buffer;
     const pictureType = req.file.mimetype;
 
@@ -34,6 +34,7 @@ carRouter.post("/addcar", upload.single("picture"), async (req, res) => {
       haveAc,
       user,
       carId,
+      status,
       picture: {
         data: pictureData,
         contentType: pictureType,
@@ -67,6 +68,7 @@ carRouter.get("/getCars/:username", async (req, res) => {
       seats: car.seats,
       system: car.system,
       haveAc: car.haveAc,
+      status: car.status,
       picture: {
         data: car.picture.data.toString("base64"),
         contentType: car.picture.contentType,
