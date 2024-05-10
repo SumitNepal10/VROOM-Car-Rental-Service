@@ -1,4 +1,5 @@
 import express from "express";
+import bodyParser from 'body-parser';
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -9,6 +10,9 @@ import { carRoute } from "./routes/car.js";
 dotenv.config();
 const app = express();
 app.use(cookieParser());
+
+app.use(bodyParser.json({ limit: '20mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '20mb' }));
 
 app.use(express.json());
 app.use(

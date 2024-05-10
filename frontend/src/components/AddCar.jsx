@@ -3,17 +3,18 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import Grid from "@mui/material/Grid";
-
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Grid';
 import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
+  const [nextCarId, setNextCarId] = useState(1); 
   const userName = "admin";
+
   const [carInfo, setCarInfo] = useState({
     modelName: "",
     price: "",
@@ -21,6 +22,7 @@ function AddCar() {
     system: "",
     haveAc: false,
     picture: null,
+    id: 0,
   });
 
   const handleClickOpen = () => {
@@ -35,6 +37,9 @@ function AddCar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const carId = nextCarId;
+    setNextCarId(nextCarId + 1);
+    
     const formData = new FormData();
     formData.append("modelName", carInfo.modelName);
     formData.append("price", carInfo.price);
@@ -43,6 +48,7 @@ function AddCar() {
     formData.append("haveAc", carInfo.haveAc);
     formData.append("picture", carInfo.picture);
     formData.append("user", userName);
+    formData.append("carId", carId);
 
     try {
       const response = await Axios.post(
