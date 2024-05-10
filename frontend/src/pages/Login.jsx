@@ -6,6 +6,7 @@ import Axios from "axios";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -17,20 +18,25 @@ function Login() {
       .then((response) => {
         if (response.data.status) {
           const { username } = response.data;
-          console.log(response.data)
           localStorage.setItem("isLoggedIn", true);
           localStorage.setItem("username", username);
-          navigate('/');
-        } 
+          if (email.endsWith("@admin.com")) {
+            localStorage.setItem("isAdmin", true);
+          }
+          navigate("/");
+        } else {
+          setError("Login failed. Please check your email and password.");
+        }
       })
       .catch((err) => {
+        setError("An error occurred during login. Please try again.");
         console.log(err);
       });
   };
 
   return (
     <div className="background">
-      <div className="login" onSubmit={handleSubmit}>
+      <div className="login">
         <div className="image">
           <img
             id="car"
@@ -49,9 +55,8 @@ function Login() {
           <h1 style={{ fontSize: "13px", color: "red", marginTop: "-10px" }}>
             Welcome aboard! Unlock your journey with us
           </h1>
-          <form className="signup-form">
+          <form className="signup-form" onSubmit={handleSubmit}>
             <Box
-              component="form"
               sx={{
                 "& .MuiTextField-root": { m: 1, width: "300px" },
               }}
@@ -59,24 +64,20 @@ function Login() {
               autoComplete="off"
             >
               <div>
-                <div>
-                  <TextField
-                    id="outlined-mail"
-                    size="small"
-                    label="Email"
-                    type="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <TextField
-                    id="outlined-password-input"
-                    label="Password"
-                    size="small"
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
+                <TextField
+                  id="outlined-mail"
+                  size="small"
+                  label="Email"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <TextField
+                  id="outlined-password-input"
+                  label="Password"
+                  size="small"
+                  type="password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
             </Box>
             <p>
@@ -96,6 +97,7 @@ function Login() {
             >
               Login
             </Button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <p className="switch">
               Don't have an account?
               <Link to="/sign-up" className="signup-switch">
