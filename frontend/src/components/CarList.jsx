@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Grid,
-  Box,
   Card,
   CardContent,
   CardMedia,
   Typography,
+  Box,
   Modal,
-  Button,
 } from "@mui/material";
 import {
   Groups as GroupsIcon,
@@ -18,25 +17,35 @@ import {
   Luggage as LuggageIcon,
 } from "@mui/icons-material";
 
-function CarList() {
-  const [selectedCar, setSelectedCar] = useState(null);
+function CarList({ searchTerm, filterOption }) {
   const [carsData, setCarsData] = useState([]);
-  const username = "admin";
+  const [selectedCar, setSelectedCar] = useState(null);
 
-  const fetchData = async () => {
+  const fetchCars = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/car/getCars/${username}`
+        "http://localhost:8000/car/getCars/admin"
       );
       setCarsData(response.data);
     } catch (error) {
-      console.error("Error fetching cars data:", error);
+      console.error("Error fetching car data:", error);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [username]);
+    fetchCars();
+  }, []);
+
+  // Filter cars based on search term and filter option
+  const filteredCars = carsData.filter((car) => {
+    const matchesSearchTerm =
+      searchTerm === "" ||
+      (filterOption === "Model" &&
+        car.modelName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (filterOption === "Price" && Number(car.price) === Number(searchTerm));
+
+    return matchesSearchTerm;
+  });
 
   const handleCardClick = (car) => {
     setSelectedCar(car);
@@ -53,7 +62,7 @@ function CarList() {
       justifyContent="center"
       style={{ padding: "20px" }}
     >
-      {carsData.map((car) => (
+      {filteredCars.map((car) => (
         <Grid item key={car._id} xs={12} sm={6} md={4}>
           <Card
             sx={{
@@ -170,7 +179,7 @@ function CarList() {
                       fontSize: 15,
                     }}
                   />
-                  {selectedCar.haveAc ? "Air-Conditioning" : "No AC"}
+                  {selectedCar.haveAc ? "Air Conditioning" : "No AC"}
                   <GroupsIcon
                     sx={{ marginRight: 1, marginLeft: 5, fontSize: 17 }}
                   />
@@ -187,7 +196,9 @@ function CarList() {
                 </Typography>
 
                 <Box textAlign="center">
-                  <h style={{ fontWeight: "bold" }}>Vehicle Features</h>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Vehicle Features
+                  </Typography>
                   <Box
                     display="flex"
                     marginTop="20px"
