@@ -37,6 +37,7 @@ function Bookings() {
       date: "2024-04-12",
       status: "Pending",
     },
+    
     // Add more data as needed
   ];
 
@@ -62,7 +63,7 @@ function Bookings() {
       </header>
       <Appbar />
       <div className="bookings-table">
-        <Paper>
+        <Paper style={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
           <TextField
             label="Search"
             variant="outlined"
@@ -79,8 +80,9 @@ function Bookings() {
                 </InputAdornment>
               ),
             }}
+            sx={{marginTop:"-110px", width:"400px"}}
           />
-          <Table sx={{ width: "1000px" }}>
+          <Table sx={{ width: "1000px", marginTop:"-80px" }}>
             <TableHead>
               <TableRow>
                 <TableCell>Booking ID</TableCell>
@@ -89,7 +91,7 @@ function Bookings() {
                 <TableCell>Price</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
+                {/* <TableCell>Action</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -128,24 +130,7 @@ function Bookings() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>
-                    {" "}
-                    <Link to="/details" style={{ textDecoration: "none" }}>
-                      <Button
-                        style={{
-                          backgroundColor: "#A2C1E0",
-                          padding: "5px 8px",
-                          borderRadius: "5px",
-                          color: "black",
-                          textAlign: "center",
-                          type: "submit",
-                        }}
-                        // onClick={handleViewDetails}
-                      >
-                        View Details
-                      </Button>
-                    </Link>
-                  </TableCell>
+                 
                 </TableRow>
               ))}
             </TableBody>

@@ -4,14 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
+
 
 function Appbar() {
   const location = useLocation();
@@ -42,6 +35,8 @@ function Appbar() {
     { label: "Dashboard", path: "/Dashboard" },
     { label: "Cars", path: "/ManageCars" },
     { label: "Bookings", path: "/Bookings" },
+    { label: "Users", path: "/Users" }, 
+    { label: "Payment", path: "/Payment" }, 
   ];
 
   return (
