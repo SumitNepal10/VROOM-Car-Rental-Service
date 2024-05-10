@@ -8,6 +8,7 @@ import {
   Typography,
   Box,
   Modal,
+  Button,
 } from "@mui/material";
 import {
   Groups as GroupsIcon,
@@ -98,6 +99,21 @@ function CarList({ searchTerm, filterOption }) {
               >
                 NPR {car.price}/day
               </Typography>
+
+              {/* Status Box */}
+              <Box
+                sx={{
+                  marginTop: "10px",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  backgroundColor: car.status === "Rented" ? "red" : "green",
+                  color: "white",
+                  textAlign: "center",
+                }}
+              >
+                {car.status === "Rented" ? "Rented" : "Available"}
+              </Box>
+
               <Box
                 display="flex"
                 justifyContent="space-between"
@@ -171,6 +187,22 @@ function CarList({ searchTerm, filterOption }) {
                 <Typography variant="subtitle1" gutterBottom>
                   NPR {selectedCar.price} /day
                 </Typography>
+
+                {/* Status Box in Modal */}
+                <Box
+                  sx={{
+                    marginTop: "10px",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    backgroundColor:
+                      selectedCar.status === "Rented" ? "red" : "green",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  {selectedCar.status === "Rented" ? "Rented" : "Available"}
+                </Box>
+
                 <Typography variant="body1" gutterBottom>
                   <AcUnitIcon
                     sx={{

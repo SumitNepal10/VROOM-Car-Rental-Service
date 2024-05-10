@@ -1,46 +1,56 @@
-import React, { useState } from "react";
-import Appbar from "../components/Appbar";
-import { Link } from "react-router-dom";
-import Navigation from "../components/Navigation";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
+  Paper,
   TextField,
   InputAdornment,
   IconButton,
-  Paper,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import Appbar from "../components/Appbar";
+import Navigation from "../components/Navigation";
 
-function Bookings() {
+function Users() {
+  const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const bookingsData = [
-    {
-      userId: 1,
-      username: "John Doe",
-      email: "john@example.com",
-      phoneNumber: "1234567890",
-    },
-    {
-      userId: 2,
-      username: "Jane Smith",
-      email: "jane@example.com",
-      phoneNumber: "9876543210",
-    },
-    // Add more data as needed
-  ];
 
-  // Filter bookings based on search query
-  const filteredBookings = bookingsData.filter(
-    (booking) =>
-      booking.userId.toString().includes(searchQuery) ||
-      booking.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.phoneNumber.includes(searchQuery)
-  );
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/auth/users");
+
+        // Assign sequential IDs starting from 1
+        const usersData = response.data.map((user, index) => ({
+          userId: index + 1, // Sequential IDs starting from 1
+          ...user, // Include all other user data
+        }));
+
+        setUsers(usersData);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredUsers = users.filter((user) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      user.phone.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <>
@@ -50,13 +60,12 @@ function Bookings() {
       <Appbar />
       <div className="users-table">
         <Paper>
-        {/* <h>Users</h> */}
           <TextField
             label="Search"
             variant="outlined"
             size="small"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearch}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -66,24 +75,23 @@ function Bookings() {
                 </InputAdornment>
               ),
             }}
-            sx={{marginTop:"-110px", width:"400px"}}
           />
-          <Table sx={{ width: "800px", marginTop:"-80px" }}>
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell>User ID</TableCell>
                 <TableCell>Username</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
+                <TableCell>Phone</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredBookings.map((booking) => (
-                <TableRow key={booking.userId}>
-                  <TableCell>{booking.userId}</TableCell>
-                  <TableCell>{booking.username}</TableCell>
-                  <TableCell>{booking.email}</TableCell>
-                  <TableCell>{booking.phoneNumber}</TableCell>
+              {filteredUsers.map((user) => (
+                <TableRow key={user.userId}>
+                  <TableCell>{user.userId}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -94,4 +102,4 @@ function Bookings() {
   );
 }
 
-export default Bookings;
+export default Users;

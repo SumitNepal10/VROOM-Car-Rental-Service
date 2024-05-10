@@ -35,8 +35,11 @@ const ManageCars = () => {
     const fetchCars = async () => {
       try {
         const username = "admin";
-        const response = await axios.get(`http://localhost:8000/car/getCars/${username}`);
+        const response = await axios.get(
+          `http://localhost:8000/car/getCars/${username}`
+        );
         setCarsData(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching cars:", error);
       }
@@ -59,7 +62,9 @@ const ManageCars = () => {
     try {
       await axios.post("http://localhost:8000/car/editCar", editCarData);
       setCarsData((prevCars) =>
-        prevCars.map((car) => (car.carId === editCarData.carId ? editCarData : car))
+        prevCars.map((car) =>
+          car.carId === editCarData.carId ? editCarData : car
+        )
       );
       setEditDialogOpen(false);
     } catch (error) {
@@ -119,7 +124,11 @@ const ManageCars = () => {
                   >
                     Price: {car.price}
                   </Typography>
-                  <Box display="flex" justifyContent="space-between" marginTop={2}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    marginTop={2}
+                  >
                     <Box display="flex">
                       <AcUnitIcon
                         sx={{
@@ -136,13 +145,21 @@ const ManageCars = () => {
                       <Typography>{car.seats}</Typography>
                     </Box>
                   </Box>
-                  <Box display="flex" justifyContent="space-between" marginTop={2}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    marginTop={2}
+                  >
                     <Box display="flex">
                       <SettingsIcon sx={{ marginRight: 1 }} />
                       <Typography>{car.system}</Typography>
                     </Box>
                   </Box>
-                  <Box display="flex" justifyContent="space-between" marginTop={2}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    marginTop={2}
+                  >
                     <Button
                       variant="outlined"
                       color="primary"
@@ -150,6 +167,21 @@ const ManageCars = () => {
                     >
                       Edit
                     </Button>
+
+                    <Box
+                      sx={{
+                        marginTop: "10px",
+                        padding: "5px",
+                        borderRadius: "5px",
+                        backgroundColor:
+                          car.status === "Rented" ? "red" : "green",
+                        color: "white",
+                        textAlign: "center",
+                      }}
+                    >
+                      {car.status === "Rented" ? "Rented" : "Available"}
+                    </Box>
+
                     <Button
                       variant="outlined"
                       color="secondary"
@@ -166,10 +198,7 @@ const ManageCars = () => {
       </div>
 
       {editDialogOpen && (
-        <Dialog
-          open={editDialogOpen}
-          onClose={handleEditCarClose}
-        >
+        <Dialog open={editDialogOpen} onClose={handleEditCarClose}>
           <DialogTitle>Edit Car</DialogTitle>
           <DialogContent>
             <Grid container spacing={3}>

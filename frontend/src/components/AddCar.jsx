@@ -22,6 +22,7 @@ function AddCar() {
     system: "",
     haveAc: false,
     picture: null,
+    status: "available",
     id: 0,
   });
 
@@ -49,6 +50,7 @@ function AddCar() {
     formData.append("picture", carInfo.picture);
     formData.append("user", userName);
     formData.append("carId", carId);
+    formData.append("status", carInfo.status);
 
     try {
       const response = await Axios.post(
