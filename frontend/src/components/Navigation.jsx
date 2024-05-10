@@ -16,7 +16,33 @@ function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const { pathname } = location;
+<<<<<<< HEAD
+=======
 
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [isAdmin, setIsAdmin] = useState(
+    localStorage.getItem("isAdmin") === "true"
+  );
+>>>>>>> fdb26a6a37fed5d77951d3d3ef4cc4b027db204c
+
+  const [selectedTab, setSelectedTab] = useState(0);
+  const navItem = [
+    { label: "Home", path: "/" },
+    { label: "Vehicles", path: "/vehicles" },
+    { label: "About", path: "/about" },
+    { label: "Services", path: "/services" },
+    { label: "Contact", path: "/contact" },
+  ];
+
+  const adminItem =
+    isLoggedIn && isAdmin ? [{ label: "Dashboard", path: "/dashboard" }] : [];
+
+  const combinedNavItem = [...navItem, ...adminItem];
   useEffect(() => {
     console.log("pathname", pathname);
     if (pathname) {
@@ -28,8 +54,9 @@ function Navigation() {
       });
 
       setValue(activeIdx);
+
     }
-  }, []);
+  }, [currentPath, navItem]);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -73,11 +100,19 @@ function Navigation() {
                 >
                   <Tab label={item?.label} onClick={() => setValue(idx)} />
                 </Link>
+<<<<<<< HEAD
+=======
+
+>>>>>>> fdb26a6a37fed5d77951d3d3ef4cc4b027db204c
               ))}
             </Tabs>
           </ThemeProvider>
         </Box>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fdb26a6a37fed5d77951d3d3ef4cc4b027db204c
         {isLoggedIn ? (
           <div>
             <img src="user-icon.png" alt="User Icon" />
@@ -93,6 +128,10 @@ function Navigation() {
             </Link>
           </div>
         )}
+<<<<<<< HEAD
+=======
+
+>>>>>>> fdb26a6a37fed5d77951d3d3ef4cc4b027db204c
       </div>
     </header>
   );
