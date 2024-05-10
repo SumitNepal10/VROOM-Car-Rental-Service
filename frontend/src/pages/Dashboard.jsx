@@ -1,6 +1,6 @@
 import React from "react";
 import Appbar from "../components/Appbar";
-import { Card, CardContent} from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -32,7 +32,15 @@ const cardData = [
 ];
 
 const CardComponent = ({ title, value, textColor, backgroundColor }) => (
-  <Card sx={{ width: 250, height: 100, backgroundColor, marginLeft: 2, marginTop: -15 }}>
+  <Card
+    sx={{
+      width: 250,
+      height: 100,
+      backgroundColor,
+      marginLeft: 2,
+      marginTop: -25,
+    }}
+  >
     <CardContent style={{ display: "flex", gap: "20px", alignItems: "center" }}>
       <div>
         <h style={{ color: textColor, fontSize: "30px", fontWeight: "bold" }}>
@@ -72,9 +80,9 @@ const rows = [
 function Dashboard() {
   return (
     <>
-    <header>
-    <Navigation />
-    </header>
+      <header>
+        <Navigation />
+      </header>
       <Appbar />
       <div
         className="card-main"

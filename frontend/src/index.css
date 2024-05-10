@@ -249,7 +249,13 @@ code {
 .bookings-table {
   display: flex;
   margin-left: 250px;
-  margin-top: -90px;
+  margin-top: -100px;
+}
+.users-table,
+.payment-table{
+  display: flex;
+  margin-left: 250px;
+  margin-top: -100px;
 }
 .main-booking {
   display: flex;
