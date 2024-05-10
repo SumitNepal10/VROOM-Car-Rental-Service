@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios"; // Importing axios
 import {
   Card,
   CardContent,
@@ -26,13 +26,12 @@ function ConfirmBooking() {
     firstName: "",
     lastName: "",
     email: "",
-    phoneNumber: "",
+    phone: "",
     agreeToTerms: false,
     driverLicense: null,
   });
 
-  const {carId} = useParams();
-  console.log(carId);
+  const { carId } = useParams(); // Retrieving carId from route parameters
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCarImage, setSelectedCarImage] = useState("");
@@ -57,10 +56,30 @@ function ConfirmBooking() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add your submission logic here, e.g., send data to server
-    console.log(renterInfo);
+    const formData = new FormData();
+    formData.append("carId", carId);
+    formData.append("firstName", renterInfo.firstName);
+    formData.append("lastName", renterInfo.lastName);
+    formData.append("email", renterInfo.email);
+    formData.append("phone", renterInfo.phone);
+    formData.append("driverLicense", renterInfo.driverLicense);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/renter/newRenter",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   const handleDialogOpen = (paymentMode, carImage) => {
@@ -74,7 +93,7 @@ function ConfirmBooking() {
   };
 
   const handlePay = () => {
-    // Add logic to handle payment
+    // Implement payment logic here
     console.log("Payment processed:", selectedPaymentMode, amount, remarks);
     setDialogOpen(false);
   };
@@ -86,63 +105,60 @@ function ConfirmBooking() {
         <Grid container justifyContent="center" spacing={3}>
           {/* Renter Information Card */}
           <Grid item xs={12} sm={6}>
-            <Card variant="standard">
+            <Card variant="outlined">
               <CardContent>
-                <h
-                  style={{
-                    color: "#000433",
-                    fontSize: "25px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Renter Information
-                </h>
+                <Typography variant="h5">Renter Information</Typography>
                 <Divider />
                 <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-                  <h>First Name</h>
                   <TextField
                     fullWidth
                     name="firstName"
                     size="small"
+                    label="First Name"
                     value={renterInfo.firstName}
                     onChange={handleChange}
                     required
                     margin="normal"
-                    marginTop="-9020px"
                   />
-                  <br></br>
-                  <h>Last Name</h>
                   <TextField
                     fullWidth
                     name="lastName"
                     size="small"
+                    label="Last Name"
                     value={renterInfo.lastName}
                     onChange={handleChange}
                     required
                     margin="normal"
-                    marginBottom="20px"
                   />
-                  <h>Phone Number</h>
                   <TextField
                     fullWidth
-                    name="phoneNumber"
+                    name="phone"
                     size="small"
-                    value={renterInfo.phoneNumber}
+                    label="Phone Number"
+                    value={renterInfo.phone}
                     onChange={handleChange}
                     required
                     margin="normal"
                   />
-                  <br></br>
+                  <TextField
+                    fullWidth
+                    name="email"
+                    size="small"
+                    label="Email"
+                    value={renterInfo.email}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                  />
                   {/* File Upload for Driver's License */}
-                  <h> Upload your driver's license</h>
-                  <br></br>
+                  <Typography variant="body1" style={{ marginTop: 10 }}>
+                    Upload your driver's license
+                  </Typography>
                   <Box
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
                     flexDirection="column"
-                    marginTop={2}
-                    marginBottom={5}
                     borderRadius={4}
                     border="1.5px dashed"
                     borderColor="grey.500"
@@ -158,11 +174,7 @@ function ConfirmBooking() {
                       id="driverLicenseInput"
                     />
                     <label htmlFor="driverLicenseInput">
-                      <IconButton
-                        color="primary"
-                        component="span"
-                        style={{ marginLeft: "50px" }}
-                      >
+                      <IconButton color="primary" component="span">
                         <UploadFile />
                       </IconButton>
                       <Typography variant="body1" align="center">
@@ -170,15 +182,11 @@ function ConfirmBooking() {
                       </Typography>
                     </label>
                   </Box>
-                  <h
-                    style={{
-                      color: "#000433",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                    }}
-                  >
+
+                  {/* Select Payment Mode */}
+                  <Typography variant="h5" style={{ marginTop: 20 }}>
                     Select Payment Mode
-                  </h>
+                  </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={4}>
                       <Box
@@ -193,12 +201,12 @@ function ConfirmBooking() {
                         width={120}
                         height={120}
                         onClick={() =>
-                          handleDialogOpen("Esewa", "../image/esewa.png")
+                          handleDialogOpen("Esewa", "/image/esewa.png")
                         }
                         style={{ cursor: "pointer" }}
                       >
                         <img
-                          src="../image/esewa.png"
+                          src="/image/esewa.png"
                           alt="Esewa"
                           style={{
                             width: "100px",
@@ -206,12 +214,7 @@ function ConfirmBooking() {
                             marginTop: "25px",
                           }}
                         />
-                        <Typography
-                          variant="subtitle2"
-                          style={{ marginTop: "10px" }}
-                        >
-                          ESEWA
-                        </Typography>
+                        <Typography variant="subtitle2">ESEWA</Typography>
                       </Box>
                     </Grid>
                     <Grid item xs={4}>
@@ -227,12 +230,12 @@ function ConfirmBooking() {
                         marginTop={3}
                         height={120}
                         onClick={() =>
-                          handleDialogOpen("Khalti", "../image/khalti.png")
+                          handleDialogOpen("Khalti", "/image/khalti.png")
                         }
                         style={{ cursor: "pointer" }}
                       >
                         <img
-                          src="../image/khalti.png"
+                          src="/image/khalti.png"
                           alt="Khalti"
                           style={{
                             width: "100px",
@@ -240,12 +243,7 @@ function ConfirmBooking() {
                             marginTop: "25px",
                           }}
                         />
-                        <Typography
-                          variant="subtitle2"
-                          style={{ marginTop: "10px" }}
-                        >
-                          KHALTI
-                        </Typography>
+                        <Typography variant="subtitle2">KHALTI</Typography>
                       </Box>
                     </Grid>
                     <Grid item xs={4}>
@@ -257,21 +255,21 @@ function ConfirmBooking() {
                         borderRadius={4}
                         border="0.5px solid #ccc"
                         p={2}
-                        marginTop={3}
                         width={120}
+                        marginTop={3}
                         height={120}
                         onClick={() =>
-                          handleDialogOpen("E-Banking", "../image/e-bank.jpg")
+                          handleDialogOpen("E-Banking", "/image/e-bank.jpg")
                         }
                         style={{ cursor: "pointer" }}
                       >
                         <img
-                          src="../image/e-bank.jpg"
+                          src="/image/e-bank.jpg"
                           alt="E-Banking"
                           style={{
                             width: "100px",
                             height: "auto",
-                            marginTop: "10px",
+                            marginTop: "25px",
                           }}
                         />
                         <Typography variant="subtitle2">EBANKING</Typography>
@@ -283,7 +281,11 @@ function ConfirmBooking() {
                     variant="contained"
                     color="primary"
                     disabled={!renterInfo.agreeToTerms}
-                    style={{ marginTop: 20 , backgroundColor:"Green", color:"white"}}
+                    style={{
+                      marginTop: 20,
+                      backgroundColor: "Green",
+                      color: "white",
+                    }}
                   >
                     Confirm Booking
                   </Button>
@@ -299,23 +301,15 @@ function ConfirmBooking() {
           />
           {/* Terms and Conditions Card */}
           <Grid item xs={12} sm={5}>
-            <Card variant="standard">
+            <Card variant="outlined">
               <CardContent>
-                <h
-                  style={{
-                    color: "#000433",
-                    fontSize: "25px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Terms and Conditions
-                </h>
+                <Typography variant="h5">Terms and Conditions</Typography>
                 <Divider />
                 <Typography variant="body2">
                   By confirming this booking, you agree to the following terms
                   and conditions:
                 </Typography>
-                <ol style={{ paddingLeft: 20 }}>
+                <ol>
                   <li>You must be at least 21 years old to rent a car.</li>
                   <li>
                     A valid driver's license and credit card in the renter's
@@ -356,13 +350,11 @@ function ConfirmBooking() {
           />
           <TextField
             fullWidth
-            label="Phone number"
+            label="Phone Number"
             value={phoneNumberDialog}
             onChange={(e) => setPhoneNumberDialog(e.target.value)}
             margin="normal"
-            variant="outlined"
             required
-            style={{ marginBottom: 10 }}
           />
           <TextField
             fullWidth
@@ -370,9 +362,7 @@ function ConfirmBooking() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             margin="normal"
-            variant="outlined"
             required
-            style={{ marginBottom: 10 }}
           />
           <TextField
             fullWidth
@@ -380,10 +370,8 @@ function ConfirmBooking() {
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
             margin="normal"
-            variant="outlined"
             multiline
             rows={3}
-            style={{ marginBottom: 10 }}
           />
         </DialogContent>
         <DialogActions>

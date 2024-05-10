@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Tabs, Tab, Box, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Vehicles from "../pages/Vehicles";
 
 const theme = createTheme({
   palette: {
@@ -13,7 +12,6 @@ const theme = createTheme({
 });
 
 function Navigation() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const { pathname } = location;
 
@@ -28,6 +26,7 @@ function Navigation() {
   );
 
   const [selectedTab, setSelectedTab] = useState(0);
+
   const navItem = [
     { label: "Home", path: "/" },
     { label: "Vehicles", path: "/vehicles" },
@@ -40,39 +39,28 @@ function Navigation() {
     isLoggedIn && isAdmin ? [{ label: "Dashboard", path: "/dashboard" }] : [];
 
   const combinedNavItem = [...navItem, ...adminItem];
+
   useEffect(() => {
-    console.log("pathname", pathname);
-    if (pathname) {
-      let activeIdx;
-      navItem?.forEach((item, idx) => {
-        if (item?.path === pathname) {
-          activeIdx = idx;
-        }
-      });
-
-      setValue(activeIdx);
-
+    const activeIdx = combinedNavItem.findIndex(
+      (item) => item.path === pathname
+    );
+    if (activeIdx !== -1) {
+      setSelectedTab(activeIdx);
     }
-  }, [currentPath, navItem]);
+  }, [pathname, combinedNavItem]);
 
   const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("isAdmin");
     setIsLoggedIn(false);
+    setUsername("");
+    setIsAdmin(false);
   };
-
-  const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
-    console.log("clicked");
-    setValue(newValue);
+    setSelectedTab(newValue);
   };
-
-  const navItem = [
-    { label: "Home", path: "/" },
-    { label: "Vehicles", path: "/vehicles" },
-    { label: "About", path: "/about" },
-    { label: "Services", path: "/services" },
-    { label: "Contact", path: "/contact" },
-  ];
 
   return (
     <header
@@ -89,25 +77,27 @@ function Navigation() {
         </Link>
         <Box sx={{ flex: 1 }}>
           <ThemeProvider theme={theme}>
-            <Tabs value={value} onChange={handleChange} textColor="primary">
-              {navItem?.map((item, idx) => (
+            <Tabs
+              value={selectedTab}
+              onChange={handleChange}
+              textColor="primary"
+            >
+              {combinedNavItem.map((item, idx) => (
                 <Link
-                  to={item?.path}
-                  key={`nav-tem-${idx}`}
-                  style={{ color: "black" }} // Corrected color style
+                  to={item.path}
+                  key={`nav-item-${idx}`}
+                  style={{ textDecoration: "none", color: "black" }}
                 >
-                  <Tab label={item?.label} onClick={() => setValue(idx)} />
+                  <Tab label={item.label} />
                 </Link>
-
               ))}
             </Tabs>
           </ThemeProvider>
         </Box>
 
-
         {isLoggedIn ? (
           <div>
-            <img src="user-icon.png" alt="User Icon" />
+            <span>Welcome, {username}</span>
             <Button onClick={handleLogout}>Logout</Button>
           </div>
         ) : (
@@ -120,7 +110,6 @@ function Navigation() {
             </Link>
           </div>
         )}
-
       </div>
     </header>
   );

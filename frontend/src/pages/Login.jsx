@@ -11,13 +11,26 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post("http://localhost:8000/auth/login", { email, password })
+
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    let isAdmin = email.endsWith("@admin.com");
+
+    Axios.post("http://localhost:8000/auth/login", {
+      email,
+      password,
+    })
       .then((response) => {
         if (response.data.status) {
-          const { username, isAdmin } = response.data;
-          localStorage.setItem("isLoggedIn", true);
+          const { username } = response.data;
+
+          localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("username", username);
-          localStorage.setItem("isAdmin", isAdmin || false);
+          localStorage.setItem("isAdmin", isAdmin.toString());
+
           navigate("/");
         } else {
           setError("Login failed. Please check your email and password.");
@@ -25,7 +38,7 @@ function Login() {
       })
       .catch((err) => {
         setError("An error occurred during login. Please try again.");
-        console.error(err);
+        console.error("Login error:", err);
       });
   };
 
@@ -35,7 +48,7 @@ function Login() {
         <div className="image">
           <img
             id="car"
-            src="image/car.jpg"
+            src="/image/car.jpg"
             style={{ height: "250px" }}
             alt="Car"
           />
@@ -43,7 +56,7 @@ function Login() {
         <div className="container">
           <img
             id="logo"
-            src="image/logo.png"
+            src="/image/logo.png"
             style={{ height: "80px" }}
             alt="Logo"
           />
@@ -63,8 +76,8 @@ function Login() {
                 />
                 <TextField
                   id="outlined-password-input"
-                  label="Password"
                   size="small"
+                  label="Password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
