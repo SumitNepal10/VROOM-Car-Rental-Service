@@ -1,100 +1,210 @@
 import React, { useState } from "react";
-import Appbar from "../components/Appbar";
 import Navigation from "../components/Navigation";
 import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
+  Card,
+  CardContent,
   TextField,
-  InputAdornment,
-  IconButton,
-  Paper,
+  Button,
+  Typography,
+  Grid,
+  Box,
+  Container,
+  Dialog,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 
-function Bookings() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const bookingsData = [
-    {
-      paymentId: 1,
-      username: "John Doe",
-      paymentDate: "2024-05-01",
-      paymentMode: "Credit Card",
-      amount: "$50",
-    },
-    {
-      paymentId: 2,
-      username: "Jane Smith",
-      paymentDate: "2024-05-02",
-      paymentMode: "PayPal",
-      amount: "$60",
-    },
-    // Add more data as needed
-  ];
+function Payment() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedCarImage, setSelectedCarImage] = useState("");
+  const [amount, setAmount] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [phoneNumberDialog, setPhoneNumberDialog] = useState("");
 
-  // Filter bookings based on search query
-  const filteredBookings = bookingsData.filter(
-    (booking) =>
-      booking.paymentId.toString().includes(searchQuery) ||
-      booking.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.paymentDate.includes(searchQuery) ||
-      booking.paymentMode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.amount.includes(searchQuery)
-  );
+  const handleDialogOpen = (carImage) => {
+    setSelectedCarImage(carImage);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handlePay = () => {
+    // Add logic to handle payment
+    console.log("Payment processed:", selectedCarImage, amount, remarks);
+    setDialogOpen(false);
+  };
 
   return (
     <>
-      <header>
-        <Navigation />
-      </header>
-      <Appbar />
-      <div className="payment-table">
-        <Paper>
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ marginTop: "-110px", width: "400px" }}
+      <Navigation />
+      <Container maxWidth="lg" style={{ paddingTop: 20, paddingBottom: 20 }}>
+        <Typography
+          style={{
+            color: "#000433",
+            fontSize: "25px",
+            fontWeight: "bold",
+          }}
+        >
+          Select Payment Mode
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={2}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              marginTop={3}
+              width={120}
+              height={120}
+              onClick={() => handleDialogOpen("../image/esewa.png")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/esewa.png"
+                alt="Esewa"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "25px",
+                }}
+              />
+              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
+                ESEWA
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              width={120}
+              marginTop={3}
+              height={120}
+              onClick={() => handleDialogOpen("../image/khalti.png")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/khalti.png"
+                alt="Khalti"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "25px",
+                }}
+              />
+              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
+                KHALTI
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              marginTop={3}
+              width={120}
+              height={120}
+              onClick={() => handleDialogOpen("../image/e-bank.jpg")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/e-bank.jpg"
+                alt="E-Banking"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "10px",
+                }}
+              />
+              <Typography variant="subtitle2">EBANKING</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          // Disabled logic here
+          style={{ marginTop: 20, backgroundColor: "Green", color: "white" }}
+          onClick={handlePay}
+        >
+          Confirm Booking
+        </Button>
+      </Container>
+
+      {/* Payment Dialog */}
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogContent>
+          <img
+            src={selectedCarImage}
+            alt="Selected Car"
+            style={{ width: "100px", height: "auto", marginBottom: 10 }}
           />
-          <Table sx={{ width: "800px", marginTop: "-80px" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Payment ID</TableCell>
-                <TableCell>Username</TableCell>
-                <TableCell>Payment Date</TableCell>
-                <TableCell>Payment Mode</TableCell>
-                <TableCell>Amount</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredBookings.map((booking) => (
-                <TableRow key={booking.paymentId}>
-                  <TableCell>{booking.paymentId}</TableCell>
-                  <TableCell>{booking.username}</TableCell>
-                  <TableCell>{booking.paymentDate}</TableCell>
-                  <TableCell>{booking.paymentMode}</TableCell>
-                  <TableCell>{booking.amount}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
+          <TextField
+            fullWidth
+            label="Phone number"
+            value={phoneNumberDialog}
+            onChange={(e) => setPhoneNumberDialog(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            required
+            style={{ marginBottom: 10 }}
+          />
+          <TextField
+            fullWidth
+            label="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            required
+            style={{ marginBottom: 10 }}
+          />
+          <TextField
+            fullWidth
+            label="Remarks"
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            multiline
+            rows={3}
+            style={{ marginBottom: 10 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handlePay}
+            style={{ backgroundColor: "#61BB47", color: "white" }}
+          >
+            Pay
+          </Button>
+          <Button
+            onClick={handleDialogClose}
+            style={{ backgroundColor: "red", color: "white" }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
 
-export default Bookings;
+export default Payment;
