@@ -5,7 +5,6 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 
-
 function Appbar() {
   const location = useLocation();
   const { pathname } = location;
@@ -35,8 +34,8 @@ function Appbar() {
     { label: "Dashboard", path: "/Dashboard" },
     { label: "Cars", path: "/ManageCars" },
     { label: "Bookings", path: "/Bookings" },
-    { label: "Users", path: "/Users" }, 
-    { label: "Payment", path: "/Payment" }, 
+    { label: "Users", path: "/Users" },
+    { label: "Payment", path: "/PaymentRecord" },
   ];
 
   return (
@@ -46,9 +45,7 @@ function Appbar() {
           <AppBar
             position="dynamic"
             sx={{ backgroundColor: "white", boxShadow: "none" }}
-          >
-           
-          </AppBar>
+          ></AppBar>
         </Box>
       </div>
       <div className="sidebar">
@@ -83,12 +80,12 @@ function Appbar() {
               <Link
                 to={item?.path}
                 key={`nav-tem-${idx}`}
-                style={{ color: value === idx ? "red" : "black" }} 
+                style={{ color: value === idx ? "red" : "black" }}
               >
                 <Tab
                   label={item?.label}
                   onClick={() => setValue(idx)}
-                  sx={{  marginRight: "30px" }}
+                  sx={{ marginRight: "30px" }}
                 />
               </Link>
             ))}
