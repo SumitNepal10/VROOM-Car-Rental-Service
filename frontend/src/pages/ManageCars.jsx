@@ -93,7 +93,7 @@ const ManageCars = () => {
       <Appbar />
       <AddCar />
       <div className="cars">
-        <Grid container spacing={5} justifyContent="center" marginTop="-10px">
+        <Grid container spacing={5} justifyContent="center" marginTop="-220px">
           {carsData.map((car) => (
             <Grid item key={car.carId} xs={12} sm={6} md={4}>
               <Card
