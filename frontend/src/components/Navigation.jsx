@@ -4,14 +4,12 @@ import {
   Tabs,
   Tab,
   Box,
-  Button,
   Menu,
   MenuItem,
   IconButton,
   Avatar,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import MenuIcon from "@mui/icons-material/Menu";
 
 const theme = createTheme({
   palette: {
@@ -133,11 +131,12 @@ function Navigation() {
             >
               <MenuItem
                 component={Link}
-                to="/UserDashboard"
+                to={isAdmin ? "/dashboard" : "/UserDashboard"}
                 onClick={handleMenuClose}
               >
-                User Dashboard
+                {isAdmin ? "Admin Dashboard" : "User Dashboard"}
               </MenuItem>
+
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
             <span style={{ marginRight: "20px" }}>Welcome, {username}</span>
