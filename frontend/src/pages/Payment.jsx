@@ -74,7 +74,7 @@ function Payment() {
 
       if (response.data.status) {
         alert("Payment successful");
-        navigate(`/UserDashboard/${carId}`);
+        navigate(`/UserDashboard`);
         setDialogOpen(false);
       } else {
         alert("Payment failed. Please try again.");

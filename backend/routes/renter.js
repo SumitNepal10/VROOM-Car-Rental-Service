@@ -85,4 +85,34 @@ renterRouter.get("/getRenters", async (req, res) => {
   }
 });
 
+// Router to send a data of a specific user
+renterRouter.get("/getRenter/:userToBook", async (req, res) => {
+  const { userToBook } = req.params;
+
+  try {
+    const renter = await Renter.findOne({ userToBook: userToBook });
+
+    if (!renter) {
+      return res
+        .status(404)
+        .json({ message: "No renter found for that username" });
+    }
+
+    const renterData = {
+      pickupLocation: renter.pickupLocation,
+      dropOffLocation: renter.dropOffLocation,
+      pickupDate: renter.pickupDate,
+      dropOffDate: renter.dropOffDate,
+      isPaid: renter.isPaid,
+      carId: renter.carId,
+    };
+
+    res.json(renterData);
+  } catch (error) {
+    console.error("Error fetching renter:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 export { renterRouter as renterRoute };

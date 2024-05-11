@@ -194,5 +194,30 @@ carRouter.post("/getCars", async (req, res) => {
   }
 });
 
+carRouter.get("/getCarInfo/:carId", async (req, res) => {
+  try {
+    const { carId } = req.params;
+    
+    const car = await Car.find({ carId });
+
+    if (!car || car.length === 0) {
+      return res.status(404).json({ message: "No cars found for the user" });
+    }
+
+    const carsData = car.map((car) => ({
+      modelName: car.modelName,
+      price: car.price,
+      picture: {
+        data: car.picture.data.toString("base64"),
+        contentType: car.picture.contentType,
+      },
+    }));
+
+    res.json(carsData);
+  } catch (error) {
+    console.error("Error fetching car", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 export { carRouter as carRoute };
