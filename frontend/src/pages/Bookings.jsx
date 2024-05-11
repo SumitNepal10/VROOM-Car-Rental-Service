@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Appbar from "../components/Appbar";
-import { Link } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import {
   Table,
@@ -12,7 +11,6 @@ import {
   InputAdornment,
   IconButton,
   Paper,
-  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -37,7 +35,7 @@ function Bookings() {
       date: "2024-04-12",
       status: "Pending",
     },
-    
+
     // Add more data as needed
   ];
 
@@ -80,9 +78,9 @@ function Bookings() {
                 </InputAdornment>
               ),
             }}
-            sx={{marginTop:"-110px", width:"400px"}}
+            sx={{ marginTop: "-110px", width: "400px" }}
           />
-          <Table sx={{ width: "1000px", marginTop:"-80px" }}>
+          <Table sx={{ width: "1000px", marginTop: "-80px" }}>
             <TableHead>
               <TableRow>
                 <TableCell>Booking ID</TableCell>
@@ -91,7 +89,6 @@ function Bookings() {
                 <TableCell>Price</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
-                {/* <TableCell>Action</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -130,7 +127,6 @@ function Bookings() {
                       </div>
                     )}
                   </TableCell>
-                 
                 </TableRow>
               ))}
             </TableBody>
