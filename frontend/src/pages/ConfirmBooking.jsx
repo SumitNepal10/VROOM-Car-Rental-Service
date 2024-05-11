@@ -111,7 +111,7 @@ function ConfirmBooking() {
           navigate(`/Payment/${carId}`);
         } else if (!renterInfo.isPaid) {
           alert("Car has been booked successfully");
-          navigate(`/UserDashboard/${carId}`)
+          navigate(`/UserDashboard`)
         }
       } else {
         alert("Failed to book the car");
