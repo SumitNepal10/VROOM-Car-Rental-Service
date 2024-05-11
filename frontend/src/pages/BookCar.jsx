@@ -12,11 +12,12 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
 
 function BookCar() {
   const cardsData = [
     {
-      id: 1,
+      // id: 1,
       image: "image/home.png",
       title: "Hyundai Tucson",
       subtitle: "NPR 7000/day",
@@ -25,7 +26,7 @@ function BookCar() {
       airConditioning: true,
     },
     {
-      id: 2,
+      // id: 2,
       image: "image/suv.png",
       title: "Compact SUV Electric",
       subtitle: "NPR 5500/day",
@@ -161,6 +162,9 @@ function BookCar() {
           ))}
         </div>
       </div>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 }
