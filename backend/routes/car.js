@@ -165,4 +165,34 @@ carRouter.get("/getCar/:carId", async (req, res) => {
   }
 });
 
+// Router to get a name of a car
+carRouter.post("/getCars", async (req, res) => {
+  try {
+    const { carIds } = req.body;
+
+    // Validate request data
+    if (!Array.isArray(carIds) || carIds.length === 0) {
+      return res.status(400).json({ message: "Invalid or empty 'carIds' array" });
+    }
+
+    // Fetch cars based on the array of carIds
+    const cars = await Car.find({ carId: { $in: carIds } });
+
+    if (!cars || cars.length === 0) {
+      return res.status(404).json({ message: "No cars found for the given IDs" });
+    }
+
+    // Map fetched cars data
+    const carsData = cars.map((car) => ({
+      vehicle: car.modelName,
+    }));
+
+    res.json(carsData);
+  } catch (error) {
+    console.error("Error fetching cars", error);
+    res.status(500).json({ message: "Failed to fetch cars. Please try again later." });
+  }
+});
+
+
 export { carRouter as carRoute };
