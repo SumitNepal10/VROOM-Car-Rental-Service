@@ -27,9 +27,6 @@ renterRouter.post(
         dropOffDate,
         isPaid,
         carId,
-        amount,
-        remarks,
-        paymentNumber,
         userToBook,
       } = req.body;
 
@@ -46,9 +43,6 @@ renterRouter.post(
         dropOffDate,
         isPaid,
         carId,
-        amount,
-        remarks,
-        paymentNumber,
         userToBook,
         driverLicense: {
           data: driverLicenseData,
@@ -76,10 +70,12 @@ renterRouter.get("/getRenters", async (req, res) => {
     }
 
     const rentersData = renters.map((renter) => ({
-      firstName: renter.firstName,
-      lastName: renter.lastName,
-      email: renter.email,
+      rentersName: renter.fullName,
+      status: renter.isPaid,
       phone: renter.phone,
+      dropOffDate: renter.dropOffDate,
+      pickupDate: renter.pickupDate,
+      carId: renter.carId,
     }));
 
     res.json(rentersData);

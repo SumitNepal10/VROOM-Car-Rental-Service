@@ -139,7 +139,7 @@ function Navigation() {
 
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
-            <span style={{ marginRight: "20px" }}>Welcome, {username}</span>
+            <span style={{ marginRight: "20px" }}>{username}</span>
           </div>
         ) : (
           <div className="header-btn">

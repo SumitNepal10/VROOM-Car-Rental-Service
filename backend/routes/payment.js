@@ -28,4 +28,41 @@ PaymentRouter.post("/paymentDetails", async (req, res) => {
   }
 });
 
+// Route to send the price paid by the user
+PaymentRouter.post("/getAmount", async (req, res) => {
+  try {
+    const { carIds } = req.body;
+
+    // Validate request data
+    if (!Array.isArray(carIds) || carIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or empty 'carIds' array" });
+    }
+
+    // Fetch payment amounts based on the array of carIds
+    const amounts = await Payment.find({ carId: { $in: carIds } });
+
+    if (!amounts || amounts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No data found for the given car IDs" });
+    }
+
+    // Map fetched payment amounts data
+    const amountData = amounts.map((amount) => ({
+      amount: amount.amount,
+    }));
+
+    res.json(amountData);
+  } catch (error) {
+    console.error("Error fetching payment amounts:", error);
+    res
+      .status(500)
+      .json({
+        message: "Failed to fetch payment amounts. Please try again later.",
+      });
+  }
+});
+
 export { PaymentRouter as paymentRoute };
