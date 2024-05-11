@@ -1,22 +1,21 @@
-import Navigation from "../components/Navigation";
+// Import necessary dependencies
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  Card,
-  CardContent,
-  TextField,
-  Button,
+  Container,
   Typography,
   Grid,
   Box,
-  Container,
+  TextField,
+  Button,
   Dialog,
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
 import axios from "axios";
 
 function Payment() {
+  // State variables
   const { carId } = useParams();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -24,16 +23,29 @@ function Payment() {
   const [amount, setAmount] = useState("");
   const [remarks, setRemarks] = useState("");
   const [paymentNumber, setPaymentNumber] = useState("");
+  const [mode, setMode] = useState("");
+  const [username, setUsername] = useState("");
 
+  // Function to get current date in the required format
+  const getCurrentDate = () => {
+    const date = new Date();
+    return `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+  };
+
+  // Function to handle opening the dialog
   const handleDialogOpen = (carImage) => {
     setSelectedCarImage(carImage);
     setDialogOpen(true);
   };
 
+  // Function to handle closing the dialog
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
 
+  // Function to handle payment
   const handlePay = async () => {
     if (amount === "" || remarks === "" || paymentNumber === "") {
       alert("Please fill all the details.");
@@ -41,6 +53,7 @@ function Payment() {
     }
 
     try {
+      let paydate = getCurrentDate();
       const response = await axios.post(
         `http://localhost:8000/payment/paymentDetails`,
         {
@@ -48,6 +61,9 @@ function Payment() {
           remarks: remarks,
           amount: amount,
           paymentNumber: paymentNumber,
+          mode: mode,
+          username: username,
+          paymentDate: paydate,
         },
         {
           headers: {
@@ -71,7 +87,6 @@ function Payment() {
 
   return (
     <>
-      <Navigation />
       <Container maxWidth="lg" style={{ paddingTop: 20, paddingBottom: 20 }}>
         <Typography
           style={{
@@ -95,7 +110,10 @@ function Payment() {
               marginTop={3}
               width={120}
               height={120}
-              onClick={() => handleDialogOpen("../image/esewa.png")}
+              onClick={() => {
+                setMode("Esewa");
+                handleDialogOpen("../image/esewa.png");
+              }}
               style={{ cursor: "pointer" }}
             >
               <img
@@ -124,7 +142,10 @@ function Payment() {
               width={120}
               marginTop={3}
               height={120}
-              onClick={() => handleDialogOpen("../image/khalti.png")}
+              onClick={() => {
+                setMode("khalti");
+                handleDialogOpen("../image/khalti.png");
+              }}
               style={{ cursor: "pointer" }}
             >
               <img
@@ -153,7 +174,10 @@ function Payment() {
               marginTop={3}
               width={120}
               height={120}
-              onClick={() => handleDialogOpen("../image/e-bank.jpg")}
+              onClick={() => {
+                setMode("Ebanking");
+                handleDialogOpen("../image/e-bank.jpg");
+              }}
               style={{ cursor: "pointer" }}
             >
               <img
@@ -178,6 +202,16 @@ function Payment() {
             src={selectedCarImage}
             alt="Selected Car"
             style={{ width: "100px", height: "auto", marginBottom: 10 }}
+          />
+          <TextField
+            fullWidth
+            label="Full Name"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            margin="normal"
+            variant="outlined"
+            required
+            style={{ marginBottom: 10 }}
           />
           <TextField
             fullWidth

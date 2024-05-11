@@ -6,7 +6,15 @@ const PaymentRouter = express.Router();
 // Route to update the renter information
 PaymentRouter.post("/paymentDetails", async (req, res) => {
   try {
-    const { carId, amount, paymentNumber, remarks } = req.body;
+    const {
+      carId,
+      amount,
+      paymentNumber,
+      remarks,
+      mode,
+      username,
+      paymentDate,
+    } = req.body;
 
     // Create a new Payment instance
     const newPayment = new Payment({
@@ -14,6 +22,9 @@ PaymentRouter.post("/paymentDetails", async (req, res) => {
       amount,
       paymentNumber,
       remarks,
+      mode,
+      username,
+      paymentDate,
     });
 
     // Save the new Payment to the database
@@ -57,11 +68,37 @@ PaymentRouter.post("/getAmount", async (req, res) => {
     res.json(amountData);
   } catch (error) {
     console.error("Error fetching payment amounts:", error);
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch payment amounts. Please try again later.",
-      });
+    res.status(500).json({
+      message: "Failed to fetch payment amounts. Please try again later.",
+    });
+  }
+});
+
+PaymentRouter.get("/getPayments", async (req, res) => {
+  try {
+    // Fetch payment amounts based on the array of carIds
+    const payments = await Payment.find();
+
+    if (!payments || payments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No data found for the given car IDs" });
+    }
+
+    // Map fetched payment amounts data
+    const paymentData = payments.map((payment) => ({
+      username: payment.username,
+      amount: payment.amount,
+      mode: payment.mode,
+      paymentDate: payment.paymentDate,
+    }));
+
+    res.json(paymentData);
+  } catch (error) {
+    console.error("Error fetching payment amounts:", error);
+    res.status(500).json({
+      message: "Failed to fetch payment amounts. Please try again later.",
+    });
   }
 });
 
