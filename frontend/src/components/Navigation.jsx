@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Tabs, Tab, Box, Button } from "@mui/material";
+import {
+  Tabs,
+  Tab,
+  Box,
+  Menu,
+  MenuItem,
+  IconButton,
+  Avatar,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -26,6 +34,7 @@ function Navigation() {
   );
 
   const [selectedTab, setSelectedTab] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const navItem = [
     { label: "Home", path: "/" },
@@ -60,6 +69,14 @@ function Navigation() {
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -97,8 +114,32 @@ function Navigation() {
 
         {isLoggedIn ? (
           <div>
-            <span>Welcome, {username}</span>
-            <Button onClick={handleLogout}>Logout</Button>
+            <IconButton
+              aria-label="profile-menu"
+              aria-controls="profile-menu"
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+            >
+              <Avatar alt="Profile" />
+            </IconButton>
+            <Menu
+              id="profile-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              style={{ marginRight: "20px" }}
+            >
+              <MenuItem
+                component={Link}
+                to={isAdmin ? "/dashboard" : "/UserDashboard"}
+                onClick={handleMenuClose}
+              >
+                {isAdmin ? "Admin Dashboard" : "User Dashboard"}
+              </MenuItem>
+
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+            <span style={{ marginRight: "20px" }}>Welcome, {username}</span>
           </div>
         ) : (
           <div className="header-btn">
