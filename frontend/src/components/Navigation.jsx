@@ -72,6 +72,7 @@ function Navigation() {
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
+
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };

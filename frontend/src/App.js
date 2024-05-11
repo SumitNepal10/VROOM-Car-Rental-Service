@@ -16,8 +16,8 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import UserDashboard from "./pages/UserDashboard";
 import Users from "./pages/Users";
+import PaymentRecord from "./pages/PaymentRecord";
 import Payment from "./pages/Payment";
-
 
 function App() {
   return (
@@ -35,13 +35,13 @@ function App() {
         <Route path="/ManageCars" element={<ManageCars />} />
         <Route path="/Bookings" element={<Bookings />} />
         <Route path="/BookCar" element={<BookCar />} />
-        <Route path="/ConfirmBooking/:carId" element={<ConfirmBooking />} />
+        <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
         <Route path="/UserDashboard" element={<UserDashboard />} />
-        <Route path="/Users" element={<Users/>} />
-        <Route path="/Payment" element={<Payment/>} />
-
+        <Route path="/Users" element={<Users />} />
+        <Route path="/Payment" element={<Payment />} />
+        <Route path="/PaymentRecord" element={<PaymentRecord />} />
       </Routes>
     </>
   );
