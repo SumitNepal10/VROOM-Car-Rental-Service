@@ -103,8 +103,25 @@ const ManageCars = () => {
                   flexDirection: "column",
                   borderRadius: 8,
                   boxShadow: "0px 4px 8px rgba(38, 50, 56, 0.08)",
+                  position: "relative", // Add position relative for the card
                 }}
               >
+                {/* Status Box */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    backgroundColor: car.status === "Rented" ? "red" : "green",
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  {car.status === "Rented" ? "Rented" : "Available"}
+                </Box>
+
                 <CardMedia
                   sx={{ width: 300, height: 150 }}
                   image={`data:${car.picture.contentType};base64,${car.picture.data}`}
@@ -167,20 +184,6 @@ const ManageCars = () => {
                     >
                       Edit
                     </Button>
-
-                    <Box
-                      sx={{
-                        marginTop: "10px",
-                        padding: "5px",
-                        borderRadius: "5px",
-                        backgroundColor:
-                          car.status === "Rented" ? "red" : "green",
-                        color: "white",
-                        textAlign: "center",
-                      }}
-                    >
-                      {car.status === "Rented" ? "Rented" : "Available"}
-                    </Box>
 
                     <Button
                       variant="outlined"

@@ -76,9 +76,26 @@ function CarList({ searchTerm, filterOption }) {
               "&:hover": {
                 transform: "scale(1.05)",
               },
+              position: "relative", // Add position relative for the card
             }}
             onClick={() => handleCardClick(car)}
           >
+            {/* Status Box */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                padding: "5px",
+                borderRadius: "5px",
+                backgroundColor: car.status === "Rented" ? "red" : "green",
+                color: "white",
+                textAlign: "center",
+              }}
+            >
+              {car.status === "Rented" ? "Rented" : "Available"}
+            </Box>
+
             <CardMedia
               sx={{ width: "100%", height: 200 }}
               image={`data:${car.picture.contentType};base64,${car.picture.data}`}
@@ -99,20 +116,6 @@ function CarList({ searchTerm, filterOption }) {
               >
                 NPR {car.price}/day
               </Typography>
-
-              {/* Status Box */}
-              <Box
-                sx={{
-                  marginTop: "10px",
-                  padding: "5px",
-                  borderRadius: "5px",
-                  backgroundColor: car.status === "Rented" ? "red" : "green",
-                  color: "white",
-                  textAlign: "center",
-                }}
-              >
-                {car.status === "Rented" ? "Rented" : "Available"}
-              </Box>
 
               <Box
                 display="flex"
@@ -188,7 +191,6 @@ function CarList({ searchTerm, filterOption }) {
                   NPR {selectedCar.price} /day
                 </Typography>
 
-                {/* Status Box in Modal */}
                 <Box
                   sx={{
                     marginTop: "10px",
