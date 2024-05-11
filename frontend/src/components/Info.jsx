@@ -24,7 +24,7 @@ const Info = () => {
       );
       setCarsData(response.data);
     } catch (error) {
-      console.error("Error fetching cars data:", error);
+      console.error("Error fetching car data:", error);
     }
   };
 
