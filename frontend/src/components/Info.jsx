@@ -162,6 +162,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
                   backgroundColor: status === "Rented" ? "red" : "green",
                   color: "white",
                   textAlign: "center",
+                  height: "20px",
                 }}
               >
                 {status === "Rented" ? "Rented" : "Available"}

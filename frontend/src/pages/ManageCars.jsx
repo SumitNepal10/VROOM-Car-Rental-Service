@@ -93,7 +93,8 @@ const ManageCars = () => {
       <Appbar />
       <AddCar />
       <div className="cars">
-        <Grid container spacing={5} justifyContent="center" marginTop="-220px">
+        <Grid container spacing={5} justifyContent="center" marginTop="-200px">
+
           {carsData.map((car) => (
             <Grid item key={car.carId} xs={12} sm={6} md={4}>
               <Card
@@ -103,7 +104,7 @@ const ManageCars = () => {
                   flexDirection: "column",
                   borderRadius: 8,
                   boxShadow: "0px 4px 8px rgba(38, 50, 56, 0.08)",
-                  position: "relative", // Add position relative for the card
+                  position: "relative",
                 }}
               >
                 {/* Status Box */}

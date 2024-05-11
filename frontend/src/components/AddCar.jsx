@@ -3,16 +3,16 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import Grid from '@mui/material/Grid';
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import Grid from "@mui/material/Grid";
 import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
-  const [nextCarId, setNextCarId] = useState(1); 
+  const [nextCarId, setNextCarId] = useState(1);
   const userName = "admin";
 
   const [carInfo, setCarInfo] = useState({
@@ -40,7 +40,7 @@ function AddCar() {
 
     const carId = nextCarId;
     setNextCarId(nextCarId + 1);
-    
+
     const formData = new FormData();
     formData.append("modelName", carInfo.modelName);
     formData.append("price", carInfo.price);
@@ -109,8 +109,8 @@ function AddCar() {
             color: "white",
             backgroundColor: "red",
             marginRight: "0px",
-            marginTop: "-450px",
-            marginLeft: "1100px",
+            marginTop: "-470px",
+            marginLeft: "730px",
           }}
         >
           Add vehicle

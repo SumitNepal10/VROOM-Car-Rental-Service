@@ -67,7 +67,7 @@ function Navigation() {
     setIsAdmin(false);
   };
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (newValue) => {
     setSelectedTab(newValue);
   };
 

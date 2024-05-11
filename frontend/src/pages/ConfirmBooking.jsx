@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Card,
+  CardMedia,
   CardContent,
   TextField,
   Checkbox,
@@ -14,34 +15,45 @@ import {
   Box,
   Container,
   IconButton,
-  Dialog,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import AcUnitIcon from "@mui/icons-material/AcUnit";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 function ConfirmBooking() {
+  const navigate = useNavigate();
+  const { carId } = useParams();
+
   const [renterInfo, setRenterInfo] = useState({
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     phoneNumber: "",
+    pickupLocation: "",
+    dropOffLocation: "",
+    pickupDate: "",
+    dropOffDate: "",
     agreeToTerms: false,
+    isPaid: false,
+    Amount: null,
+    remarks: null,
+    paymentNumber: null,
     driverLicense: null,
   });
-
-  const { carId } = useParams();
-  console.log(carId);
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedCarImage, setSelectedCarImage] = useState("");
 
   const handleChange = (event) => {
     const { name, value, checked, files } = event.target;
     setRenterInfo((prevInfo) => ({
       ...prevInfo,
-      [name]: name === "agreeToTerms" ? checked : files ? files[0] : value,
+      [name]:
+        name === "agreeToTerms"
+          ? checked
+          : name === "isPaid"
+          ? checked
+          : files
+          ? files[0]
+          : value,
     }));
   };
 
@@ -53,63 +65,120 @@ function ConfirmBooking() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(renterInfo);
+
+    // check if the user had agreed to terms or not
+    if (!renterInfo.agreeToTerms) {
+      alert("Please accept the terms and conditions");
+      return;
+    }
+
+    // Construct form data
+    const formData = new FormData();
+    formData.append("fullName", renterInfo.fullName);
+    formData.append("email", renterInfo.email);
+    formData.append("phoneNumber", renterInfo.phoneNumber);
+    formData.append("pickupLocation", renterInfo.pickupLocation);
+    formData.append("dropOffLocation", renterInfo.dropOffLocation);
+    formData.append("pickupDate", renterInfo.pickupDate);
+    formData.append("dropOffDate", renterInfo.dropOffDate);
+    formData.append("isPaid", renterInfo.isPaid);
+    formData.append("driverLicense", renterInfo.driverLicense);
+    formData.append("carId", carId);
+    formData.append("amount", renterInfo.Amount);
+    formData.append("paymentNumber", renterInfo.paymentNumber);
+    formData.append("remarks", renterInfo.remarks);
+
+    // retrive the username from localStorgae
+    const user = localStorage.getItem("username");
+    formData.append("userToBook", user);
+    
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/renter/newRenter`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.status) {
+        // if the user chose to pays navigate to the payment
+        if (renterInfo.isPaid) {
+          navigate(`/Payment/${carId}`);
+        } else if (!renterInfo.isPaid) {
+          alert("Car has been booked successfully");
+          navigate(`/UserDashboard/${carId}`)
+        }
+      } else {
+        alert("Failed to book the car");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleDialogOpen = (carImage) => {
-    setSelectedCarImage(carImage);
-    setDialogOpen(true);
+  // Fetch the car details
+  const [carData, setCarData] = useState([]);
+
+  const fetchCarData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/car/getCar/${carId}`
+      );
+      setCarData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching cars data:", error);
+    }
   };
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
+  useEffect(() => {
+    fetchCarData();
+  }, []);
 
   return (
     <>
       <Navigation />
       <Container maxWidth="lg" style={{ paddingTop: 20, paddingBottom: 20 }}>
-        <Grid container justifyContent="center" spacing={3}>
+        <Grid container spacing={3}>
           {/* Renter Information Card */}
           <Grid item xs={12} sm={6}>
             <Card variant="standard">
               <CardContent>
-                <h
-                  style={{
-                    color: "#000433",
-                    fontSize: "25px",
-                    fontWeight: "bold",
-                  }}
-                >
+                <Typography variant="h5" gutterBottom>
                   Renter Information
-                </h>
+                </Typography>
                 <Divider />
                 <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-                  <h>First Name</h>
+                  {/* Form fields */}
+                  <Typography>Full Name</Typography>
                   <TextField
                     fullWidth
-                    name="firstName"
+                    name="fullName"
                     size="small"
-                    value={renterInfo.firstName}
+                    value={renterInfo.fullName}
                     onChange={handleChange}
                     required
                     margin="normal"
                   />
-                  <br></br>
-                  <h>Last Name</h>
+                  <br />
+                  <Typography>Email</Typography>
                   <TextField
                     fullWidth
-                    name="lastName"
+                    name="email"
+                    type="email"
                     size="small"
-                    value={renterInfo.lastName}
+                    value={renterInfo.email}
                     onChange={handleChange}
                     required
                     margin="normal"
-                    marginBottom="20px"
                   />
-                  <h>Phone Number</h>
+                  <br />
+                  <Typography>Phone Number</Typography>
                   <TextField
                     fullWidth
                     name="phoneNumber"
@@ -119,10 +188,54 @@ function ConfirmBooking() {
                     required
                     margin="normal"
                   />
-                  <br></br>
-                  {/* File Upload for Driver's License */}
-                  <h> Upload your driver's license</h>
-                  <br></br>
+                  <br />
+                  <Typography>Pickup Location</Typography>
+                  <TextField
+                    fullWidth
+                    name="pickupLocation"
+                    size="small"
+                    value={renterInfo.pickupLocation}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                  />
+                  <br />
+                  <Typography>Drop-off Location</Typography>
+                  <TextField
+                    fullWidth
+                    name="dropOffLocation"
+                    size="small"
+                    value={renterInfo.dropOffLocation}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                  />
+                  <br />
+                  <Typography>Pickup Date</Typography>
+                  <TextField
+                    fullWidth
+                    name="pickupDate"
+                    type="date"
+                    size="small"
+                    value={renterInfo.pickupDate}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                  />
+                  <br />
+                  <Typography>Drop-off Date</Typography>
+                  <TextField
+                    fullWidth
+                    name="dropOffDate"
+                    type="date"
+                    size="small"
+                    value={renterInfo.dropOffDate}
+                    onChange={handleChange}
+                    required
+                    margin="normal"
+                  />
+                  <br />
+                  <Typography>Upload your driver's license</Typography>
                   <Box
                     display="flex"
                     alignItems="center"
@@ -157,98 +270,162 @@ function ConfirmBooking() {
                       </Typography>
                     </label>
                   </Box>
-                  <Link to="/Payment">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={!renterInfo.agreeToTerms}
-                      style={{
-                        marginTop: 20,
-                        backgroundColor: "Green",
-                        color: "white",
-                      }}
-                    >
-                      Pay now
-                    </Button>
-                  </Link>
+                  {/* Checkboxes */}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={renterInfo.isPaid}
+                        onChange={handleChange}
+                        name="isPaid"
+                      />
+                    }
+                    label="Pay Now"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!renterInfo.isPaid}
+                        onChange={handleChange}
+                        name="isPaid"
+                      />
+                    }
+                    label="Pay Later"
+                  />
+
+                  {/* Book Now button */}
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    style={{
+                      marginTop: 40,
+                      backgroundColor: "Green",
+                      color: "white",
+                    }}
+                  >
+                    Book Now
+                  </Button>
                 </form>
               </CardContent>
             </Card>
           </Grid>
-          {/* Partition Line */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            style={{ margin: "0 20px" }}
-          />
-          {/* Terms and Conditions Card */}
-          <Grid item xs={12} sm={5}>
-            <Card variant="standard">
-              <CardContent>
-                <h
-                  style={{
-                    color: "#000433",
-                    fontSize: "25px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Terms and Conditions
-                </h>
-                <Divider />
-                <Typography variant="body2">
-                  By confirming this booking, you agree to the following terms
-                  and conditions:
-                </Typography>
-                <ol style={{ paddingLeft: 20 }}>
-                  <li>You must be at least 21 years old to rent a car.</li>
-                  <li>
-                    A valid driver's license and credit card in the renter's
-                    name are required.
-                  </li>
-                  <li>
-                    The rental period starts and ends at the agreed-upon dates
-                    and times.
-                  </li>
-                  <li>
-                    Any damage to the rental car during the rental period is the
-                    renter's responsibility.
-                  </li>
-                </ol>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={renterInfo.agreeToTerms}
-                      onChange={handleChange}
-                      name="agreeToTerms"
+
+          {/* Car Information and Terms and Conditions Cards */}
+          <Grid item xs={12} sm={6}>
+            <Grid container spacing={3}>
+              {/* Car Information Card */}
+              {carData.map((car) => (
+                <Grid item key={car.carId} xs={12} sm={6} md={4}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      flexDirection: "right",
+                      justifyContent: "right",
+                      width: 500,
+                      height: 300,
+                      borderRadius: 8,
+                      boxShadow: "0px 4px 8px rgba(38, 50, 56, 0.08)",
+                    }}
+                  >
+                    <CardMedia
+                      sx={{ width: 300, height: 150 }}
+                      image={`data:${car.picture.contentType};base64,${car.picture.data}`}
+                      title={car.modelName}
                     />
-                  }
-                  label="I agree to the terms and conditions"
-                />
-              </CardContent>
-            </Card>
+                    <CardContent>
+                      <Typography
+                        variant="h5"
+                        sx={{ fontWeight: "bold", fontSize: 17 }}
+                      >
+                        {car.modelName}
+                      </Typography>
+                      <Typography
+                        variant="subtitle1"
+                        color="text.secondary"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        Price: {car.price}
+                      </Typography>
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        marginTop={2}
+                      >
+                        <Box display="flex">
+                          <AcUnitIcon
+                            sx={{
+                              color: car.haveAc ? "green" : "red",
+                              marginRight: 1,
+                            }}
+                          />
+                          <Typography>
+                            {car.haveAc ? "Air Conditioning" : "No AC"}
+                          </Typography>
+                        </Box>
+                        <Box display="flex">
+                          <GroupsIcon sx={{ marginRight: 1 }} />
+                          <Typography>{car.seats}</Typography>
+                        </Box>
+                      </Box>
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        marginTop={2}
+                      >
+                        <Box display="flex">
+                          <SettingsIcon sx={{ marginRight: 1 }} />
+                          <Typography>{car.system}</Typography>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+              {/* Terms and Conditions Card */}
+              <Grid item xs={12}>
+                <Card variant="standard">
+                  <CardContent>
+                    <Typography variant="h5" gutterBottom>
+                      Terms and Conditions
+                    </Typography>
+                    <Divider />
+                    <Typography variant="body2">
+                      By confirming this booking, you agree to the following
+                      terms and conditions:
+                    </Typography>
+                    <ol style={{ paddingLeft: 20 }}>
+                      <li>You must be at least 21 years old to rent a car.</li>
+                      <li>
+                        A valid driver's license and credit card in the renter's
+                        name are required.
+                      </li>
+                      <li>
+                        The rental period starts and ends at the agreed-upon
+                        dates and times.
+                      </li>
+                      <li>
+                        Any damage to the rental car during the rental period is
+                        the renter's responsibility.
+                      </li>
+                    </ol>
+                  </CardContent>
+                  {/* Checkboxes */}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={renterInfo.agreeToTerms}
+                        onChange={handleChange}
+                        name="agreeToTerms"
+                      />
+                    }
+                    label="I agree to the terms and conditions"
+                  />
+                </Card>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </Container>
-
-      {/* Dialog */}
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogContent>
-          <img
-            src={selectedCarImage}
-            alt="Selected Car"
-            style={{ width: "100px", height: "auto", marginBottom: 10 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleDialogClose}
-            style={{ backgroundColor: "red", color: "white" }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 }

@@ -76,7 +76,9 @@ function CarList({ searchTerm, filterOption }) {
               "&:hover": {
                 transform: "scale(1.05)",
               },
-              position: "relative", // Add position relative for the card
+              position: "relative",
+              // objectFit: "contain",
+              // objectPosition: "center",
             }}
             onClick={() => handleCardClick(car)}
           >
@@ -179,7 +181,12 @@ function CarList({ searchTerm, filterOption }) {
           {selectedCar && (
             <>
               <CardMedia
-                sx={{ width: 300, height: 200 }}
+                sx={{
+                  width: 400,
+                  height: 300,
+                  objectFit: "contain",
+                  objectPosition: "center",
+                }}
                 image={`data:${selectedCar.picture.contentType};base64,${selectedCar.picture.data}`}
                 title={selectedCar.title}
               />

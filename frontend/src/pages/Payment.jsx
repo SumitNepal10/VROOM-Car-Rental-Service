@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Navigation from "../components/Navigation";
 import {
   Card,
@@ -13,13 +12,18 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 function Payment() {
+  const { carId } = useParams();
+  const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCarImage, setSelectedCarImage] = useState("");
   const [amount, setAmount] = useState("");
   const [remarks, setRemarks] = useState("");
-  const [phoneNumberDialog, setPhoneNumberDialog] = useState("");
+  const [paymentNumber, setPaymentNumber] = useState("");
 
   const handleDialogOpen = (carImage) => {
     setSelectedCarImage(carImage);
@@ -30,10 +34,39 @@ function Payment() {
     setDialogOpen(false);
   };
 
-  const handlePay = () => {
-    // Add logic to handle payment
-    console.log("Payment processed:", selectedCarImage, amount, remarks);
-    setDialogOpen(false);
+  const handlePay = async () => {
+    if (amount === "" || remarks === "" || paymentNumber === "") {
+      alert("Please fill all the details.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/payment/paymentDetails`,
+        {
+          carId: carId,
+          remarks: remarks,
+          amount: amount,
+          paymentNumber: paymentNumber,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status) {
+        alert("Payment successful");
+        navigate(`/UserDashboard/${carId}`);
+        setDialogOpen(false);
+      } else {
+        alert("Payment failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -136,16 +169,6 @@ function Payment() {
             </Box>
           </Grid>
         </Grid>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          // Disabled logic here
-          style={{ marginTop: 20, backgroundColor: "Green", color: "white" }}
-          onClick={handlePay}
-        >
-          Confirm Booking
-        </Button>
       </Container>
 
       {/* Payment Dialog */}
@@ -159,8 +182,8 @@ function Payment() {
           <TextField
             fullWidth
             label="Phone number"
-            value={phoneNumberDialog}
-            onChange={(e) => setPhoneNumberDialog(e.target.value)}
+            value={paymentNumber}
+            onChange={(e) => setPaymentNumber(e.target.value)}
             margin="normal"
             variant="outlined"
             required
@@ -191,7 +214,7 @@ function Payment() {
         <DialogActions>
           <Button
             onClick={handlePay}
-            style={{ backgroundColor: "#61BB47", color: "white" }}
+            style={{ backgroundColor: "green", color: "white" }}
           >
             Pay
           </Button>
