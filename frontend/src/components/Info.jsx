@@ -24,7 +24,7 @@ const Info = () => {
       );
       setCarsData(response.data);
     } catch (error) {
-      console.error("Error fetching car data:", error);
+      console.error("Error fetching cars data:", error);
     }
   };
 
@@ -162,6 +162,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
                   backgroundColor: status === "Rented" ? "red" : "green",
                   color: "white",
                   textAlign: "center",
+                  height: "20px",
                 }}
               >
                 {status === "Rented" ? "Rented" : "Available"}

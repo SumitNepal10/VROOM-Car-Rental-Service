@@ -1,11 +1,16 @@
 import mongoose from 'mongoose';
 
 const renterSchema = new mongoose.Schema({
-  carId: { type: String, required: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true },
-  phone: { type: String, required: true },
+  fullName: { type: String, required: true, unique: false },
+  email: { type: String, required: true, unique: false },
+  phoneNumber: { type: String, required: true, unique: false },
+  pickupLocation: { type: String, required: true, unique: false },
+  dropOffLocation: { type: String, required: true, unique: false },
+  pickupDate: { type: Date, required: true, unique: false },
+  dropOffDate: { type: Date, required: true, unique: false },
+  isPaid: { type: Boolean, required: true, unique: false },
+  userToBook: { type: String, required: true, unique: false },
+  carId: { type: String, required: true, unique: false },
   driverLicense: {
     data: Buffer,
     contentType: String,
