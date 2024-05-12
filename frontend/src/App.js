@@ -35,12 +35,12 @@ function App() {
         <Route path="/ManageCars" element={<ManageCars />} />
         <Route path="/Bookings" element={<Bookings />} />
         <Route path="/BookCar" element={<BookCar />} />
-        <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
+        <Route path="/ConfirmBooking/:carId" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
         <Route path="/UserDashboard" element={<UserDashboard />} />
         <Route path="/Users" element={<Users />} />
-        <Route path="/Payment" element={<Payment />} />
+        <Route path="/Payment/:carId" element={<Payment />} />
         <Route path="/PaymentRecord" element={<PaymentRecord />} />
       </Routes>
     </>

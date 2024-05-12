@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Appbar from "../components/Appbar";
 import Navigation from "../components/Navigation";
+import axios from "axios";
+
 import {
   Table,
   TableHead,
@@ -16,32 +18,40 @@ import SearchIcon from "@mui/icons-material/Search";
 
 function Bookings() {
   const [searchQuery, setSearchQuery] = useState("");
-  const bookingsData = [
-    {
-      paymentId: 1,
-      username: "John Doe",
-      paymentDate: "2024-05-01",
-      paymentMode: "Credit Card",
-      amount: "$50",
-    },
-    {
-      paymentId: 2,
-      username: "Jane Smith",
-      paymentDate: "2024-05-02",
-      paymentMode: "PayPal",
-      amount: "$60",
-    },
-    // Add more data as needed
-  ];
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const paymentResponse = await axios.get(
+          `http://localhost:8000/payment/getPayments`
+        );
+
+        setPayments(
+          paymentResponse.data.map((payment, index) => ({
+            paymentId: index + 1,
+            ...payment,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching payments:", error);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+  const handleSearch = () => {
+    //pass
+  };
 
   // Filter bookings based on search query
-  const filteredBookings = bookingsData.filter(
-    (booking) =>
-      booking.paymentId.toString().includes(searchQuery) ||
-      booking.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.paymentDate.includes(searchQuery) ||
-      booking.paymentMode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.amount.includes(searchQuery)
+  const filteredPayments = payments.filter((payment) =>
+    Object.values(payment).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
@@ -61,7 +71,7 @@ function Bookings() {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton>
+                  <IconButton onClick={handleSearch}>
                     <SearchIcon />
                   </IconButton>
                 </InputAdornment>
@@ -80,13 +90,13 @@ function Bookings() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredBookings.map((booking) => (
-                <TableRow key={booking.paymentId}>
-                  <TableCell>{booking.paymentId}</TableCell>
-                  <TableCell>{booking.username}</TableCell>
-                  <TableCell>{booking.paymentDate}</TableCell>
-                  <TableCell>{booking.paymentMode}</TableCell>
-                  <TableCell>{booking.amount}</TableCell>
+              {filteredPayments.map((payment) => (
+                <TableRow key={payment.paymentId}>
+                  <TableCell>{payment.paymentId}</TableCell>
+                  <TableCell>{payment.username}</TableCell>
+                  <TableCell>{payment.paymentDate}</TableCell>
+                  <TableCell>{payment.mode}</TableCell>
+                  <TableCell>{payment.amount}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

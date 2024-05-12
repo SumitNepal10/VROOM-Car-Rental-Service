@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import Car from "../models/Car.js";
 import { Counter } from "../models/Counter.js";
+import { model } from "mongoose";
 
 const carRouter = express.Router();
 
@@ -49,7 +50,6 @@ carRouter.post("/addcar", upload.single("picture"), async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-
 
 // Route to get cars for a user
 carRouter.get("/getCars/:username", async (req, res) => {
@@ -102,11 +102,9 @@ carRouter.post("/editCar", upload.single("picture"), async (req, res) => {
       };
     }
 
-    const updatedCar = await Car.findOneAndUpdate(
-      { carId },
-      updatedData,
-      { new: true }
-    );
+    const updatedCar = await Car.findOneAndUpdate({ carId }, updatedData, {
+      new: true,
+    });
 
     if (!updatedCar) {
       return res.status(404).json({ message: "Car not found" });
@@ -136,5 +134,93 @@ carRouter.delete("/deleteCar/:carId", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Route to get a detail of a single car
+carRouter.get("/getCar/:carId", async (req, res) => {
+  try {
+    const { carId } = req.params;
+    const car = await Car.find({ carId });
+
+    if (!car || car.length === 0) {
+      return res.status(404).json({ message: "No cars found for the user" });
+    }
+
+    const carsData = car.map((car) => ({
+      carId: car.carId,
+      modelName: car.modelName,
+      price: car.price,
+      seats: car.seats,
+      system: car.system,
+      haveAc: car.haveAc,
+      status: car.status,
+      picture: {
+        data: car.picture.data.toString("base64"),
+        contentType: car.picture.contentType,
+      },
+    }));
+
+    res.json(carsData);
+  } catch (error) {
+    console.error("Error fetching car", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Router to get a name of a car
+carRouter.post("/getCars", async (req, res) => {
+  try {
+    const { carIds } = req.body;
+
+    // Validate request data
+    if (!Array.isArray(carIds) || carIds.length === 0) {
+      return res.status(400).json({ message: "Invalid or empty 'carIds' array" });
+    }
+
+    // Fetch cars based on the array of carIds
+    const cars = await Car.find({ carId: { $in: carIds } });
+
+    if (!cars || cars.length === 0) {
+      return res.status(404).json({ message: "No cars found for the given IDs" });
+    }
+
+    // Map fetched cars data
+    const carsData = cars.map((car) => ({
+      vehicle: car.modelName,
+    }));
+
+    res.json(carsData);
+  } catch (error) {
+    console.error("Error fetching cars", error);
+    res.status(500).json({ message: "Failed to fetch cars. Please try again later." });
+  }
+});
+
+// Router to get a car information
+carRouter.get("/getCarInfo/:carId", async (req, res) => {
+  try {
+    const { carId } = req.params;
+    
+    const car = await Car.findOne({ carId });
+
+    if (!car) {
+      return res.status(404).json({ message: "No car found with the specified ID" });
+    }
+
+    const carData = {
+      modelName: car.modelName,
+      price: car.price,
+      picture: {
+        data: car.picture.data.toString("base64"),
+        contentType: car.picture.contentType,
+      },
+    };
+
+    res.json(carData);
+  } catch (error) {
+    console.error("Error fetching car:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 export { carRouter as carRoute };

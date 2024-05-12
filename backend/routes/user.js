@@ -7,12 +7,14 @@ import nodemailer from "nodemailer";
 
 router.post("/signup", async (req, res) => {
   const { username, email, password, phone } = req.body;
-  
+
   // Check if a user with the same username or email already exists
   const existingUser = await User.findOne({ $or: [{ username }, { email }] });
 
   if (existingUser) {
-    return res.status(400).json({ message: "Username or email already exists" });
+    return res
+      .status(400)
+      .json({ message: "Username or email already exists" });
   }
 
   const hashpassword = await bcrypt.hash(password, 10);
@@ -118,11 +120,34 @@ router.post("/reset/:token", async (req, res) => {
 // Fetch all users
 router.get("/users", async (req, res) => {
   try {
-    const users = await User.find(); 
+    const users = await User.find();
     return res.json(users);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
+// router to get user data
+
+router.get("/getUser/:username", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "No Data for the user" });
+    }
+
+    const userData = {
+      name: user.username,
+      email: user.email,
+      phone: user.phone,
+    };
+
+    res.json(userData);
+  } catch (error) {
+    console.error("Error fetching renter:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

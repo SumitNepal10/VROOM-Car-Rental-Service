@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Appbar from "../components/Appbar";
 import Navigation from "../components/Navigation";
 import {
@@ -15,44 +16,76 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 
 function Bookings() {
+  const [bookings, setBookings] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  // const history = useHistory();
-  // Sample bookings data (replace with your actual data)
-  const bookingsData = [
-    {
-      bookingId: 1,
-      rentersName: "John Doe",
-      vehicle: "Toyota Camry",
-      price: "$50",
-      date: "2024-04-10",
-      status: "Confirmed",
-    },
-    {
-      bookingId: 2,
-      rentersName: "Jane Smith",
-      vehicle: "Honda Accord",
-      price: "$60",
-      date: "2024-04-12",
-      status: "Pending",
-    },
 
-    // Add more data as needed
-  ];
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const bookingsResponse = await axios.get(
+          `http://localhost:8000/renter/getRenters`
+        );
+        const bookingsData = bookingsResponse.data.map((renter, index) => ({
+          bookingId: index + 1,
+          ...renter,
+        }));
+
+        // Fetch car details and price for each booking
+        const updatedBookingsData = await Promise.all(
+          bookingsData.map(async (booking) => {
+            try {
+              // Fetch car details
+              const carResponse = await axios.post(
+                `http://localhost:8000/car/getCars`,
+                { carIds: [booking.carId] }
+              );
+              const carName = carResponse.data[0].vehicle;
+
+              // Initialize price to display in case status is false
+              let price = "-";
+
+              if (booking.status === true) {
+                // If status is true, fetch payment amounts
+                const priceResponse = await axios.post(
+                  `http://localhost:8000/payment/getAmount`,
+                  { carIds: [booking.carId] }
+                );
+                // Sum up amounts for all carIds with status true
+                const totalAmount = priceResponse.data.reduce(
+                  (acc, curr) => acc + parseFloat(curr.amount),
+                  0
+                );
+                price = totalAmount;
+              }
+
+              return {
+                ...booking,
+                vehicle: carName,
+                price: price,
+              };
+            } catch (error) {
+              console.error("Error fetching booking details:", error);
+              return booking;
+            }
+          })
+        );
+        setBookings(updatedBookingsData);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   // Filter bookings based on search query
-  const filteredBookings = bookingsData.filter(
-    (booking) =>
-      booking.bookingId.toString().includes(searchQuery) ||
-      booking.rentersName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.vehicle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.price.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      booking.date.includes(searchQuery) ||
-      booking.status.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredBookings = bookings.filter((booking) =>
+    Object.values(booking).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
-  // Function to handle view details button click
-  // const handleViewDetails = () => {
-  //   history.push("/Details");
-  // };
 
   return (
     <>
@@ -66,13 +99,12 @@ function Bookings() {
             label="Search"
             variant="outlined"
             size="small"
-            width="500px"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton>
+                  <IconButton onClick={() => console.log("Search clicked")}>
                     <SearchIcon />
                   </IconButton>
                 </InputAdornment>
@@ -87,7 +119,8 @@ function Bookings() {
                 <TableCell>Renter's Name</TableCell>
                 <TableCell>Vehicle</TableCell>
                 <TableCell>Price</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>Pickup Date</TableCell>
+                <TableCell>Dropoff Date</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -98,10 +131,10 @@ function Bookings() {
                   <TableCell>{booking.rentersName}</TableCell>
                   <TableCell>{booking.vehicle}</TableCell>
                   <TableCell>{booking.price}</TableCell>
-                  <TableCell>{booking.date}</TableCell>
+                  <TableCell>{booking.pickupDate}</TableCell>
+                  <TableCell>{booking.dropOffDate}</TableCell>
                   <TableCell>
-                    {" "}
-                    {booking.status === "Pending" ? (
+                    {booking.status === false ? (
                       <div
                         style={{
                           backgroundColor: "orange",

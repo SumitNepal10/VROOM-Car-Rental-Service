@@ -152,6 +152,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
           >
             {price}
           </Typography>
+
           Status Box */
           <Box
             sx={{

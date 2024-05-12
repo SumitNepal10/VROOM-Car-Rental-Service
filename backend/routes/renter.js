@@ -1,6 +1,6 @@
-import express from 'express';
-import multer from 'multer';
-import { Renter } from '../models/Renter.js';
+import express from "express";
+import multer from "multer";
+import { Renter } from "../models/Renter.js";
 
 const renterRouter = express.Router();
 
@@ -12,53 +12,105 @@ const upload = multer({
 });
 
 // Route to add a new renter
-renterRouter.post('/newRenter', upload.single('driverLicense'), async (req, res) => {
-  try {
-    const { carId, firstName, lastName, email, phone } = req.body;
-    const driverLicenseData = req.file ? req.file.buffer : null;
-    const driverLicenseType = req.file ? req.file.mimetype : null;
+renterRouter.post(
+  "/newRenter",
+  upload.single("driverLicense"),
+  async (req, res) => {
+    try {
+      const {
+        fullName,
+        email,
+        phoneNumber,
+        pickupLocation,
+        dropOffLocation,
+        pickupDate,
+        dropOffDate,
+        isPaid,
+        carId,
+        userToBook,
+      } = req.body;
 
-    const newRenter = new Renter({
-      carId,
-      firstName,
-      lastName,
-      email,
-      phone,
-      driverLicense: {
-        data: driverLicenseData,
-        contentType: driverLicenseType,
-      },
-    });
+      const driverLicenseData = req.file ? req.file.buffer : null;
+      const driverLicenseType = req.file ? req.file.mimetype : null;
 
-    await newRenter.save();
+      const newRenter = new Renter({
+        fullName,
+        email,
+        phoneNumber,
+        pickupLocation,
+        dropOffLocation,
+        pickupDate,
+        dropOffDate,
+        isPaid,
+        carId,
+        userToBook,
+        driverLicense: {
+          data: driverLicenseData,
+          contentType: driverLicenseType,
+        },
+      });
 
-    return res.json({ status: true, message: 'Renter added successfully' });
-  } catch (error) {
-    console.error('Error adding renter:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+      await newRenter.save();
+
+      return res.json({ status: true, message: "Renter added successfully" });
+    } catch (error) {
+      console.error("Error adding renter:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   }
-});
+);
 
 // Route to get all renters
-renterRouter.get('/getRenters', async (req, res) => {
+renterRouter.get("/getRenters", async (req, res) => {
   try {
     const renters = await Renter.find();
 
     if (!renters || renters.length === 0) {
-      return res.status(404).json({ message: 'No renters found' });
+      return res.status(404).json({ message: "No renters found" });
     }
 
     const rentersData = renters.map((renter) => ({
-      firstName: renter.firstName,
-      lastName: renter.lastName,
-      email: renter.email,
+      rentersName: renter.fullName,
+      status: renter.isPaid,
       phone: renter.phone,
+      dropOffDate: renter.dropOffDate,
+      pickupDate: renter.pickupDate,
+      carId: renter.carId,
     }));
 
     res.json(rentersData);
   } catch (error) {
-    console.error('Error fetching renters:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching renters:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Router to send a data of a specific user
+renterRouter.get("/getRenter/:userToBook", async (req, res) => {
+  const { userToBook } = req.params;
+
+  try {
+    const renter = await Renter.findOne({ userToBook: userToBook });
+
+    if (!renter) {
+      return res
+        .status(404)
+        .json({ message: "No renter found for that username" });
+    }
+
+    const renterData = {
+      pickupLocation: renter.pickupLocation,
+      dropOffLocation: renter.dropOffLocation,
+      pickupDate: renter.pickupDate,
+      dropOffDate: renter.dropOffDate,
+      isPaid: renter.isPaid,
+      carId: renter.carId,
+    };
+
+    res.json(renterData);
+  } catch (error) {
+    console.error("Error fetching renter:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
