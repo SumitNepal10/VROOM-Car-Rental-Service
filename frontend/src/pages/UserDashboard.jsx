@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Navigation from "../components/Navigation";
 import Card from "@mui/material/Card";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -8,81 +9,79 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
-import axios from "axios";
 
 function UserDashboard() {
   const [displayedContent, setDisplayedContent] = useState("dashboard");
-  const [rentDetails, setRentDetails] = useState([]);
   const [userData, setUserData] = useState({});
+  const [bookings, setBookings] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const username = localStorage.getItem("username");
+  
+      // Fetch user data
+      const userResponse = await axios.get(
+        `http://localhost:8000/auth/getUser/${username}`
+      );
+      setUserData(userResponse.data);
+  
+      // Fetch renter details
+      const renterResponse = await axios.get(
+        `http://localhost:8000/renter/getRenter/${username}`
+      );
+      let renterData = renterResponse.data;
+  
+      // Convert object response to array with single element
+      if (!Array.isArray(renterData)) {
+        renterData = [renterData];
+      }
+  
+      // Fetch car details for each renter
+      const carIds = renterData.map((rent) => rent.carId);
+      const carResponses = await Promise.all(
+        carIds.map((carId) =>
+          axios.get(`http://localhost:8000/car/getCarInfo/${carId}`)
+        )
+      );
+      const carData = carResponses.map((response) => response.data);
+  
+      // Combine renter and car details into a single object
+      const combinedData = renterData.map((rent, index) => ({
+        ...rent,
+        car: carData[index]
+      }));
+  
+      // Set bookings with the combined data
+      setBookings(combinedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const username = localStorage.getItem("username");
-
-        // Fetch user data
-        const userResponse = await axios.get(
-          `http://localhost:8000/auth/getUser/${username}`
-        );
-        setUserData(userResponse.data);
-
-        // Fetch data based on displayed content
-        if (displayedContent === "dashboard") {
-          // Fetch renter details
-          const renterResponse = await axios.get(
-            `http://localhost:8000/renter/getRenter/${username}`
-          );
-          const renterData = renterResponse.data;
-
-          // Check if renterData is an array or single object
-          if (Array.isArray(renterData)) {
-            const updatedRentersData = await Promise.all(
-              renterData.map(async (renter) => {
-                try {
-                  const carResponse = await axios.get(
-                    `http://localhost:8000/car/getCarInfo/${renterData.carId}`
-                  );
-                  const carData = carResponse.data[0];
-
-                  // Calculate total price based on pickup and drop-off dates
-                  const startDate = new Date(renter.pickupDate);
-                  const endDate = new Date(renter.dropOffDate);
-                  const days = Math.ceil(
-                    (endDate - startDate) / (1000 * 60 * 60 * 24)
-                  );
-                  const totalPrice = days * parseFloat(carData.price);
-
-                  return {
-                    ...renter,
-                    carName: carData.modelName,
-                    carImage: carData.picture,
-                    totalPrice: totalPrice.toFixed(2),
-                  };
-                } catch (error) {
-                  console.error("Error fetching car details:", error);
-                  return null;
-                }
-              })
-            );
-
-            setRentDetails(updatedRentersData.filter(Boolean));
-          } else if (typeof renterData === "object") {
-            // If renterData is a single object, convert it to an array
-            const updatedRenterData = [renterData];
-            setRentDetails(updatedRenterData);
-          } else {
-            console.error("Invalid data format received for renter details");
-          }
-        } else if (displayedContent === "profile") {
-          // Fetch additional profile data if needed
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
-  }, [displayedContent]);
+  }, []);
+
+  // Function to calculate total price based on pickup and drop-off dates
+  const calculateTotalPrice = (pickupDate, dropOffDate, price) => {
+    if (!pickupDate || !dropOffDate || !price) return 0;
+
+    // Parse price to a number
+    const parsedPrice = parseFloat(price);
+
+    // Convert dates to Date objects
+    const pickup = new Date(pickupDate);
+    const dropOff = new Date(dropOffDate);
+
+    // Calculate number of days
+    const diffTime = Math.abs(dropOff - pickup);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Calculate total price
+    const totalPrice = parsedPrice * diffDays;
+    return totalPrice || 0;
+  };
 
   const handleProfileClick = () => {
     setDisplayedContent("profile");
@@ -175,35 +174,51 @@ function UserDashboard() {
                 <h2 style={{ paddingLeft: "20px", textAlign: "left" }}>
                   My Bookings
                 </h2>
-                {rentDetails.map((booking, index) => (
-                  <Card key={index} style={{ margin: "20px", padding: "20px" }}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      {booking.carImage && booking.carImage.contentType && (
-                        <div style={{ marginRight: "20px" }}>
-                          {/* car image */}
-                          <img
-                            src={`data:${booking.carImage.contentType};base64,${booking.carImage.data}`}
-                            alt="Car"
-                            style={{ width: "100px", height: "auto" }}
-                          />
+                {Array.isArray(bookings) && bookings.length > 0 ? (
+                  bookings.map((booking, index) => (
+                    <Card
+                      key={index}
+                      style={{ margin: "20px", padding: "20px" }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        {/* Display car image */}
+                        {booking.car.picture && (
+                          <div style={{ marginRight: "20px" }}>
+                            <img
+                              src={`data:${booking.car.picture.contentType};base64,${booking.car.picture.data}`}
+                              alt="Car"
+                              style={{ width: "400px", height: "300px" }}
+                            />
+                          </div>
+                        )}
+                        <div>
+                          {/* Display car name */}
+                          <h3>Car Name: {booking.car.modelName}</h3>
+                          <p>Start Date: {booking.pickupDate}</p>
+                          <p>End Date: {booking.dropOffDate}</p>
+                          {/* Calculate and display total price */}
+                          <p>
+                            Total Price: NPR{" "}
+                            {calculateTotalPrice(
+                              booking.pickupDate,
+                              booking.dropOffDate,
+                              booking.car.price
+                            )}
+                          </p>{" "}
                         </div>
-                      )}
-                      <div>
-                        <h3>Car Name: {booking.carName}</h3>
-                        <p>Start Date: {booking.pickupDate}</p>
-                        <p>End Date: {booking.dropOffDate}</p>
-                        <p>Total Price: NPR {booking.totalPrice}</p>{" "}
+                        <div style={{ marginLeft: "10px" }}>
+                          <p>
+                            Payment Status: {booking.isPaid ? "Paid" : "Unpaid"}
+                          </p>
+                          <p>From Location: {booking.pickupLocation}</p>
+                          <p>To Location: {booking.dropOffLocation}</p>
+                        </div>
                       </div>
-                      <div style={{ marginLeft: "10px" }}>
-                        <p>
-                          Payment Status: {booking.isPaid ? "Paid" : "Unpaid"}
-                        </p>
-                        <p>From Location: {booking.pickupLocation}</p>
-                        <p>To Location: {booking.dropOffLocation}</p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  ))
+                ) : (
+                  <p>No bookings found</p>
+                )}
               </div>
             )}
           </Card>
