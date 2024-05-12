@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
-import { useNavigate, useParams } from "react-router-dom";
+
+import Footer from "../components/Footer";
+import { useParams } from "react-router-dom";
+
 import {
   Card,
   CardMedia,
@@ -426,7 +429,32 @@ function ConfirmBooking() {
           </Grid>
         </Grid>
       </Container>
+
+
+      {/* Dialog */}
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogContent>
+          <img
+            src={selectedCarImage}
+            alt="Selected Car"
+            style={{ width: "100px", height: "auto", marginBottom: 10 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleDialogClose}
+            style={{ backgroundColor: "red", color: "white" }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <footer>
+      <Footer />
+    </footer>
+
     </>
+     
   );
 }
 
