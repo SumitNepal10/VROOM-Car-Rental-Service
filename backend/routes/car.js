@@ -2,7 +2,6 @@ import express from "express";
 import multer from "multer";
 import Car from "../models/Car.js";
 import { Counter } from "../models/Counter.js";
-import { model } from "mongoose";
 
 const carRouter = express.Router();
 
@@ -173,14 +172,18 @@ carRouter.post("/getCars", async (req, res) => {
 
     // Validate request data
     if (!Array.isArray(carIds) || carIds.length === 0) {
-      return res.status(400).json({ message: "Invalid or empty 'carIds' array" });
+      return res
+        .status(400)
+        .json({ message: "Invalid or empty 'carIds' array" });
     }
 
     // Fetch cars based on the array of carIds
     const cars = await Car.find({ carId: { $in: carIds } });
 
     if (!cars || cars.length === 0) {
-      return res.status(404).json({ message: "No cars found for the given IDs" });
+      return res
+        .status(404)
+        .json({ message: "No cars found for the given IDs" });
     }
 
     // Map fetched cars data
@@ -191,7 +194,9 @@ carRouter.post("/getCars", async (req, res) => {
     res.json(carsData);
   } catch (error) {
     console.error("Error fetching cars", error);
-    res.status(500).json({ message: "Failed to fetch cars. Please try again later." });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch cars. Please try again later." });
   }
 });
 
@@ -199,11 +204,13 @@ carRouter.post("/getCars", async (req, res) => {
 carRouter.get("/getCarInfo/:carId", async (req, res) => {
   try {
     const { carId } = req.params;
-    
+
     const car = await Car.findOne({ carId });
 
     if (!car) {
-      return res.status(404).json({ message: "No car found with the specified ID" });
+      return res
+        .status(404)
+        .json({ message: "No car found with the specified ID" });
     }
 
     const carData = {
@@ -222,5 +229,33 @@ carRouter.get("/getCarInfo/:carId", async (req, res) => {
   }
 });
 
+// Router to update the car status to Rented
+carRouter.post("/updateCarStatus/:carId", async (req, res) => {
+  const { carId } = req.params;
+
+  try {
+    // Find the car by ID and update its status to "Rented"
+    const updatedCar = await Car.findOneAndUpdate(
+      { carId: carId },
+      { $set: { status: "Rented" } },
+      { new: true }
+    );
+
+    if (!updatedCar) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Car status updated successfully",
+        car: updatedCar,
+      });
+  } catch (error) {
+    console.error("Error updating car status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
 
 export { carRouter as carRoute };

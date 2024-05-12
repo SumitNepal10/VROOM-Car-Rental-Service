@@ -96,7 +96,7 @@ function ConfirmBooking() {
     // retrive the username from localStorgae
     const user = localStorage.getItem("username");
     formData.append("userToBook", user);
-    
+
     try {
       const response = await axios.post(
         `http://localhost:8000/renter/newRenter`,
@@ -109,12 +109,19 @@ function ConfirmBooking() {
       );
 
       if (response.data.status) {
+        try {
+          await axios.post(
+            `http://localhost:8000/car/updateCarStatus/${carId}`,
+          );
+        } catch (error) {
+          console.error("Error updating the car status");
+        }
         // if the user chose to pays navigate to the payment
         if (renterInfo.isPaid) {
           navigate(`/Payment/${carId}`);
         } else if (!renterInfo.isPaid) {
           alert("Car has been booked successfully");
-          navigate(`/UserDashboard`)
+          navigate(`/UserDashboard`);
         }
       } else {
         alert("Failed to book the car");
@@ -133,15 +140,25 @@ function ConfirmBooking() {
         `http://localhost:8000/car/getCar/${carId}`
       );
       setCarData(response.data);
-      console.log(response.data);
     } catch (error) {
-      console.error("Error fetching cars data:", error);
+      console.error("Error fetching car data:", error);
     }
   };
 
   useEffect(() => {
     fetchCarData();
   }, []);
+
+  useEffect(() => {
+    const checkCarStatus = async () => {
+      if (carData.length > 0 && carData[0].status === "Rented") {
+        alert("This car is already booked. Please select another one.");
+        navigate("/");
+      }
+    };
+
+    checkCarStatus();
+  }, [carData, navigate]);
 
   return (
     <>
