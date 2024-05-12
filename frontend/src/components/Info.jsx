@@ -78,7 +78,6 @@ const Info = () => {
               carId={car.carId}
               status={car.status}
             />
- 
           ))}
         </div>
       </div>
@@ -127,10 +126,10 @@ const Info = () => {
 };
 
 const CardComponent = ({ title, image, price, carId, status }) => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleRentClick = () => {
-    navigate(`/ConfirmBooking/${carId}`); 
+    navigate(`/ConfirmBooking/${carId}`);
   };
 
   return (
@@ -153,19 +152,22 @@ const CardComponent = ({ title, image, price, carId, status }) => {
           >
             {price}
           </Typography>
-            {/* Status Box */}
-            <Box
-                sx={{
-                  marginTop: "10px",
-                  padding: "5px",
-                  borderRadius: "5px",
-                  backgroundColor: status === "Rented" ? "red" : "green",
-                  color: "white",
-                  textAlign: "center",
-                }}
-              >
-                {status === "Rented" ? "Rented" : "Available"}
-              </Box>
+          Status Box */
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 10,
+              marginTop: "10px",
+              padding: "5px",
+              borderRadius: "5px",
+              backgroundColor: status === "Rented" ? "red" : "green",
+              color: "white",
+              textAlign: "center",
+            }}
+          >
+            {status === "Rented" ? "Rented" : "Available"}
+          </Box>
         </CardContent>
       </CardActionArea>
       <CardActions>

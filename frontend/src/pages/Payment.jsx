@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import {
   Card,
   CardContent,
@@ -203,6 +204,7 @@ function Payment() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Footer />
     </>
   );
 }

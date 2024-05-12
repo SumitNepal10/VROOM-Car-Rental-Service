@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 import { useParams } from "react-router-dom";
 import {
   Card,
@@ -249,7 +250,11 @@ function ConfirmBooking() {
           </Button>
         </DialogActions>
       </Dialog>
+      <footer>
+      <Footer />
+    </footer>
     </>
+     
   );
 }
 
