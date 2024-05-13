@@ -20,7 +20,7 @@ const Info = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/car/getCars/admin"
+        "http://localhost:8000/cars/getCars/admin"
       );
       setCarsData(response.data);
     } catch (error) {
@@ -128,10 +128,8 @@ const Info = () => {
 const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate();
 
-
   const handleRentClick = () => {
-    navigate(`/ConfirmBooking/${carId}`);
-    navigate(`/ConfirmBooking/${carId}`);
+    navigate(`/ConfirmBooking/${carId}`); // Fixed the navigate function call
   };
 
   return (
@@ -155,7 +153,6 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             {price}
           </Typography>
 
-          Status Box */
           <Box
             sx={{
               position: "absolute",
@@ -171,20 +168,6 @@ const CardComponent = ({ title, image, price, carId, status }) => {
           >
             {status === "Rented" ? "Rented" : "Available"}
           </Box>
-          {/* Status Box */}
-          <Box
-            sx={{
-              marginTop: "10px",
-              padding: "5px",
-              borderRadius: "5px",
-              backgroundColor: status === "Rented" ? "red" : "green",
-              color: "white",
-              textAlign: "center",
-              height: "20px",
-            }}
-          >
-            {status === "Rented" ? "Rented" : "Available"}
-          </Box>
         </CardContent>
       </CardActionArea>
       <CardActions>
@@ -194,10 +177,9 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             fontSize: "13px",
             color: "white",
             marginLeft: "auto",
-            backgroundColor: status === "Rented" ? "red" : "green",
+            backgroundColor: "red",
           }}
           type="button"
-          disabled={status === "Rented"}
           onClick={handleRentClick}
         >
           RENT
