@@ -43,7 +43,7 @@ function Login() {
   };
 
   return (
-    <div className="background">
+    <div className="container">
       <div className="login">
         <div className="image">
           <img
@@ -53,14 +53,14 @@ function Login() {
             alt="Car"
           />
         </div>
-        <div className="container">
+        <div className="content">
           <img
             id="logo"
             src="/image/logo.png"
             style={{ height: "80px" }}
             alt="Logo"
           />
-          <h1 style={{ fontSize: "13px", color: "red", marginTop: "-10px" }}>
+          <h1 style={{ fontSize: "20px", color: "red" }}>
             Welcome aboard! Unlock your journey with us.
           </h1>
           <form className="signup-form" onSubmit={handleSubmit}>
@@ -92,7 +92,7 @@ function Login() {
             <Button
               variant="contained"
               sx={{
-                fontSize: "13px",
+                fontSize: "16px",
                 marginTop: "10px",
                 color: "white",
                 backgroundColor: "red",
@@ -101,10 +101,10 @@ function Login() {
             >
               Login
             </Button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <p className="switch">
+            {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+            <p className="switch" style={{ marginTop: "10px" }}>
               Don't have an account?
-              <Link to="/sign-up" className="signup-switch">
+              <Link to="/sign-up" className="signup-switch" style={{ marginLeft: "5px" }}>
                 Sign Up
               </Link>
             </p>

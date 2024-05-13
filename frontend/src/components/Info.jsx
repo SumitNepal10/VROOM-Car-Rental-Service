@@ -127,7 +127,7 @@ const Info = () => {
 
 const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate();
-  const navigate = useNavigate();
+
 
   const handleRentClick = () => {
     navigate(`/ConfirmBooking/${carId}`);
