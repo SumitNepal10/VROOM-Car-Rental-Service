@@ -42,16 +42,19 @@ const Info = () => {
             title="Pokhara"
             image="/image/pokhara.jpg"
             price="NPR 30,000"
+            status = "Rented"
           />
           <CardComponent
             title="Nagarkot"
             image="/image/nagarkot.jpg"
             price="NPR 25,000"
+            status = "Rented"
           />
           <CardComponent
             title="Chitwan"
             image="/image/chitwan.jpg"
             price="NPR 35,000"
+            status = "Rented"
           />
         </div>
       </div>
@@ -129,7 +132,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate();
 
   const handleRentClick = () => {
-    navigate(`/ConfirmBooking/${carId}`); 
+    navigate(`/ConfirmBooking/${carId}`);
   };
 
   return (
@@ -177,9 +180,10 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             fontSize: "13px",
             color: "white",
             marginLeft: "auto",
-            backgroundColor: "red",
+            backgroundColor: status === "Rented" ? "red" : "green",
           }}
           type="button"
+          disabled={status === "Rented"}
           onClick={handleRentClick}
         >
           RENT

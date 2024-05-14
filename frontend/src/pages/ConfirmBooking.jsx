@@ -15,6 +15,7 @@ import {
   Box,
   Container,
   IconButton,
+  Radio,
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
 import axios from "axios";
@@ -66,7 +67,7 @@ function ConfirmBooking() {
         name === "agreeToTerms"
           ? checked
           : name === "isPaid"
-          ? checked
+          ? value === "true"
           : files
           ? files[0]
           : value,
@@ -161,7 +162,6 @@ function ConfirmBooking() {
   useEffect(() => {
     fetchCarData();
   }, []);
-  
 
   useEffect(() => {
     const checkCarStatus = async () => {
@@ -304,12 +304,13 @@ function ConfirmBooking() {
                       </Typography>
                     </label>
                   </Box>
-                  {/* Checkboxes */}
+                  {/* radio buttons */}
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        checked={renterInfo.isPaid}
+                      <Radio
+                        checked={renterInfo.isPaid === true}
                         onChange={handleChange}
+                        value={true}
                         name="isPaid"
                       />
                     }
@@ -317,9 +318,10 @@ function ConfirmBooking() {
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        checked={!renterInfo.isPaid}
+                      <Radio
+                        checked={renterInfo.isPaid === false}
                         onChange={handleChange}
+                        value={false}
                         name="isPaid"
                       />
                     }

@@ -10,6 +10,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +36,7 @@ function Navigation() {
 
   const [selectedTab, setSelectedTab] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [activityData, setActivityData] = useState([]);
 
   const navItem = [
     { label: "Home", path: "/" },
@@ -65,6 +67,24 @@ function Navigation() {
     setIsLoggedIn(false);
     setUsername("");
     setIsAdmin(false);
+
+    const currentDate = new Date();
+    const date = currentDate.toISOString();
+    const activity = "User logged out of the system";
+
+    // Construct activity object
+    const newActivity = {
+      username,
+      activity,
+      date,
+    };
+
+    setActivityData((prevActivityData) => [...prevActivityData, newActivity]);
+
+    // Send activityData to the server
+    axios.post("http://localhost:8000/activity/addActivity", {
+      activityData: newActivity,
+    });
   };
 
   const handleChange = (newValue) => {
