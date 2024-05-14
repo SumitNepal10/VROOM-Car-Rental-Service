@@ -8,7 +8,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 function Footer() {
   return (
-    <div className="bottom"> {/* Removed fixed positioning here */}
+    <div className="bottom">
       <div className="footer">
         <div className="about-us" style={{ flex: 1 }}>
           <h2>About Us</h2>
@@ -21,40 +21,33 @@ function Footer() {
         <div className="contact-info" style={{ flex: 1 }}>
           <h2>Contact Info</h2>
           <p>
-            <LocationOnIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
-            <span style={{ verticalAlign: "middle" }}>Naxal, Kathmandu</span>
+            <LocationOnIcon
+              sx={{ color: "red", fontSize: "20px" }}
+            ></LocationOnIcon>{" "}
+            Naxal, Kathmandu
           </p>
           <p>
             {" "}
-            <PhoneIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
-            <span style={{ verticalAlign: "middle" }}>01-5672891, 9863829183</span>
+            <PhoneIcon sx={{ color: "red", fontSize: "20px" }}></PhoneIcon>{" "}
+            01-5672891, 9863829183
           </p>
           <p>
-            <MailIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
-            <span style={{ verticalAlign: "middle" }}>vroom@rentalcar.org</span>
+            <MailIcon sx={{ color: "red", fontSize: "20px" }}></MailIcon>{" "}
+            vroom@rentalcar.org
           </p>
-          <p style={{ fontWeight: "bold", textTransform: "uppercase", verticalAlign: "middle" }}>ISO CERTIFIED</p>
-          {/* Images beneath ISO Certified */}
-          <div>
-            <img src="../image/iso_3.png" alt="image 1" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
-            <img src="../image/iso_2.png" alt="image 2" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
-            <img src="../image/iso1.png" alt="image 3" style={{ width: "50px", height: "50px" }} />
-          </div>
         </div>
         <div className="quickLinks" style={{ flex: 1 }}>
-          <h2>QUICK LINKS</h2>
-          <p>ABOUT</p>
-          <p>VEHICLES</p>
-          <p>SERVICES</p>
-          <p>CONTACT</p>
+          <h2>Quick Links</h2>
+          <p>About</p>
+          <p>Vehicles</p>
+          <p>Services</p>
+          <p>Contact</p>
         </div>
         <div className="social-network" style={{ flex: 1 }}>
           <h2>Social Network</h2>
-          <FacebookIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "40px" }} />
-          <InstagramIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "40px" }} />
-          <LinkedInIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "40px" }} />
-          <p style={{ fontWeight: "bold", verticalAlign: "middle", fontSize: "18px" }}>Download</p>
-          <img src="../image/appstore.png" alt="image 1" style={{ width: "150px", height: "50px", marginRight: "10px" }} />
+          <FacebookIcon></FacebookIcon>
+          <InstagramIcon></InstagramIcon>
+          <LinkedInIcon></LinkedInIcon>
         </div>
       </div>
       <div className="copyright">

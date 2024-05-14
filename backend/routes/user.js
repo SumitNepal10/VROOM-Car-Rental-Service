@@ -129,7 +129,6 @@ router.get("/users", async (req, res) => {
 });
 
 // router to get user data
-
 router.get("/getUser/:username", async (req, res) => {
   const { username } = req.params;
   try {
@@ -147,6 +146,21 @@ router.get("/getUser/:username", async (req, res) => {
     res.json(userData);
   } catch (error) {
     console.error("Error fetching renter:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// router to get the total number of user
+router.get("/totalUser", async (req, res) => {
+  try {
+    const totalUser = await User.collection.countDocuments();
+    if (totalUser === 0) {
+      return res.json(0);
+    }
+    
+    res.json(totalUser);
+  } catch (error) {
+    console.error("Error fetching User number:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import {
   Button,
@@ -7,59 +7,61 @@ import {
   CardContent,
   CardMedia,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
-import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 function BookCar() {
-  const cardsData = [
-    {
-      // id: 1,
-      image: "image/home.png",
-      title: "Hyundai Tucson",
-      subtitle: "NPR 7000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      // id: 2,
-      image: "image/suv.png",
-      title: "Compact SUV Electric",
-      subtitle: "NPR 5500/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      id: 3,
-      image: "image/suv2.png",
-      title: "Compact SUV Hybrid",
-      subtitle: "NPR 5000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    {
-      id: 4,
-      image: "image/suv2.png",
-      title: "Compact SUV Hybrid",
-      subtitle: "NPR 5000/day",
-      passengers: 5,
-      transmission: "Automatic",
-      airConditioning: true,
-    },
-    // Add more card data as needed
-  ];
+  const navigate = useNavigate();
+  const location = useLocation();
+  const bookingDetails = location.state.formData;
+  const [carsData, setCarsData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/car/availableCars/admin`
+      );
+      if (response.status !== 200) {
+        navigate("/");
+      } else {
+        setCarsData(response.data);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleBookNow = (carId) => {
+    navigate(`/ConfirmBooking/${carId}`, { state: { bookingDetails } });
+  };
+
   return (
     <>
       <Navigation />
       <div className="main-booking">
         <div className="left-card">
-          {/* Left side card content */}
           <h2
             style={{
               fontSize: "17px",
@@ -74,92 +76,120 @@ function BookCar() {
             className="detail"
             style={{ fontSize: "15px", textAlign: "left", paddingLeft: "10px" }}
           >
-            <p>From: </p>
-            <p>To: </p>
-            <p>Start Date: </p>
-            <p>End Date: </p>
+            <p>Pickup Location: {bookingDetails.pickupLocation}</p>
+            <p>Drop-off Location: {bookingDetails.dropOffLocation}</p>
+            <p>Pickup Date: {bookingDetails.pickupDate}</p>
+            <p>Drop-off Date: {bookingDetails.dropOffDate}</p>
           </div>
         </div>
         <div className="right-cards">
-          {cardsData.map((card) => (
-            <div className="right-card" key={card.id}>
-              <Card
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Box sx={{ display: "flex" }}>
-                  <CardMedia
-                    sx={{ width: 300, height: 170 }}
-                    image={card.image}
-                    title={card.title}
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      marginTop: "30px",
-                      marginLeft: "40px",
-                    }}
-                  >
-                    <h>Car Features</h>
-                    <br></br>
-                    <Box display="flex" alignItems="center">
-                      <AcUnitIcon
-                        sx={{
-                          color: card.airConditioning ? "green" : "red",
-                          marginRight: 1,
-                        }}
-                      />
-                      <Typography>
-                        {card.airConditioning ? "Air-Conditioning" : "No AC"}
-                      </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <GroupsIcon sx={{ marginRight: 1 }} />
-                      <Typography>{card.passengers}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <SettingsIcon sx={{ color: "green", marginRight: 1 }} />
-                      <Typography>{card.transmission}</Typography>
-                    </Box>
-                    <Link to="/ConfirmBooking">
-                      <Button
-                        variant="contained"
-                        sx={{
-                          fontSize: "13px",
-                          marginTop: "10px",
-                          color: "white",
-                          backgroundColor: "red",
-                        }}
-                        // type="submit"
-                      >
-                        Book Now
-                      </Button>
-                    </Link>
-                  </Box>
-                </Box>
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    sx={{ fontWeight: "bold", fontSize: "17px" }}
-                  >
-                    {card.title}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    {card.subtitle}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p>Error fetching cars data: {error.message}</p>
+          ) : (
+            <>
+              {console.log("carsData length:", carsData.length)}
+              {carsData.length === 0 ? (
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                  <DialogTitle>No Car</DialogTitle>
+                  <DialogContent>
+                    No Car available for now. Please come back later.
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog}>OK</Button>
+                  </DialogActions>
+                </Dialog>
+              ) : (
+                carsData.map((card) => (
+                  <div className="right-card" key={card.id}>
+                    <Card
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box sx={{ display: "flex" }}>
+                        <CardMedia
+                          sx={{ width: 300, height: 170 }}
+                          image={`data:${card.picture.contentType};base64,${card.picture.data}`}
+                          title={card.title}
+                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            marginTop: "30px",
+                            marginLeft: "40px",
+                          }}
+                        >
+                          <Typography variant="h2">Car Features</Typography>
+                          <br />
+                          <Box display="flex" alignItems="center">
+                            <AcUnitIcon
+                              sx={{
+                                color: card.haveAc ? "green" : "red",
+                                marginRight: 1,
+                              }}
+                            />
+                            <Typography>
+                              {card.haveAc ? "Air-Conditioning" : "No AC"}
+                            </Typography>
+                          </Box>
+                          <Box display="flex" alignItems="center">
+                            <GroupsIcon sx={{ marginRight: 1 }} />
+                            <Typography>{card.seats}</Typography>
+                          </Box>
+                          {typeof card.system !== "undefined" && (
+                            <Box display="flex" alignItems="center">
+                              <SettingsIcon
+                                sx={{
+                                  color: card.system ? "green" : "red",
+                                  marginRight: 1,
+                                }}
+                              />
+                              <Typography>
+                                {card.system ? "auto" : "manual"}
+                              </Typography>
+                            </Box>
+                          )}
+                          <Button
+                            variant="contained"
+                            sx={{
+                              fontSize: "13px",
+                              marginTop: "10px",
+                              color: "white",
+                              backgroundColor: "green",
+                            }}
+                            onClick={() => handleBookNow(card.carId)}
+                          >
+                            Book Now
+                          </Button>
+                        </Box>
+                      </Box>
+                      <CardContent>
+                        <Typography
+                          gutterBottom
+                          variant="h5"
+                          component="div"
+                          sx={{ fontWeight: "bold", fontSize: "17px" }}
+                        >
+                          {card.title}
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          color="text.secondary"
+                          sx={{ fontWeight: "bold" }}
+                        >
+                          {card.subtitle}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))
+              )}
+            </>
+          )}
         </div>
       </div>
       <footer>

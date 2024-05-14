@@ -20,7 +20,7 @@ const Info = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/cars/getCars/admin"
+        "http://localhost:8000/car/getCars/admin"
       );
       setCarsData(response.data);
     } catch (error) {
@@ -129,7 +129,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate();
 
   const handleRentClick = () => {
-    navigate(`/ConfirmBooking/${carId}`); // Fixed the navigate function call
+    navigate(`/ConfirmBooking/${carId}`); 
   };
 
   return (

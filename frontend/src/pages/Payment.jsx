@@ -1,8 +1,6 @@
-
-import React, { useState } from "react";
-import Navigation from "../components/Navigation";
-import Footer from "../components/Footer";
-
+// Import necessary dependencies
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -262,7 +260,6 @@ function Payment() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Footer />
     </>
   );
 }

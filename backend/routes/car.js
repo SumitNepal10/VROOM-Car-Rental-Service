@@ -245,16 +245,73 @@ carRouter.post("/updateCarStatus/:carId", async (req, res) => {
       return res.status(404).json({ success: false, message: "Car not found" });
     }
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Car status updated successfully",
-        car: updatedCar,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Car status updated successfully",
+      car: updatedCar,
+    });
   } catch (error) {
     console.error("Error updating car status:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+// router to get the total number of Car
+carRouter.get("/totalCar", async (req, res) => {
+  try {
+    const totalCar = await Car.collection.countDocuments();
+    if (totalCar === 0) {
+      return res.json(0);
+    }
+
+    res.json(totalCar);
+  } catch (error) {
+    console.error("Error fetching Car:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// router to get the toal available cars
+carRouter.get("/availableCar", async (req, res) => {
+  try {
+    const availabelCar = await Car.collection.countDocuments({
+      status: "Rented",
+    });
+    if (availabelCar === 0) {
+      return res.json(0);
+    }
+
+    res.json(availabelCar);
+  } catch (error) {
+    console.error("Error  Total Car:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Route to get cars for a user
+carRouter.get("/availableCars/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    const cars = await Car.find({ user: username, status: "available" });
+
+    const carsData = cars.map((car) => ({
+      carId: car.carId,
+      modelName: car.modelName,
+      price: car.price,
+      seats: car.seats,
+      system: car.system,
+      haveAc: car.haveAc,
+      status: car.status,
+      picture: {
+        data: car.picture.data.toString("base64"),
+        contentType: car.picture.contentType,
+      },
+    }));
+
+    res.json(carsData);
+  } catch (error) {
+    console.error("Error fetching cars:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

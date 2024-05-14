@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
-
-import Footer from "../components/Footer";
-import { useParams } from "react-router-dom";
-
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Card,
   CardMedia,
@@ -27,7 +24,9 @@ import SettingsIcon from "@mui/icons-material/Settings";
 
 function ConfirmBooking() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { carId } = useParams();
+  const bookingDetails = location.state ? location.state.bookingDetails : null;
 
   const [renterInfo, setRenterInfo] = useState({
     fullName: "",
@@ -44,6 +43,20 @@ function ConfirmBooking() {
     paymentNumber: null,
     driverLicense: null,
   });
+
+  useEffect(() => {
+    if (bookingDetails) {
+      const { pickupLocation, dropOffLocation, pickupDate, dropOffDate } =
+        bookingDetails;
+      setRenterInfo((prevInfo) => ({
+        ...prevInfo,
+        pickupLocation,
+        dropOffLocation,
+        pickupDate,
+        dropOffDate,
+      }));
+    }
+  }, [bookingDetails]);
 
   const handleChange = (event) => {
     const { name, value, checked, files } = event.target;
@@ -93,7 +106,7 @@ function ConfirmBooking() {
     formData.append("paymentNumber", renterInfo.paymentNumber);
     formData.append("remarks", renterInfo.remarks);
 
-    // retrive the username from localStorgae
+    // retrieve the username from localStorage
     const user = localStorage.getItem("username");
     formData.append("userToBook", user);
 
@@ -111,12 +124,12 @@ function ConfirmBooking() {
       if (response.data.status) {
         try {
           await axios.post(
-            `http://localhost:8000/car/updateCarStatus/${carId}`,
+            `http://localhost:8000/car/updateCarStatus/${carId}`
           );
         } catch (error) {
           console.error("Error updating the car status");
         }
-        // if the user chose to pays navigate to the payment
+        // if the user chose to pay, navigate to the payment
         if (renterInfo.isPaid) {
           navigate(`/Payment/${carId}`);
         } else if (!renterInfo.isPaid) {
@@ -148,6 +161,7 @@ function ConfirmBooking() {
   useEffect(() => {
     fetchCarData();
   }, []);
+  
 
   useEffect(() => {
     const checkCarStatus = async () => {
@@ -446,32 +460,7 @@ function ConfirmBooking() {
           </Grid>
         </Grid>
       </Container>
-
-
-      {/* Dialog */}
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogContent>
-          <img
-            src={selectedCarImage}
-            alt="Selected Car"
-            style={{ width: "100px", height: "auto", marginBottom: 10 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleDialogClose}
-            style={{ backgroundColor: "red", color: "white" }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <footer>
-      <Footer />
-    </footer>
-
     </>
-     
   );
 }
 
