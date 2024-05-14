@@ -1,13 +1,37 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import { Button, CardActionArea, CardActions } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+} from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 
-function Info() {
+import { useNavigate } from "react-router-dom";
+
+const Info = () => {
+  const [carsData, setCarsData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/cars/getCars/admin"
+      );
+      setCarsData(response.data);
+    } catch (error) {
+      console.error("Error fetching cars data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="packages">
@@ -35,151 +59,96 @@ function Info() {
       <div className="main-cars">
         <h2>Top Sellers</h2>
         <p>Explore the city with our top seller cars.</p>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <CarComponent
-            title="Hyundai SUV"
-            image="/image/suv.png"
-            price="NPR 50,000/day"
-          />
-          <CarComponent
-            title="Hyundai Tucson"
-            image="/image/suv2.png"
-            price="NPR 40,000/day"
-          />
-          <CarComponent
-            title="Compact SUV Electric"
-            image="/image/suv.png"
-            price="NPR 30,000/day"
-          />
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            marginLeft: "150px",
+            gap: "10px",
+            maxWidth: "1300px",
+          }}
+        >
+          {carsData.map((car) => (
+            <CardComponent
+              key={car.id}
+              title={car.modelName}
+              image={`data:${car.picture.contentType};base64,${car.picture.data}`}
+              price={`NPR ${car.price}/day`}
+              carId={car.carId}
+              status={car.status}
+            />
+          ))}
         </div>
       </div>
 
-      <Box
-        component="section"
-        sx={{
-          position: "relative",
-          height: "220px",
-          backgroundColor: "white",
-          textAlign: "left",
-        }}
-      >
-        <div
-          className="introText"
-          style={{
-            display: "flex",
-            gap: "300px",
-            justifyContent: "normal",
-            marginTop: "50px",
-            marginLeft: "20px",
-          }}
-        >
-          <h1 style={{ fontSize: "25px", marginLeft: "100px" }}>
-            Call us for further information. Customer care is<br></br> here to
-            help you anytime.
-          </h1>
-          <p style={{ fontSize: "25px", justifyContent: "right" }}>
-            <PhoneIcon sx={{ fontSize: "50px", color: "red" }}></PhoneIcon>
-            <br></br>
-            CALL US NOW<br></br> 01-4473693<br></br>
-            <Button
-              variant="contained"
-              sx={{
-                fontSize: "13px",
-                color: "white",
-                backgroundColor: "red",
-              }}
-              type="submit"
-            >
-              CONTACT
-            </Button>
-          </p>
-        </div>
-      </Box>
+      
     </div>
   );
-}
+};
 
-const CardComponent = ({ title, image, price }) => (
-  <Card sx={{ maxWidth: 345, margin: "0 10px" }}>
-    <CardActionArea>
-      <CardMedia component="img" height="200" image={image} />
-      <CardContent>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{ textAlign: "left" }}
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          style={{ textAlign: "left" }}
-        >
-          {price}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-    <CardActions>
-      <Button
-        variant="contained"
-        sx={{
-          fontSize: "13px",
-          marginTop: "-100px",
-          color: "white",
-          marginLeft: "auto",
-          marginRight: "20px",
-          backgroundColor: "red",
-        }}
-        type="submit"
-      >
-        BUY
-      </Button>
-    </CardActions>
-  </Card>
-);
+const CardComponent = ({ title, image, price, carId, status }) => {
+  const navigate = useNavigate();
 
-const CarComponent = ({ title, image, price }) => (
-  <Card sx={{ maxWidth: 345, margin: "0 10px" }}>
-    <CardActionArea>
-      <CardMedia component="img" height="200" image={image} />
-      <CardContent>
-        <Typography
-          gutterBottom
-          variant="h5"
-          component="div"
-          style={{ textAlign: "left" }}
+  const handleRentClick = () => {
+    navigate(`/ConfirmBooking/${carId}`); // Fixed the navigate function call
+  };
+
+  return (
+    <Card sx={{ maxWidth: 345, margin: "10px" }}>
+      <CardActionArea>
+        <CardMedia component="img" height="200" image={image} />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            style={{ textAlign: "left" }}
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            style={{ textAlign: "left" }}
+          >
+            {price}
+          </Typography>
+
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              right: 10,
+              marginTop: "10px",
+              padding: "5px",
+              borderRadius: "5px",
+              backgroundColor: status === "Rented" ? "red" : "green",
+              color: "white",
+              textAlign: "center",
+            }}
+          >
+            {status === "Rented" ? "Rented" : "Available"}
+          </Box>
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        <Button
+          variant="contained"
+          sx={{
+            fontSize: "13px",
+            color: "white",
+            marginLeft: "auto",
+            backgroundColor: "red",
+          }}
+          type="button"
+          onClick={handleRentClick}
         >
-          {title}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          style={{ textAlign: "left" }}
-        >
-          {price}
-        </Typography>
-      </CardContent>
-    </CardActionArea>
-    <CardActions>
-      <Button
-        variant="contained"
-        sx={{
-          fontSize: "13px",
-          marginTop: "-100px",
-          color: "white",
-          marginLeft: "auto",
-          marginRight: "20px",
-          marginTop: "-64px",
-          backgroundColor: "red",
-        }}
-        type="submit"
-      >
-        RENT
-      </Button>
-    </CardActions>
-  </Card>
-);
+          RENT
+        </Button>
+      </CardActions>
+    </Card>
+  );
+};
 
 export default Info;
