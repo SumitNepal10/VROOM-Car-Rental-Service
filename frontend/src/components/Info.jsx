@@ -141,7 +141,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             gutterBottom
             variant="h5"
             component="div"
-            style={{ textAlign: "left" }}
+            style={{ textAlign: "left" }}git s
           >
             {title}
           </Typography>
