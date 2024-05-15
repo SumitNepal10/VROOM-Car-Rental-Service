@@ -115,7 +115,7 @@ function Dashboard() {
             image="/image/team.png"
           />
           <CardComponent
-            title="Active Rentals"
+            title="Active Rental"
             value={availableData.activeRentals}
             textColor="white"
             backgroundColor="#EDAD4F"

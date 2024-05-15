@@ -179,7 +179,8 @@ const ManageCars = () => {
                   >
                     <Button
                       variant="outlined"
-                      color="primary"
+                      sx={{ marginLeft: "120px" }}
+                      // color="primary"
                       onClick={() => handleEditCar(car)}
                     >
                       Edit
@@ -187,7 +188,7 @@ const ManageCars = () => {
 
                     <Button
                       variant="outlined"
-                      color="secondary"
+                      color="primary"
                       onClick={() => handleDeleteDialogOpen(car.carId)}
                     >
                       Delete
@@ -209,6 +210,7 @@ const ManageCars = () => {
                 <TextField
                   label="Model Name"
                   fullWidth
+                  style={{ marginTop: "20px" }}
                   value={editCarData?.modelName || ""}
                   onChange={(e) => {
                     setEditCarData({
