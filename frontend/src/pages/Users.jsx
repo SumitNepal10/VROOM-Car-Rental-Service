@@ -145,6 +145,7 @@ const Users = () => {
                           border: "none",
                           cursor: "pointer",
                         }}
+                        disabled={user.username === "Admin"}
                         onClick={() => handleDelete(user.email)}
                       >
                         Remove User

@@ -94,7 +94,6 @@ const ManageCars = () => {
       <AddCar />
       <div className="cars">
         <Grid container spacing={5} justifyContent="center" marginTop="-200px">
-
           {carsData.map((car) => (
             <Grid item key={car.carId} xs={12} sm={6} md={4}>
               <Card
@@ -124,7 +123,7 @@ const ManageCars = () => {
                 </Box>
 
                 <CardMedia
-                  sx={{ width: 300, height: 150 }}
+                  sx={{ width: 300, height: 150, margin: 2 }}
                   image={`data:${car.picture.contentType};base64,${car.picture.data}`}
                   title={car.modelName}
                 />

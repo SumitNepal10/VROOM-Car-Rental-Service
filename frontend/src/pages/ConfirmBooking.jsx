@@ -31,8 +31,14 @@ function ConfirmBooking() {
   const navigate = useNavigate();
   const location = useLocation();
   const { carId } = useParams();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogSecondOpen, setDialogSecondOpen] = useState(false);
+  const [dialogThirdOpen, setDialogThirdOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [secondDialogMessage, setSecondDialogMessage] = useState("");
+  const [thirdDialogMessage, setThirdDialogMessage] = useState("");
+  const [fileDisplayName, setFileDisplayName] = useState("");
   const bookingDetails = location.state ? location.state.bookingDetails : null;
-
   const [renterInfo, setRenterInfo] = useState({
     fullName: "",
     email: "",
@@ -48,12 +54,6 @@ function ConfirmBooking() {
     paymentNumber: null,
     driverLicense: null,
   });
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
-  const [secondDialogMessage, setSecondDialogMessage] = useState("");
-  const [thirdDialogMessage, setthirdDialogMessage] = useState("");
-  const [fileDisplayName, setFileDisplayName] = useState("");
 
   useEffect(() => {
     if (bookingDetails) {
@@ -86,14 +86,12 @@ function ConfirmBooking() {
       selectedPickupDate.setUTCHours(0, 0, 0, 0);
 
       if (selectedPickupDate < currentDate) {
-        setDialogMessage("Pickup date should be after the current date");
-        setDialogOpen(true);
+        openDialog("Pickup date should be after the current date");
         return;
       }
 
-      if (otherDateValue && selectedPickupDate > new Date(otherDateValue)) {
-        setDialogMessage("Pickup date should be before drop-off date");
-        setDialogOpen(true);
+      if (otherDateValue && selectedPickupDate < new Date(otherDateValue)) {
+        openDialog("Pickup date should be before drop-off date");
         return;
       }
     }
@@ -167,9 +165,9 @@ function ConfirmBooking() {
         }
         if (renterInfo.isPaid) {
           navigate(`/Payment/${carId}`);
-        } else if (!renterInfo.isPaid) {
-          setthirdDialogMessage("Car booked sucessfully");
-          openDialog(true);
+        } else {
+          setThirdDialogMessage("Car booked successfully");
+          setDialogThirdOpen(true);
         }
       } else {
         openDialog("Failed to book the car");
@@ -184,17 +182,27 @@ function ConfirmBooking() {
     setDialogOpen(true);
   };
 
+  const openSecondDialog = (message) => {
+    setSecondDialogMessage(message);
+    setDialogSecondOpen(true);
+  };
+
+  const openThirdDialog = (message) => {
+    setThirdDialogMessage(message);
+    setDialogThirdOpen(true);
+  };
+
   const closeDialog = () => {
     setDialogOpen(false);
   };
 
-  const closesecondDialog = () => {
-    setDialogOpen(false);
+  const closeSecondDialog = () => {
+    setDialogSecondOpen(false);
     navigate("/");
   };
 
-  const closethirdDialog = () => {
-    setDialogOpen(false);
+  const closeThirdDialog = () => {
+    setDialogThirdOpen(false);
     navigate("/UserDashboard");
   };
 
@@ -218,16 +226,14 @@ function ConfirmBooking() {
   useEffect(() => {
     const checkCarStatus = async () => {
       if (carData.length > 0 && carData[0].status === "Rented") {
-        setSecondDialogMessage(
+        openSecondDialog(
           "This car is already booked. Please select another one."
         );
-        setDialogOpen(true);
       }
     };
 
     checkCarStatus();
   }, [carData, navigate]);
-
   return (
     <>
       <Navigation />
@@ -517,7 +523,7 @@ function ConfirmBooking() {
         </Grid>
       </Container>
 
-      {/* Dialog Box */}
+      {/* Dialog Boxes */}
       <Dialog open={dialogOpen} onClose={closeDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{dialogMessage}</DialogContent>
@@ -528,23 +534,21 @@ function ConfirmBooking() {
         </DialogActions>
       </Dialog>
 
-      {/* second Dialog Box */}
-      <Dialog open={dialogOpen} onClose={closesecondDialog}>
+      <Dialog open={dialogSecondOpen} onClose={closeSecondDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{secondDialogMessage}</DialogContent>
         <DialogActions>
-          <Button onClick={closesecondDialog} color="primary">
+          <Button onClick={closeSecondDialog} color="primary">
             OK
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* third Dialog Box */}
-      <Dialog open={dialogOpen} onClose={closethirdDialog}>
+      <Dialog open={dialogThirdOpen} onClose={closeThirdDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{thirdDialogMessage}</DialogContent>
         <DialogActions>
-          <Button onClick={closethirdDialog} color="primary">
+          <Button onClick={closeThirdDialog} color="primary">
             OK
           </Button>
         </DialogActions>

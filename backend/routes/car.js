@@ -294,6 +294,10 @@ carRouter.get("/availableCars/:username", async (req, res) => {
     const { username } = req.params;
     const cars = await Car.find({ user: username, status: "available" });
 
+    if (!cars || cars.length === 0) {
+      return res.json([]);
+    }
+
     const carsData = cars.map((car) => ({
       carId: car.carId,
       modelName: car.modelName,

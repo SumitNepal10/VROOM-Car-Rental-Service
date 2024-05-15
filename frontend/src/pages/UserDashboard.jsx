@@ -18,24 +18,24 @@ function UserDashboard() {
   const fetchData = async () => {
     try {
       const username = localStorage.getItem("username");
-  
+
       // Fetch user data
       const userResponse = await axios.get(
         `http://localhost:8000/auth/getUser/${username}`
       );
       setUserData(userResponse.data);
-  
+
       // Fetch renter details
       const renterResponse = await axios.get(
         `http://localhost:8000/renter/getRenter/${username}`
       );
       let renterData = renterResponse.data;
-  
+
       // Convert object response to array with single element
       if (!Array.isArray(renterData)) {
         renterData = [renterData];
       }
-  
+
       // Fetch car details for each renter
       const carIds = renterData.map((rent) => rent.carId);
       const carResponses = await Promise.all(
@@ -44,20 +44,19 @@ function UserDashboard() {
         )
       );
       const carData = carResponses.map((response) => response.data);
-  
+
       // Combine renter and car details into a single object
       const combinedData = renterData.map((rent, index) => ({
         ...rent,
-        car: carData[index]
+        car: carData[index],
       }));
-  
+
       // Set bookings with the combined data
       setBookings(combinedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
 
   useEffect(() => {
     fetchData();
@@ -162,10 +161,6 @@ function UserDashboard() {
                     <InputLabel htmlFor="phone">Phone</InputLabel>
                     <Input id="phone" value={userData.phone} readOnly />
                   </FormControl>
-                  {/* <FormControl style={{ marginBottom: "30px" }}>
-                    <InputLabel htmlFor="address">Address</InputLabel>
-                    <Input id="address" value={userData.address} readOnly />
-                  </FormControl> */}
                 </div>
               </>
             )}
@@ -187,7 +182,11 @@ function UserDashboard() {
                             <img
                               src={`data:${booking.car.picture.contentType};base64,${booking.car.picture.data}`}
                               alt="Car"
-                              style={{ width: "400px", height: "300px" }}
+                              style={{
+                                width: "400px",
+                                height: "250px",
+                                margin: 2,
+                              }}
                             />
                           </div>
                         )}
