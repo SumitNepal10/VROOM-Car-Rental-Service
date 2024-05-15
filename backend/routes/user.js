@@ -157,10 +157,28 @@ router.get("/totalUser", async (req, res) => {
     if (totalUser === 0) {
       return res.json(0);
     }
-    
+
     res.json(totalUser);
   } catch (error) {
     console.error("Error fetching User number:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Route to delete a user
+router.delete("/deleteUser/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ status: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting User:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

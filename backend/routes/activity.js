@@ -8,8 +8,6 @@ const activityRouter = express.Router();
 activityRouter.post("/addActivity", async (req, res) => {
   try {
     const { username, activity, date } = req.body.activityData;
-    console.log(username, activity, date);
-
     const newActivity = new Activity({
       username,
       activity,

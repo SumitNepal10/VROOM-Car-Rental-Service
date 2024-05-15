@@ -56,6 +56,16 @@ const Users = () => {
     );
   });
 
+  const handleDelete = async (email) => {
+    try {
+      await axios.delete(`http://localhost:8000/auth/deleteUser/${email}`);
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting User:", error);
+    }
+  };
+
   return (
     <>
       <Navigation />
@@ -84,7 +94,7 @@ const Users = () => {
               boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
               width: "80%",
               border: "2px solid #d1d5db",
-              marginLeft:"90px"
+              marginLeft: "90px",
             }}
           >
             <TextField
@@ -107,7 +117,7 @@ const Users = () => {
                 width: "60%",
               }}
             />
-            <Table >
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ color: "#475569" }}>User ID</TableCell>
@@ -123,6 +133,23 @@ const Users = () => {
                     <TableCell>{user.username}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phone}</TableCell>
+                    <TableCell>
+                      <button
+                        style={{
+                          fontSize: "13px",
+                          color: "white",
+                          marginLeft: "auto",
+                          backgroundColor: "red",
+                          borderRadius: "10px",
+                          height: "25px",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleDelete(user.email)}
+                      >
+                        Remove User
+                      </button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
