@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -97,6 +98,7 @@ const Info = () => {
     <br />
     01-4473693
     <br />
+    <Link to="/CONTACT">
     <Button
       variant="contained"
       sx={{ fontSize: "13px", color: "white", backgroundColor: "red" }}
@@ -104,6 +106,7 @@ const Info = () => {
     >
       CONTACT
     </Button>
+    </Link>
   </p>
 </div>
 
