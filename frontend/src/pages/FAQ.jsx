@@ -60,6 +60,8 @@ const FAQPage = () => {
       
     </div>
     <Footer/>
+
+    
     </>);
 };
 
