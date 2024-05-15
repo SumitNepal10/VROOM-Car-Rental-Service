@@ -81,9 +81,10 @@ const Users = () => {
           <Paper
             sx={{
               padding: "24px",
-              boxShadow: "0px 6px 12px rgba(0, 0, 0.3, 0.3)",
-              width: "60%",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              width: "80%",
               border: "2px solid #d1d5db",
+              marginLeft:"90px"
             }}
           >
             <TextField
@@ -106,7 +107,7 @@ const Users = () => {
                 width: "60%",
               }}
             />
-            <Table>
+            <Table >
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ color: "#475569" }}>User ID</TableCell>
