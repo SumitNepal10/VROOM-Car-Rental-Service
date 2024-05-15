@@ -1,6 +1,5 @@
 import express from "express";
 import { Activity } from "../models/Activity.js";
-import Car from "../models/Car.js";
 
 const activityRouter = express.Router();
 

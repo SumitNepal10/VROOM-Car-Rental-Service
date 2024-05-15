@@ -20,25 +20,20 @@ code .
 ### Install Dependencies
 
 # Install server dependencies
-cd backend
+cd backend<br>
 npm install
 
+# Start the server<br>
+npm start
+
+# Open a new terminal<br>
 # Install client dependencies
-cd ..
-cd frontend
-npm install
+
+npm install<br>
 
 ### Start the Application
 
-# Start the server
-cd ..
-cd backend
 npm start
 
-# start the client
-
-cd ..
-cd frontend
-npm start
 
 This will open your broweser and run the Car Rental Application

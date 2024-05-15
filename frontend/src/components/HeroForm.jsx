@@ -41,9 +41,18 @@ function HeroForm() {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-  };
+    const currentDate = new Date().toISOString().split("T")[0];
 
+    if (id === "pickupDate" && value < currentDate) {
+      setError("Pickup date cannot be in the past.");
+      setOpenDialog(true);
+    } else if (id === "dropOffDate" && value < formData.pickupDate) {
+      setError("Drop-off date cannot be before the pickup date.");
+      setOpenDialog(true);
+    } else {
+      setFormData({ ...formData, [id]: value });
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     for (const key in formData) {
@@ -189,7 +198,7 @@ function HeroForm() {
 
       {/* Error Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Empty Value</DialogTitle>
+        <DialogTitle>Error</DialogTitle>
         <DialogContent>{error}</DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>OK</Button>
