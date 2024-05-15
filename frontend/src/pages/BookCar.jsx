@@ -33,6 +33,7 @@ function BookCar() {
       const response = await axios.get(
         `http://localhost:8000/car/availableCars/admin`
       );
+      console.log(response.data);
       if (response.status !== 200) {
         navigate("/");
       } else {
@@ -93,6 +94,7 @@ function BookCar() {
             <p>Error fetching cars data: {error.message}</p>
           ) : (
             <>
+              {console.log("carsData length:", carsData.length)}
               {carsData.length === 0 ? (
                 <Dialog open={openDialog} onClose={handleCloseDialog}>
                   <DialogTitle>No Car</DialogTitle>
@@ -114,12 +116,7 @@ function BookCar() {
                     >
                       <Box sx={{ display: "flex" }}>
                         <CardMedia
-                          sx={{
-                            width: 300,
-                            height: 170,
-                            marginLeft: "20px",
-                            marginTop: "25px",
-                          }}
+                          sx={{ width: 300, height: 170, marginLeft:"20px", marginTop:"25px" }}
                           image={`data:${card.picture.contentType};base64,${card.picture.data}`}
                           title={card.title}
                         />

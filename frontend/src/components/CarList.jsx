@@ -99,7 +99,7 @@ function CarList({ searchTerm, filterOption }) {
             </Box>
 
             <CardMedia
-              sx={{ width: "100%", height: 200 }}
+              sx={{ marginLeft: 5, width: 350, height: 200 }}
               image={`data:${car.picture.contentType};base64,${car.picture.data}`}
               title={car.modelName}
             />
