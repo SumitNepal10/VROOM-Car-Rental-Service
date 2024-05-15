@@ -7,6 +7,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [activityData, setActivityData] = useState([]);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -30,6 +31,28 @@ function Login() {
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("username", username);
           localStorage.setItem("isAdmin", isAdmin.toString());
+
+          const currentDate = new Date();
+          const date = currentDate.toISOString();
+          const activity = "User logged in to the system";
+
+          // Construct activity object
+          const newActivity = {
+            username,
+            activity,
+            date
+          };
+
+          setActivityData((prevActivityData) => [
+            ...prevActivityData,
+            newActivity,
+          ]);
+
+    
+          // Send activityData to the server
+          Axios.post("http://localhost:8000/activity/addActivity", {
+            activityData: newActivity,
+          });
 
           navigate("/");
         } else {

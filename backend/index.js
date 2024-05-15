@@ -8,6 +8,8 @@ import { UserRouter } from "./routes/user.js";
 import { carRoute } from "./routes/car.js";
 import { renterRoute } from "./routes/renter.js";
 import { paymentRoute } from "./routes/payment.js";
+import { contactRouter } from "./routes/contact.js";
+import { activityRoute } from "./routes/activity.js";
 
 dotenv.config();
 const app = express();
@@ -27,6 +29,8 @@ app.use("/auth", UserRouter);
 app.use("/car", carRoute);
 app.use("/renter", renterRoute);
 app.use("/payment", paymentRoute);
+app.use("/contact", contactRouter);
+app.use("/activity", activityRoute);
 
 // Error handling middleware
 app.use((err, res) => {

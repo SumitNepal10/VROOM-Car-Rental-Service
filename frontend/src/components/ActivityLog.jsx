@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -10,7 +10,16 @@ import {
   TableRow,
 } from "@mui/material";
 
-const ActivityLog = ({ activities }) => {
+const ActivityLog = () => {
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/activity/getActivity")
+      .then((response) => response.json())
+      .then((data) => setActivities(data))
+      .catch((error) => console.error("Error fetching activities:", error));
+  }, []);
+
   return (
     <Paper
       elevation={10}
@@ -20,7 +29,7 @@ const ActivityLog = ({ activities }) => {
         padding: 20,
         paddingBottom: 40,
         marginLeft: "250px",
-        marginTop: "-700px",
+        marginTop: "-800px",
         borderRadius: "15px",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
         boxSizing: "border-box",
@@ -41,26 +50,17 @@ const ActivityLog = ({ activities }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities &&
-              activities.map((activity, index) => (
-                <TableRow key={index}>
-                  <TableCell>{activity.username}</TableCell>
-                  <TableCell>
-                    {activity.activity_type === "login"
-                      ? "Logged in to the system"
-                      : activity.activity_type === "logout"
-                      ? "Logged out of the system"
-                      : activity.activity_type === "rented"
-                      ? "Rented a vehicle"
-                      : ""}
-                  </TableCell>
-                  <TableCell>
-                    {activity.date && typeof activity.date === "string"
-                      ? activity.date
-                      : ""}
-                  </TableCell>
-                </TableRow>
-              ))}
+            {activities.map((activity, index) => (
+              <TableRow key={index}>
+                <TableCell>{activity.username}</TableCell>
+                <TableCell>{activity.activity}</TableCell>
+                <TableCell>
+                  {activity.date && typeof activity.date === "string"
+                    ? activity.date
+                    : ""}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -68,10 +68,4 @@ const ActivityLog = ({ activities }) => {
   );
 };
 
-// Sample data
-const activities = [
-  { username: "user1", activity_type: "login", date: "2024-05-10T08:00:00Z" },
-  { username: "user2", activity_type: "logout", date: "2024-05-10T17:00:00Z" },
-];
-
-export default () => <ActivityLog activities={activities} />;
+export default ActivityLog;
