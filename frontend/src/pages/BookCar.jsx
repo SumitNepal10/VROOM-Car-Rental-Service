@@ -111,7 +111,7 @@ function BookCar() {
                     >
                       <Box sx={{ display: "flex" }}>
                         <CardMedia
-                          sx={{ width: 300, height: 170 }}
+                          sx={{ width: 300, height: 170, marginLeft:"20px", marginTop:"25px" }}
                           image={`data:${card.picture.contentType};base64,${card.picture.data}`}
                           title={card.title}
                         />
@@ -123,7 +123,7 @@ function BookCar() {
                             marginLeft: "40px",
                           }}
                         >
-                          <Typography variant="h2">Car Features</Typography>
+                          <Typography variant="h6">Car Features</Typography>
                           <br />
                           <Box display="flex" alignItems="center">
                             <AcUnitIcon

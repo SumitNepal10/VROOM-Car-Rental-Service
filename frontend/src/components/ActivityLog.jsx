@@ -39,11 +39,12 @@ const ActivityLog = () => {
         width: "70%",
         padding: 20,
         paddingBottom: 40,
-        marginLeft: "250px",
-        marginTop: "-800px",
+        marginLeft: "230px",
+        marginTop: "-750px",
         borderRadius: "15px",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
         boxSizing: "border-box",
+        
       }}
     >
       <Typography style={{ paddingLeft: 10, color: "#021F3A" }} variant="h6">
@@ -54,8 +55,10 @@ const ActivityLog = () => {
       {error && <Typography variant="body1" color="error">{error}</Typography>}
 
       {/* Activity log table */}
-      <TableContainer style={{ marginTop: 10 }}>
-        <Table>
+      <TableContainer
+        style={{ marginTop: 10, maxHeight: "400px", overflowY: "auto" }}
+      >
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Username</TableCell>
