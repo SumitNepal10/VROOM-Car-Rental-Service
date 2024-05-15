@@ -61,7 +61,7 @@ router.post("/forgot", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.KEY, {
-      expiresIn: "5m",
+      expiresIn: "30m",
     });
 
     var transporter = nodemailer.createTransport({

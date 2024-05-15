@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Box, Button } from "@mui/material";
+import { TextField, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +7,13 @@ import { useNavigate } from "react-router-dom";
 function Forgot() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate("/login");
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,8 +25,7 @@ function Forgot() {
     Axios.post("http://localhost:8000/auth/forgot", { email })
       .then((response) => {
         if (response.data.status) {
-          alert("Check your email for the reset password link");
-          navigate("/login");
+          setOpenDialog(true);
         }
       })
       .catch((err) => {
@@ -90,6 +95,19 @@ function Forgot() {
           </p>
         </div>
       </form>
+      
+      {/* Dialog box */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Success!</DialogTitle>
+        <DialogContent>
+          Check your email for the reset password link.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

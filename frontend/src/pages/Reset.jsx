@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Box, Button } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import Axios from "axios";
 
@@ -7,6 +15,7 @@ function Reset() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [openDialog, setOpenDialog] = useState(false); 
   const { token } = useParams();
 
   const navigate = useNavigate();
@@ -21,8 +30,7 @@ function Reset() {
     Axios.post(`http://localhost:8000/auth/reset/${token}`, { password })
       .then((response) => {
         if (response.data.status) {
-          alert("Password Changed Sucessfully");
-          navigate("/login");
+          setOpenDialog(true); 
         } else {
           setError("Failed to reset password. Please try again later.");
         }
@@ -31,6 +39,11 @@ function Reset() {
         setError("An error occurred. Please try again later.");
         console.error(err);
       });
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false); 
+    navigate("/login"); 
   };
 
   return (
@@ -86,6 +99,18 @@ function Reset() {
           </form>
         </div>
       </div>
+      {/* Dialog Box */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Password Changed Successfully</DialogTitle>
+        <DialogContent>
+          <p>Your password has been changed successfully.</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary" autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

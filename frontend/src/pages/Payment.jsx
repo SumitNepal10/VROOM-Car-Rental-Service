@@ -1,5 +1,4 @@
-// Import necessary dependencies
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Container,
@@ -15,7 +14,6 @@ import {
 import axios from "axios";
 
 function Payment() {
-  // State variables
   const { carId } = useParams();
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -25,8 +23,12 @@ function Payment() {
   const [paymentNumber, setPaymentNumber] = useState("");
   const [mode, setMode] = useState("");
   const [username, setUsername] = useState("");
+  const [paymentSuccessDialogOpen, setPaymentSuccessDialogOpen] =
+    useState(false);
+  const [paymentFailureDialogOpen, setPaymentFailureDialogOpen] =
+    useState(false);
+  const [fillDetailsDialogOpen, setFillDetailsDialogOpen] = useState(false);
 
-  // Function to get current date in the required format
   const getCurrentDate = () => {
     const date = new Date();
     return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -34,21 +36,24 @@ function Payment() {
       .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
   };
 
-  // Function to handle opening the dialog
-  const handleDialogOpen = (carImage) => {
+  const handleDialogOpen = (carImage, selectedMode) => {
     setSelectedCarImage(carImage);
+    setMode(selectedMode);
     setDialogOpen(true);
   };
 
-  // Function to handle closing the dialog
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
 
-  // Function to handle payment
   const handlePay = async () => {
-    if (amount === "" || remarks === "" || paymentNumber === "") {
-      alert("Please fill all the details.");
+    if (
+      amount === "" ||
+      remarks === "" ||
+      paymentNumber === "" ||
+      username === ""
+    ) {
+      setFillDetailsDialogOpen(true);
       return;
     }
 
@@ -73,128 +78,21 @@ function Payment() {
       );
 
       if (response.data.status) {
-        alert("Payment successful");
+        setPaymentSuccessDialogOpen(true);
         navigate(`/UserDashboard`);
-        setDialogOpen(false);
       } else {
-        alert("Payment failed. Please try again.");
+        setPaymentFailureDialogOpen(true);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again later.");
+      setPaymentFailureDialogOpen(true);
+    } finally {
+      handleDialogClose();
     }
   };
 
   return (
     <>
-      <Container maxWidth="lg" style={{ paddingTop: 20, paddingBottom: 20 }}>
-        <Typography
-          style={{
-            color: "#000433",
-            fontSize: "25px",
-            fontWeight: "bold",
-          }}
-        >
-          Select Payment Mode
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={2}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              boxShadow={2}
-              borderRadius={4}
-              border="0.5px solid #ccc"
-              p={2}
-              marginTop={3}
-              width={120}
-              height={120}
-              onClick={() => {
-                setMode("Esewa");
-                handleDialogOpen("../image/esewa.png");
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src="../image/esewa.png"
-                alt="Esewa"
-                style={{
-                  width: "100px",
-                  height: "auto",
-                  marginTop: "25px",
-                }}
-              />
-              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
-                ESEWA
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={2}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              boxShadow={2}
-              borderRadius={4}
-              border="0.5px solid #ccc"
-              p={2}
-              width={120}
-              marginTop={3}
-              height={120}
-              onClick={() => {
-                setMode("khalti");
-                handleDialogOpen("../image/khalti.png");
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src="../image/khalti.png"
-                alt="Khalti"
-                style={{
-                  width: "100px",
-                  height: "auto",
-                  marginTop: "25px",
-                }}
-              />
-              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
-                KHALTI
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={4}>
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              boxShadow={2}
-              borderRadius={4}
-              border="0.5px solid #ccc"
-              p={2}
-              marginTop={3}
-              width={120}
-              height={120}
-              onClick={() => {
-                setMode("Ebanking");
-                handleDialogOpen("../image/e-bank.jpg");
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              <img
-                src="../image/e-bank.jpg"
-                alt="E-Banking"
-                style={{
-                  width: "100px",
-                  height: "auto",
-                  marginTop: "10px",
-                }}
-              />
-              <Typography variant="subtitle2">EBANKING</Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
-
       {/* Payment Dialog */}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
@@ -260,6 +158,155 @@ function Payment() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Payment Success Dialog */}
+      <Dialog
+        open={paymentSuccessDialogOpen}
+        onClose={() => setPaymentSuccessDialogOpen(false)}
+      >
+        <DialogContent>
+          <Typography variant="h6">Payment successful</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setPaymentSuccessDialogOpen(false);
+              navigate(`/UserDashboard`);
+            }}
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Payment Failure Dialog */}
+      <Dialog
+        open={paymentFailureDialogOpen}
+        onClose={() => setPaymentFailureDialogOpen(false)}
+      >
+        <DialogContent>
+          <Typography variant="h6">
+            Payment failed. Please try again.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPaymentFailureDialogOpen(false)}>OK</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Fill Details Dialog */}
+      <Dialog
+        open={fillDetailsDialogOpen}
+        onClose={() => setFillDetailsDialogOpen(false)}
+      >
+        <DialogContent>
+          <Typography variant="h6">Please fill in all the details.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFillDetailsDialogOpen(false)}>OK</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Container maxWidth="lg" style={{ paddingTop: 20, paddingBottom: 20 }}>
+        <Typography
+          style={{
+            color: "#000433",
+            fontSize: "25px",
+            fontWeight: "bold",
+          }}
+        >
+          Select Payment Mode
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={2}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              marginTop={3}
+              width={120}
+              height={120}
+              onClick={() => handleDialogOpen("../image/esewa.png", "Esewa")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/esewa.png"
+                alt="Esewa"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "25px",
+                }}
+              />
+              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
+                ESEWA
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              width={120}
+              marginTop={3}
+              height={120}
+              onClick={() => handleDialogOpen("../image/khalti.png", "Khalti")}
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/khalti.png"
+                alt="Khalti"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "25px",
+                }}
+              />
+              <Typography variant="subtitle2" style={{ marginTop: "10px" }}>
+                KHALTI
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              boxShadow={2}
+              borderRadius={4}
+              border="0.5px solid #ccc"
+              p={2}
+              marginTop={3}
+              width={120}
+              height={120}
+              onClick={() =>
+                handleDialogOpen("../image/e-bank.jpg", "Ebanking")
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <img
+                src="../image/e-bank.jpg"
+                alt="E-Banking"
+                style={{
+                  width: "100px",
+                  height: "auto",
+                  marginTop: "10px",
+                }}
+              />
+              <Typography variant="subtitle2">EBANKING</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
     </>
   );
 }

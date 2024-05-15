@@ -12,12 +12,23 @@ import {
 
 const ActivityLog = () => {
   const [activities, setActivities] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/activity/getActivity")
-      .then((response) => response.json())
-      .then((data) => setActivities(data))
-      .catch((error) => console.error("Error fetching activities:", error));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch activities");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setActivities(data);
+        setError(null); 
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   }, []);
 
   return (
@@ -38,6 +49,9 @@ const ActivityLog = () => {
       <Typography style={{ paddingLeft: 10, color: "#021F3A" }} variant="h6">
         Activity log
       </Typography>
+
+      {/* Display error message if there's an error */}
+      {error && <Typography variant="body1" color="error">{error}</Typography>}
 
       {/* Activity log table */}
       <TableContainer style={{ marginTop: 10 }}>

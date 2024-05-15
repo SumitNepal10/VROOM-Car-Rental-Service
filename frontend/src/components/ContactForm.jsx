@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +14,9 @@ const ContactForm = () => {
     phone: "",
     message: "",
   });
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogStatus, setDialogStatus] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +24,19 @@ const ContactForm = () => {
       ...prevFormData,
       [name]: value,
     }));
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    if (dialogStatus === "success") {
+      setFormData({
+        category: "",
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -30,9 +51,13 @@ const ContactForm = () => {
       })
       .then((response) => {
         if (response.data.status) {
-          alert("mail Sent to user");
+          setDialogMessage("Mail sent to user");
+          setDialogStatus("success");
+          setDialogOpen(true);
         } else {
-          alert("please try agian");
+          setDialogMessage("Please try again");
+          setDialogStatus("error");
+          setDialogOpen(true);
         }
       });
   };
@@ -164,6 +189,32 @@ const ContactForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialog Box for Success or Error Message */}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        PaperProps={{
+          style: {
+            minHeight: "200px",
+            minWidth: "300px",
+            borderRadius: "20px",
+            backgroundColor: "#fff",
+          },
+        }}
+      >
+        <DialogTitle>
+          {dialogStatus === "success" ? "Success" : "Error"}
+        </DialogTitle>
+        <DialogContent>
+          <p>{dialogMessage}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button className="accept" onClick={handleCloseDialog}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

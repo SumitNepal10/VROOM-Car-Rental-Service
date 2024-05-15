@@ -16,6 +16,10 @@ import {
   Container,
   IconButton,
   Radio,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
 import axios from "axios";
@@ -45,6 +49,12 @@ function ConfirmBooking() {
     driverLicense: null,
   });
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [secondDialogMessage, setSecondDialogMessage] = useState("");
+  const [thirdDialogMessage, setthirdDialogMessage] = useState("");
+  const [fileDisplayName, setFileDisplayName] = useState("");
+
   useEffect(() => {
     if (bookingDetails) {
       const { pickupLocation, dropOffLocation, pickupDate, dropOffDate } =
@@ -61,6 +71,33 @@ function ConfirmBooking() {
 
   const handleChange = (event) => {
     const { name, value, checked, files } = event.target;
+
+    if (name === "pickupDate" || name === "dropOffDate") {
+      const otherDateName =
+        name === "pickupDate" ? "dropOffDate" : "pickupDate";
+      const otherDateValue = renterInfo[otherDateName];
+
+      // Convert current date to UTC
+      const currentDate = new Date();
+      currentDate.setUTCHours(0, 0, 0, 0);
+
+      // Convert selected pickup date to UTC
+      const selectedPickupDate = new Date(value);
+      selectedPickupDate.setUTCHours(0, 0, 0, 0);
+
+      if (selectedPickupDate < currentDate) {
+        setDialogMessage("Pickup date should be after the current date");
+        setDialogOpen(true);
+        return;
+      }
+
+      if (otherDateValue && selectedPickupDate > new Date(otherDateValue)) {
+        setDialogMessage("Pickup date should be before drop-off date");
+        setDialogOpen(true);
+        return;
+      }
+    }
+
     setRenterInfo((prevInfo) => ({
       ...prevInfo,
       [name]:
@@ -80,18 +117,17 @@ function ConfirmBooking() {
       ...prevInfo,
       driverLicense: file,
     }));
+    setFileDisplayName(file ? file.name : "");
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // check if the user had agreed to terms or not
     if (!renterInfo.agreeToTerms) {
-      alert("Please accept the terms and conditions");
+      openDialog("Please accept the terms and conditions");
       return;
     }
 
-    // Construct form data
     const formData = new FormData();
     formData.append("fullName", renterInfo.fullName);
     formData.append("email", renterInfo.email);
@@ -107,7 +143,6 @@ function ConfirmBooking() {
     formData.append("paymentNumber", renterInfo.paymentNumber);
     formData.append("remarks", renterInfo.remarks);
 
-    // retrieve the username from localStorage
     const user = localStorage.getItem("username");
     formData.append("userToBook", user);
 
@@ -130,22 +165,39 @@ function ConfirmBooking() {
         } catch (error) {
           console.error("Error updating the car status");
         }
-        // if the user chose to pay, navigate to the payment
         if (renterInfo.isPaid) {
           navigate(`/Payment/${carId}`);
         } else if (!renterInfo.isPaid) {
-          alert("Car has been booked successfully");
-          navigate(`/UserDashboard`);
+          setthirdDialogMessage("Car booked sucessfully");
+          openDialog(true);
         }
       } else {
-        alert("Failed to book the car");
+        openDialog("Failed to book the car");
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  // Fetch the car details
+  const openDialog = (message) => {
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const closesecondDialog = () => {
+    setDialogOpen(false);
+    navigate("/");
+  };
+
+  const closethirdDialog = () => {
+    setDialogOpen(false);
+    navigate("/UserDashboard");
+  };
+
   const [carData, setCarData] = useState([]);
 
   const fetchCarData = async () => {
@@ -166,8 +218,10 @@ function ConfirmBooking() {
   useEffect(() => {
     const checkCarStatus = async () => {
       if (carData.length > 0 && carData[0].status === "Rented") {
-        alert("This car is already booked. Please select another one.");
-        navigate("/");
+        setSecondDialogMessage(
+          "This car is already booked. Please select another one."
+        );
+        setDialogOpen(true);
       }
     };
 
@@ -245,6 +299,7 @@ function ConfirmBooking() {
                     margin="normal"
                   />
                   <br />
+
                   <Typography>Pickup Date</Typography>
                   <TextField
                     fullWidth
@@ -256,7 +311,6 @@ function ConfirmBooking() {
                     required
                     margin="normal"
                   />
-                  <br />
                   <Typography>Drop-off Date</Typography>
                   <TextField
                     fullWidth
@@ -268,7 +322,6 @@ function ConfirmBooking() {
                     required
                     margin="normal"
                   />
-                  <br />
                   <Typography>Upload your driver's license</Typography>
                   <Box
                     display="flex"
@@ -300,7 +353,7 @@ function ConfirmBooking() {
                         <UploadFile />
                       </IconButton>
                       <Typography variant="body1" align="center">
-                        Choose your file here
+                        {fileDisplayName || "Choose your file here"}
                       </Typography>
                     </label>
                   </Box>
@@ -421,6 +474,7 @@ function ConfirmBooking() {
               <Grid item xs={12}>
                 <Card variant="standard">
                   <CardContent>
+                    {/* Terms and Conditions content */}
                     <Typography variant="h5" gutterBottom>
                       Terms and Conditions
                     </Typography>
@@ -462,6 +516,39 @@ function ConfirmBooking() {
           </Grid>
         </Grid>
       </Container>
+
+      {/* Dialog Box */}
+      <Dialog open={dialogOpen} onClose={closeDialog}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{dialogMessage}</DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* second Dialog Box */}
+      <Dialog open={dialogOpen} onClose={closesecondDialog}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{secondDialogMessage}</DialogContent>
+        <DialogActions>
+          <Button onClick={closesecondDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* third Dialog Box */}
+      <Dialog open={dialogOpen} onClose={closethirdDialog}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{thirdDialogMessage}</DialogContent>
+        <DialogActions>
+          <Button onClick={closethirdDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

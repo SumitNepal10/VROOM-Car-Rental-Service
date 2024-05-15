@@ -12,6 +12,8 @@ import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogStatus, setDialogStatus] = useState(""); 
   const [nextCarId, setNextCarId] = useState(1);
   const userName = "admin";
 
@@ -64,14 +66,19 @@ function AddCar() {
       );
 
       if (response.data.status) {
-        alert("Car has been added successfully");
-        handleClose();
+        setDialogMessage("Car has been added successfully");
+        setDialogStatus("success");
+        setOpen(true);
       } else {
-        alert("Failed to add car. Please try again.");
+        setDialogMessage("Failed to add car. Please try again.");
+        setDialogStatus("error");
+        setOpen(true);
       }
     } catch (error) {
       console.error("Error adding car:", error);
-      alert("Failed to add car. Please try again.");
+      setDialogMessage("Failed to add car. Please try again.");
+      setDialogStatus("error");
+      setOpen(true);
     }
   };
 
@@ -196,6 +203,21 @@ function AddCar() {
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit">Add</Button>
+          </DialogActions>
+        </Dialog>
+        {/* Dialog Box for Success or Error Message */}
+        <Dialog
+          open={dialogStatus === "success" || dialogStatus === "error"}
+          onClose={handleClose}
+        >
+          <DialogTitle>
+            {dialogStatus === "success" ? "Success" : "Error"}
+          </DialogTitle>
+          <DialogContent>
+            <p>{dialogMessage}</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>OK</Button>
           </DialogActions>
         </Dialog>
       </React.Fragment>
