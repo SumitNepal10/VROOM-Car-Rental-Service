@@ -14,7 +14,10 @@ import BookCar from "./pages/BookCar";
 import ConfirmBooking from "./pages/ConfirmBooking";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
-
+import FAQ from "./pages/FAQ";
+import CONTACT from "./pages/Contact";
+import SERVICES from "./pages/Services";
+import ABOUT from "./pages/About";
 function App() {
   return (
     <>
@@ -34,6 +37,7 @@ function App() {
         <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
+        <Route path="/FAQ'S" element = {<FAQ/>}/>
       </Routes>
     </>
   );

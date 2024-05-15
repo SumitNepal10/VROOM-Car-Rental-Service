@@ -80,47 +80,35 @@ const Info = () => {
             />
           ))}
         </div>
+        <div
+  style={{
+    backgroundColor: "black", // Light color background
+    padding: "20px", // Add padding for spacing
+  }}
+>
+<h2 style={{ fontSize: "25px", color: "white" }}>
+  Call us for further information. Customer care is here to help you
+  anytime.
+</h2>
+  <p style={{ fontSize: "25px", justifyContent: "right" }}>
+    <PhoneIcon sx={{ fontSize: "50px", color: "red" }} />
+    <br />
+    CALL US NOW
+    <br />
+    01-4473693
+    <br />
+    <Button
+      variant="contained"
+      sx={{ fontSize: "13px", color: "white", backgroundColor: "red" }}
+      type="submit"
+    >
+      CONTACT
+    </Button>
+  </p>
+</div>
+
       </div>
 
-      <Box
-        component="section"
-        sx={{
-          position: "relative",
-          height: "220px",
-          backgroundColor: "white",
-          textAlign: "left",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "50px",
-            padding: "0 20px",
-          }}
-        >
-          <h1 style={{ fontSize: "25px" }}>
-            Call us for further information. Customer care is here to help you
-            anytime.
-          </h1>
-          <p style={{ fontSize: "25px", justifyContent: "right" }}>
-            <PhoneIcon sx={{ fontSize: "50px", color: "red" }} />
-            <br />
-            CALL US NOW
-            <br />
-            01-4473693
-            <br />
-            <Button
-              variant="contained"
-              sx={{ fontSize: "13px", color: "white", backgroundColor: "red" }}
-              type="submit"
-            >
-              CONTACT
-            </Button>
-          </p>
-        </div>
-      </Box>
     </div>
   );
 };
@@ -141,7 +129,7 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             gutterBottom
             variant="h5"
             component="div"
-            style={{ textAlign: "left" }}git s
+            style={{ textAlign: "left" }}git
           >
             {title}
           </Typography>

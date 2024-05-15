@@ -197,6 +197,7 @@ code {
 .footer p {
   font-size: 14px;
 }
+.footer link
 .sidebar {
   display: flex;
   flex-direction: column;
