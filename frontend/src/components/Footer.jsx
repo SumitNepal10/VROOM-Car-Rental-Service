@@ -40,9 +40,9 @@ function Footer() {
           <p style={{ fontWeight: "bold", textTransform: "uppercase", verticalAlign: "middle" }}>ISO CERTIFIED</p>
           {/* Images beneath ISO Certified */}
           <div>
-            <img src="../image/iso1.png" alt="Image 1" style={{ width: "100px", height: "100px", marginRight: "10px" }} />
-            <img src="../image/iso_2.png" alt="Image 2" style={{ width: "100px", height: "100px", marginRight: "10px" }} />
-            <img src="../image/iso_3.png" alt="Image 3" style={{ width: "100px", height: "100px" }} />
+            <img src="../image/iso1.png" alt="Image 1" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
+            <img src="../image/iso_2.png" alt="Image 2" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
+            <img src="../image/iso_3.png" alt="Image 3" style={{ width: "50px", height: "50px" }} />
           </div>
         </div>
         {/* Quick Links Section */}
