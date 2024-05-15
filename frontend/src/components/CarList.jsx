@@ -1,144 +1,165 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Grid,
-  Box,
-  Button,
   Card,
   CardContent,
   CardMedia,
   Typography,
+  Box,
   Modal,
+  Button,
 } from "@mui/material";
-import GroupsIcon from "@mui/icons-material/Groups";
-import SettingsIcon from "@mui/icons-material/Settings";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import LuggageIcon from "@mui/icons-material/Luggage";
-import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
+import {
+  Groups as GroupsIcon,
+  Settings as SettingsIcon,
+  AcUnit as AcUnitIcon,
+  LocalGasStation as LocalGasStationIcon,
+  Luggage as LuggageIcon,
+} from "@mui/icons-material";
 
-const cardsData = [
-  {
-    id: 1,
-    image: "image/home.png",
-    title: "Hyundai Tucson",
-    subtitle: "NPR 7000/day",
-    passengers: 5,
-    transmission: "Automatic",
-    airConditioning: true,
-    luggage: 4,
-    fuel: "Petrol",
-  },
-  {
-    id: 2,
-    image: "image/suv.png",
-    title: "Compact SUV Electric",
-    subtitle: "NPR 5500/day",
-    passengers: 5,
-    transmission: "Automatic",
-    airConditioning: true,
-    luggage: 4,
-    fuel: "Petrol",
-  },
-  {
-    id: 3,
-    image: "image/suv2.png",
-    title: "Compact SUV Hybrid",
-    subtitle: "NPR 5000/day",
-    passengers: 5,
-    transmission: "Automatic",
-    airConditioning: true,
-    luggage: 4,
-    fuel: "Petrol",
-  },
-  {
-    id: 4,
-    image: "image/suv2.png",
-    title: "Compact SUV Hybrid",
-    subtitle: "NPR 5000/day",
-    passengers: 5,
-    transmission: "Automatic",
-    airConditioning: true,
-    luggage: 4,
-    fuel: "Petrol",
-  },
-  // Add more card data as needed
-];
+function CarList({ searchTerm, filterOption }) {
+  const [carsData, setCarsData] = useState([]);
+  const [selectedCar, setSelectedCar] = useState(null);
 
-function CarList() {
-  const [selectedCard, setSelectedCard] = useState(null);
+  const fetchCars = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/car/getCars/admin"
+      );
+      setCarsData(response.data);
+    } catch (error) {
+      console.error("Error fetching car data:", error);
+    }
+  };
 
-  const handleCardClick = (card) => {
-    setSelectedCard(card);
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
+  // Filter cars based on search term and filter option
+  const filteredCars = carsData.filter((car) => {
+    const matchesSearchTerm =
+      searchTerm === "" ||
+      (filterOption === "Model" &&
+        car.modelName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (filterOption === "Price" && Number(car.price) === Number(searchTerm));
+
+    return matchesSearchTerm;
+  });
+
+  const handleCardClick = (car) => {
+    setSelectedCar(car);
   };
 
   const handleCloseModal = () => {
-    setSelectedCard(null);
+    setSelectedCar(null);
   };
 
   return (
-    <Grid container spacing={5} justifyContent="center" marginTop="-10px">
-      {cardsData.map((card) => (
-        <Grid item key={card.id}>
+    <Grid
+      container
+      spacing={5}
+      justifyContent="center"
+      style={{ padding: "20px" }}
+    >
+      {filteredCars.map((car) => (
+        <Grid item key={car._id} xs={12} sm={6} md={4}>
           <Card
             sx={{
-              height: "100%", // Set a fixed height for the card
+              height: "100%",
               display: "flex",
               flexDirection: "column",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              transition: "transform 0.2s",
+              "&:hover": {
+                transform: "scale(1.05)",
+              },
+              position: "relative",
+              // objectFit: "contain",
+              // objectPosition: "center",
             }}
-            onClick={() => handleCardClick(card)}
+            onClick={() => handleCardClick(car)}
           >
+            {/* Status Box */}
+            <Box
+              sx={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                padding: "5px",
+                borderRadius: "5px",
+                backgroundColor: car.status === "Rented" ? "red" : "green",
+                color: "white",
+                textAlign: "center",
+              }}
+            >
+              {car.status === "Rented" ? "Rented" : "Available"}
+            </Box>
+
             <CardMedia
-              sx={{ width: 300, height: 200 }}
-              image={card.image}
-              title={card.title}
+              sx={{ marginLeft: 5, width: 350, height: 200 }}
+              image={`data:${car.picture.contentType};base64,${car.picture.data}`}
+              title={car.modelName}
             />
-            <CardContent sx={{ flexGrow: 1 }}>
+            <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
               <Typography
-                gutterBottom
                 variant="h5"
                 component="div"
                 sx={{ fontWeight: "bold", fontSize: "17px" }}
               >
-                {card.title}
+                {car.modelName}
               </Typography>
               <Typography
                 variant="subtitle1"
                 color="text.secondary"
                 sx={{ fontWeight: "bold" }}
               >
-                {card.subtitle}
+                NPR {car.price}/day
               </Typography>
-              <br></br>
-              <Box display="flex" justifyContent="space-between">
-                <Box display="flex">
+
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                paddingY="10px"
+              >
+                <Box display="flex" alignItems="center">
                   <AcUnitIcon
                     sx={{
-                      color: card.airConditioning ? "black" : "red",
+                      color: car.haveAc ? "black" : "red",
                       marginRight: 1,
                     }}
                   />
-                  <Box marginLeft={1}>
-                    {card.airConditioning ? "Air-Conditioning" : "No AC"}
-                  </Box>
+                  <Typography variant="body2">
+                    {car.haveAc ? "Air Conditioning" : "No AC"}
+                  </Typography>
                 </Box>
-                <Box display="flex">
+                <Box display="flex" alignItems="center">
                   <GroupsIcon sx={{ color: "black", marginRight: 1 }} />
-                  <Box marginLeft={1}>{card.passengers}</Box>
+                  <Typography variant="body2">{car.seats} seats</Typography>
                 </Box>
               </Box>
               <Box display="flex" justifyContent="space-between">
-                <Box display="flex">
+                <Box display="flex" alignItems="center">
                   <SettingsIcon
-                    sx={{ color: "black", marginRight: 1 }} // Did you mean "green" instead of "gre"?
+                    sx={{
+                      color: car.system === "auto" ? "black" : "red",
+                      marginRight: 1,
+                    }}
                   />
-                  <Box marginLeft={1}>{card.transmission}</Box>
+                  <Typography variant="body2">
+                    {car.system === "auto" ? "Automatic" : "Manual"}
+                  </Typography>
                 </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
       ))}
+
       <Modal
-        open={!!selectedCard}
+        open={!!selectedCar}
         onClose={handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -157,47 +178,53 @@ function CarList() {
             p: 4,
           }}
         >
-          {selectedCard && (
+          {selectedCar && (
             <>
               <CardMedia
-                sx={{ width: 300, height: 200 }}
-                image={selectedCard.image}
-                title={selectedCard.title}
+                sx={{
+                  width: 400,
+                  height: 300,
+                  objectFit: "contain",
+                  objectPosition: "center",
+                }}
+                image={`data:${selectedCar.picture.contentType};base64,${selectedCar.picture.data}`}
+                title={selectedCar.title}
               />
               <Box display="flex" flexDirection="column">
                 <Typography variant="h5" gutterBottom>
-                  {selectedCard.title}
+                  {selectedCar.modelName}
                 </Typography>
                 <Typography variant="subtitle1" gutterBottom>
-                  {selectedCard.subtitle}
+                  NPR {selectedCar.price} /day
                 </Typography>
-                <Button
-                  variant="contained"
+
+                <Box
                   sx={{
-                    fontSize: "13px",
                     marginTop: "10px",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    backgroundColor:
+                      selectedCar.status === "Rented" ? "red" : "green",
                     color: "white",
-                    backgroundColor: "red",
-                    width: "150px",
-                    marginBottom: "20px",
+                    textAlign: "center",
                   }}
-                  type="submit"
                 >
-                  Book Now
-                </Button>
+                  {selectedCar.status === "Rented" ? "Rented" : "Available"}
+                </Box>
+
                 <Typography variant="body1" gutterBottom>
                   <AcUnitIcon
                     sx={{
-                      color: selectedCard.airConditioning ? "black" : "red",
+                      color: selectedCar.haveAc ? "black" : "red",
                       marginRight: 1,
                       fontSize: 15,
                     }}
                   />
-                  {selectedCard.airConditioning ? "Air-Conditioning" : "No AC"}
+                  {selectedCar.haveAc ? "Air Conditioning" : "No AC"}
                   <GroupsIcon
                     sx={{ marginRight: 1, marginLeft: 5, fontSize: 17 }}
                   />
-                  Passengers: {selectedCard.passengers}
+                  Passengers: {selectedCar.seats}
                   <SettingsIcon
                     sx={{
                       color: "black",
@@ -206,11 +233,13 @@ function CarList() {
                       fontSize: 15,
                     }}
                   />
-                  {selectedCard.transmission}
+                  {selectedCar.system}
                 </Typography>
 
                 <Box textAlign="center">
-                  <h style={{ fontWeight: "bold" }}>Vehicle Features</h>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Vehicle Features
+                  </Typography>
                   <Box
                     display="flex"
                     marginTop="20px"
@@ -219,7 +248,7 @@ function CarList() {
                     <Box>
                       <AcUnitIcon
                         sx={{
-                          color: selectedCard.airConditioning ? "black" : "red",
+                          color: selectedCar.haveAc ? "black" : "red",
                           fontSize: 30,
                           backgroundColor: "#D9D9D9",
                           borderRadius: "10px",
@@ -227,7 +256,7 @@ function CarList() {
                         }}
                       />
                       <Typography variant="body1">
-                        {selectedCard.airConditioning ? "AC" : "No AC"}
+                        {selectedCar.haveAc ? "AC" : "No AC"}
                       </Typography>
                     </Box>
                     <Box>
@@ -240,7 +269,7 @@ function CarList() {
                         }}
                       />
                       <Typography variant="body1">
-                        {selectedCard.passengers}
+                        {selectedCar.seats}
                       </Typography>
                     </Box>
                     <Box>
@@ -254,7 +283,7 @@ function CarList() {
                         }}
                       />
                       <Typography variant="body1">
-                        {selectedCard.transmission}
+                        {selectedCar.system}
                       </Typography>
                     </Box>
                     <Box>
@@ -268,7 +297,7 @@ function CarList() {
                         }}
                       />
                       <Typography variant="body1">
-                        {selectedCard.luggage}
+                        {selectedCar.luggage}
                       </Typography>
                     </Box>
                     <Box>
@@ -282,7 +311,7 @@ function CarList() {
                         }}
                       />
                       <Typography variant="body1">
-                        {selectedCard.fuel}
+                        {selectedCar.fuel}
                       </Typography>
                     </Box>
                   </Box>

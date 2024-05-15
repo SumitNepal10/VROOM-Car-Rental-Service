@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Tabs, Tab, Box, Button } from "@mui/material";
+import {
+  Tabs,
+  Tab,
+  Box,
+  Menu,
+  MenuItem,
+  IconButton,
+  Avatar,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+<<<<<<< HEAD
+=======
+import axios from "axios";
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
 
 const theme = createTheme({
   palette: {
@@ -12,10 +24,10 @@ const theme = createTheme({
 });
 
 function Navigation() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const { pathname } = location;
 
+<<<<<<< HEAD
   useEffect(() => {
     console.log("pathname", pathname);
   }, [pathname]);
@@ -26,6 +38,21 @@ function Navigation() {
     console.log("clicked");
     setValue(newValue);
   };
+=======
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [isAdmin, setIsAdmin] = useState(
+    localStorage.getItem("isAdmin") === "true"
+  );
+
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [activityData, setActivityData] = useState([]);
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -35,6 +62,7 @@ function Navigation() {
     { label: "Contact", path: "/contact" },
   ];
 
+<<<<<<< HEAD
   const handleLogout = () => {
     setIsLoggedIn(false);
   };
@@ -51,11 +79,77 @@ function Navigation() {
           padding: "10px",
         }}
       >
+=======
+  const adminItem =
+    isLoggedIn && isAdmin ? [{ label: "Dashboard", path: "/dashboard" }] : [];
+
+  const combinedNavItem = [...navItem, ...adminItem];
+
+  useEffect(() => {
+    const activeIdx = combinedNavItem.findIndex(
+      (item) => item.path === pathname
+    );
+    if (activeIdx !== -1) {
+      setSelectedTab(activeIdx);
+    }
+  }, [pathname, combinedNavItem]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("isAdmin");
+    setIsLoggedIn(false);
+    setUsername("");
+    setIsAdmin(false);
+
+    const currentDate = new Date();
+    const date = currentDate.toISOString();
+    const activity = "User logged out of the system";
+
+    // Construct activity object
+    const newActivity = {
+      username,
+      activity,
+      date,
+    };
+
+    setActivityData((prevActivityData) => [...prevActivityData, newActivity]);
+
+    // Send activityData to the server
+    axios.post("http://localhost:8000/activity/addActivity", {
+      activityData: newActivity,
+    });
+  };
+
+  const handleChange = (newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <header
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        padding: "10px",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
         <Link to="/" className="logo">
-          <img className="home-logo" src="image/logo.png" alt="logo" />
+          <img className="home-logo" src="/image/logo.png" alt="logo" />
         </Link>
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ flex: 1 }}>
           <ThemeProvider theme={theme}>
+<<<<<<< HEAD
             <Tabs value={value} onChange={handleChange} textColor="primary">
               {navItems.map((item, idx) => (
                 <Link
@@ -64,6 +158,20 @@ function Navigation() {
                   style={{ color: "black", textDecoration: "none" }}
                 >
                   <Tab label={item.label} onClick={() => setValue(idx)} />
+=======
+            <Tabs
+              value={selectedTab}
+              onChange={handleChange}
+              textColor="primary"
+            >
+              {combinedNavItem.map((item, idx) => (
+                <Link
+                  to={item.path}
+                  key={`nav-item-${idx}`}
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  <Tab label={item.label} />
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
                 </Link>
               ))}
             </Tabs>
@@ -72,8 +180,32 @@ function Navigation() {
 
         {isLoggedIn ? (
           <div>
-            <img src="user-icon.png" alt="User Icon" />
-            <Button onClick={handleLogout}>Logout</Button>
+            <IconButton
+              aria-label="profile-menu"
+              aria-controls="profile-menu"
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+            >
+              <Avatar alt="Profile" />
+            </IconButton>
+            <Menu
+              id="profile-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              style={{ marginRight: "20px" }}
+            >
+              <MenuItem
+                component={Link}
+                to={isAdmin ? "/dashboard" : "/UserDashboard"}
+                onClick={handleMenuClose}
+              >
+                {isAdmin ? "Admin Dashboard" : "User Dashboard"}
+              </MenuItem>
+
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+            <span style={{ marginRight: "20px" }}>{username}</span>
           </div>
         ) : (
           <div className="header-btn">

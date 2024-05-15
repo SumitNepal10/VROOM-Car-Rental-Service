@@ -7,9 +7,14 @@ import nodemailer from "nodemailer";
 
 router.post("/signup", async (req, res) => {
   const { username, email, password, phone } = req.body;
-  const user = await User.findOne({ email });
-  if (user) {
-    return res.json({ message: "user already exist" });
+
+  // Check if a user with the same username or email already exists
+  const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ message: "Username or email already exists" });
   }
 
   const hashpassword = await bcrypt.hash(password, 10);
@@ -26,7 +31,6 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
   const user = await User.findOne({ email });
   if (!user) {
     return res.json({ message: "user is not registered" });
@@ -41,7 +45,11 @@ router.post("/login", async (req, res) => {
     expiresIn: "1h",
   });
   res.cookie("token", token, { httpOnly: true, maxAge: 360000 });
-  return res.json({ status: true, message: "login sucessfull" });
+  return res.json({
+    status: true,
+    message: "login sucessfull",
+    username: user.username,
+  });
 });
 
 router.post("/forgot", async (req, res) => {
@@ -53,44 +61,34 @@ router.post("/forgot", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.KEY, {
-      expiresIn: "5m",
+      expiresIn: "30m",
     });
 
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "nepalsumit30@gmail.com",
-        pass: "aqph vtlm crzu cclx",
+        user: process.env.email,
+        pass: process.env.password,
       },
     });
 
-    var mailOptions = {
-      from: "nepalsumit30@gmail.com",
+    const mailOptions = {
+      from: process.env.email,
       to: email,
-      subject: "Reset Password",
-      text: `Change the Password`,
-      html: `<p>Follow the following link to change the password</p>
-      <button><a href="http://localhost:3000/reset/${token}">Click Here</a></button>`,
+      subject: "Reset Your Password",
+      text: `Reset Your Password`,
+      title: "Password Reset",
+      html: `<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
+                  <h1 style="color: #333333; text-align: center;">🔑 Password Reset</h1>
+                  <p style="color: #666666; text-align: center;">You've requested to reset your password.</p>
+                  <div style="text-align: center;">
+                    <a href="http://localhost:3000/Reset/${token}" style="display: inline-block; background-color: #007bff; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Reset Password</a>
+                  </div>
+                </div>
+              </body>`,
     };
 
-    // var mailOptions = {
-    //   from: "nepalsumit30@gmail.com",
-    //   to: email,
-    //   subject: "Reset Password",
-    //   text: `Change the Password`,
-    //   html: `
-    //     <title>Password Reset</title>
-    //     <body>
-    //       <div style="text-align: center;">
-    //         <h1>Password Reset</h1>
-    //         <p>You've requested to reset your password.</p>
-    //         <p>Click the following link to reset your password:</p>
-    //         <a href="http://localhost:3000/ResetPassword/${token}">Reset Password</a>
-    //       </div>
-    //     </body>
-    //   `,
-    // };
-    
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return res.json({ message: "Error sending email" });
@@ -110,13 +108,78 @@ router.post("/reset/:token", async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.KEY);
     const id = decoded.id;
-    const hashpassword = await bcrypt.hash(password, 10)
-    await User.findByIdAndUpdate({_id: id}, {password: hashpassword})
-    return res.json({status: true, message: "Password updated"})
-
+    const hashpassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate({ _id: id }, { password: hashpassword });
+    return res.json({ status: true, message: "Password updated" });
   } catch (error) {
-    console.log(error)
-    return res.json("Invalid token")
+    console.log(error);
+    return res.json("Invalid token");
+  }
+});
+
+// Fetch all users
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.json(users);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+});
+
+// router to get user data
+router.get("/getUser/:username", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "No Data for the user" });
+    }
+
+    const userData = {
+      name: user.username,
+      email: user.email,
+      phone: user.phone,
+    };
+
+    res.json(userData);
+  } catch (error) {
+    console.error("Error fetching renter:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// router to get the total number of user
+router.get("/totalUser", async (req, res) => {
+  try {
+    const totalUser = await User.collection.countDocuments();
+    if (totalUser === 0) {
+      return res.json(0);
+    }
+
+    res.json(totalUser);
+  } catch (error) {
+    console.error("Error fetching User number:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Route to delete a user
+router.delete("/deleteUser/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ status: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting User:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

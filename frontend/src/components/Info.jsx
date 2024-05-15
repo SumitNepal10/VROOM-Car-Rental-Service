@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
+=======
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
 import {
   Box,
   Card,
@@ -21,7 +24,11 @@ const Info = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
+<<<<<<< HEAD
         "http://localhost:8000/cars/getCars/admin"
+=======
+        "http://localhost:8000/car/getCars/admin"
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
       );
       setCarsData(response.data);
     } catch (error) {
@@ -43,16 +50,19 @@ const Info = () => {
             title="Pokhara"
             image="/image/pokhara.jpg"
             price="NPR 30,000"
+            status = "Rented"
           />
           <CardComponent
             title="Nagarkot"
             image="/image/nagarkot.jpg"
             price="NPR 25,000"
+            status = "Rented"
           />
           <CardComponent
             title="Chitwan"
             image="/image/chitwan.jpg"
             price="NPR 35,000"
+            status = "Rented"
           />
         </div>
       </div>
@@ -60,6 +70,7 @@ const Info = () => {
       <div className="main-cars">
         <h2>Top Sellers</h2>
         <p>Explore the city with our top seller cars.</p>
+<<<<<<< HEAD
         <div
           style={{
             display: "flex",
@@ -80,6 +91,68 @@ const Info = () => {
               status={car.status}
             />
           ))}
+=======
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            marginLeft: "150px",
+            gap: "10px",
+            maxWidth: "1300px",
+          }}
+        >
+          {carsData.map((car) => (
+            <CardComponent
+              key={car.id}
+              title={car.modelName}
+              image={`data:${car.picture.contentType};base64,${car.picture.data}`}
+              price={`NPR ${car.price}/day`}
+              carId={car.carId}
+              status={car.status}
+            />
+          ))}
+        </div>
+      </div>
+
+      <Box
+        component="section"
+        sx={{
+          position: "relative",
+          height: "220px",
+          backgroundColor: "white",
+          textAlign: "left",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "50px",
+            padding: "0 20px",
+          }}
+        >
+          <h1 style={{ fontSize: "25px" }}>
+            Call us for further information. Customer care is here to help you
+            anytime.
+          </h1>
+          <p style={{ fontSize: "25px", justifyContent: "right" }}>
+            <PhoneIcon sx={{ fontSize: "50px", color: "red" }} />
+            <br />
+            CALL US NOW
+            <br />
+            01-4473693
+            <br />
+            <Button
+              variant="contained"
+              sx={{ fontSize: "13px", color: "white", backgroundColor: "red" }}
+              type="submit"
+            >
+              CONTACT
+            </Button>
+          </p>
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
         </div>
         <div
   style={{
@@ -120,7 +193,11 @@ const CardComponent = ({ title, image, price, carId, status }) => {
   const navigate = useNavigate();
 
   const handleRentClick = () => {
+<<<<<<< HEAD
     navigate(`/ConfirmBooking/${carId}`); // Fixed the navigate function call
+=======
+    navigate(`/ConfirmBooking/${carId}`);
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
   };
 
   return (
@@ -132,7 +209,11 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             gutterBottom
             variant="h5"
             component="div"
+<<<<<<< HEAD
             style={{ textAlign: "left" }}git
+=======
+            style={{ textAlign: "left" }}
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
           >
             {title}
           </Typography>
@@ -168,9 +249,16 @@ const CardComponent = ({ title, image, price, carId, status }) => {
             fontSize: "13px",
             color: "white",
             marginLeft: "auto",
+<<<<<<< HEAD
             backgroundColor: "red",
           }}
           type="button"
+=======
+            backgroundColor: status === "Rented" ? "red" : "green",
+          }}
+          type="button"
+          disabled={status === "Rented"}
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
           onClick={handleRentClick}
         >
           RENT

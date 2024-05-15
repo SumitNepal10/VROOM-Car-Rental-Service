@@ -8,16 +8,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
+import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogStatus, setDialogStatus] = useState(""); 
+  const [nextCarId, setNextCarId] = useState(1);
+  const userName = "admin";
+
   const [carInfo, setCarInfo] = useState({
     modelName: "",
     price: "",
     seats: "",
     system: "",
-    airConditioning: false,
+    haveAc: false,
     picture: null,
+    status: "available",
+    id: 0,
   });
 
   const handleClickOpen = () => {
@@ -26,6 +34,52 @@ function AddCar() {
 
   const handleClose = () => {
     setOpen(false);
+    window.location.reload();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const carId = nextCarId;
+    setNextCarId(nextCarId + 1);
+
+    const formData = new FormData();
+    formData.append("modelName", carInfo.modelName);
+    formData.append("price", carInfo.price);
+    formData.append("seats", carInfo.seats);
+    formData.append("system", carInfo.system);
+    formData.append("haveAc", carInfo.haveAc);
+    formData.append("picture", carInfo.picture);
+    formData.append("user", userName);
+    formData.append("carId", carId);
+    formData.append("status", carInfo.status);
+
+    try {
+      const response = await Axios.post(
+        "http://localhost:8000/car/addcar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.data.status) {
+        setDialogMessage("Car has been added successfully");
+        setDialogStatus("success");
+        setOpen(true);
+      } else {
+        setDialogMessage("Failed to add car. Please try again.");
+        setDialogStatus("error");
+        setOpen(true);
+      }
+    } catch (error) {
+      console.error("Error adding car:", error);
+      setDialogMessage("Failed to add car. Please try again.");
+      setDialogStatus("error");
+      setOpen(true);
+    }
   };
 
   const handleInputChange = (event) => {
@@ -39,7 +93,7 @@ function AddCar() {
   const handleSwitchChange = () => {
     setCarInfo({
       ...carInfo,
-      airConditioning: !carInfo.airConditioning,
+      haveAc: !carInfo.haveAc,
     });
   };
 
@@ -49,13 +103,6 @@ function AddCar() {
       ...carInfo,
       picture: file,
     });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // You can perform additional validation or submit data to backend here
-    console.log(carInfo);
-    handleClose();
   };
 
   return (
@@ -68,8 +115,9 @@ function AddCar() {
             fontSize: "15px",
             color: "white",
             backgroundColor: "red",
-            marginRight: "10px",
-            marginTop: "20px",
+            marginRight: "0px",
+            marginTop: "-470px",
+            marginLeft: "730px",
           }}
         >
           Add vehicle
@@ -133,9 +181,9 @@ function AddCar() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={carInfo.airConditioning}
+                      checked={carInfo.haveAc}
                       onChange={handleSwitchChange}
-                      name="airConditioning"
+                      name="haveAc"
                     />
                   }
                   label="Air Conditioning"
@@ -155,6 +203,21 @@ function AddCar() {
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit">Add</Button>
+          </DialogActions>
+        </Dialog>
+        {/* Dialog Box for Success or Error Message */}
+        <Dialog
+          open={dialogStatus === "success" || dialogStatus === "error"}
+          onClose={handleClose}
+        >
+          <DialogTitle>
+            {dialogStatus === "success" ? "Success" : "Error"}
+          </DialogTitle>
+          <DialogContent>
+            <p>{dialogMessage}</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>OK</Button>
           </DialogActions>
         </Dialog>
       </React.Fragment>

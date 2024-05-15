@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    category: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    message: ''
+    category: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    message: "",
   });
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogStatus, setDialogStatus] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,47 +26,79 @@ const ContactForm = () => {
     }));
   };
 
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    if (dialogStatus === "success") {
+      setFormData({
+        category: "",
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
+    axios
+      .post("http://localhost:8000/contact/sendMail", {
+        category: formData.category,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      })
+      .then((response) => {
+        if (response.data.status) {
+          setDialogMessage("Mail sent to user");
+          setDialogStatus("success");
+          setDialogOpen(true);
+        } else {
+          setDialogMessage("Please try again");
+          setDialogStatus("error");
+          setDialogOpen(true);
+        }
+      });
   };
 
-  // Inline styles that mimic the theme from the screenshot
   const formContainerStyle = {
-    backgroundColor: '#f8f9fa', // light gray background
-    padding: '40px',
-    borderRadius: '8px',
-    width: '100%', // Use 100% of the container's width to be responsive within the Bootstrap column
-    maxWidth: '600px', // Set a max-width if you want to limit how wide the form can get
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', // subtle shadow
-    marginLeft: 'auto', // Automatically adjust left margin
-    marginRight: 'auto', // Automatically adjust right margin
+    backgroundColor: "#97E7E1",
+    padding: "40px",
+    borderRadius: "8px",
+    width: "100%",
+    maxWidth: "600px",
+    boxShadow: "0 0 10px rgba(0.1, 0.1, 0.3, 0.3)",
+    marginLeft: "auto",
+    marginRight: "auto",
   };
-  
 
   const labelStyle = {
-    display: 'block',
-    color: '#495057', // dark gray color for text
-    marginBottom: '10px',
+    display: "block",
+    color: "#495057",
+    marginBottom: "10px",
   };
 
   const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ced4da', // light gray border
+    width: "100%",
+    padding: "10px",
+    marginBottom: "10px",
+    borderRadius: "5px",
+    border: "1px solid #ced4da",
   };
 
   const buttonStyle = {
-    backgroundColor: '#dc3545', // red background for the button
-    color: 'white',
-    padding: '10px 25px',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    width: '100%',
-    marginTop: '15px',
+    backgroundColor: "#0B2447",
+    color: "white",
+    padding: "10px 25px",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    width: "200px",
+    marginTop: "15px",
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "block",
   };
 
   return (
@@ -71,7 +111,7 @@ const ContactForm = () => {
               {/* Category */}
               <label style={labelStyle}>
                 Choose your category
-                <select 
+                <select
                   className="form-select"
                   style={inputStyle}
                   name="category"
@@ -80,79 +120,64 @@ const ContactForm = () => {
                   required
                 >
                   <option value="">Please select</option>
-                  <option value="billing">Billing</option>
-                  <option value="support">Support</option>
+                  <option value="billing">Booking</option>
+                  <option value="service">Service</option>
+                  <option value="support">Customer Support</option>
                   <option value="general">General Inquiry</option>
-                  {/* Add more categories as needed */}
                 </select>
               </label>
 
               {/* First Name */}
               <label style={labelStyle}>
-                First Name
-                <input 
-                  type="text" 
-                  className="form-control" 
+                Full Name
+                <input
+                  type="text"
+                  className="form-control"
                   style={inputStyle}
-                  name="firstName" 
-                  value={formData.firstName} 
-                  onChange={handleChange} 
-                  required 
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
                 />
               </label>
-
-              {/* Last Name */}
-              <label style={labelStyle}>
-                Last Name
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  style={inputStyle}
-                  name="lastName" 
-                  value={formData.lastName} 
-                  onChange={handleChange} 
-                  required 
-                />
-              </label>
-
               {/* Email */}
               <label style={labelStyle}>
                 Email
-                <input 
-                  type="email" 
-                  className="form-control" 
+                <input
+                  type="email"
+                  className="form-control"
                   style={inputStyle}
-                  name="email" 
-                  value={formData.email} 
-                  onChange={handleChange} 
-                  required 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                 />
               </label>
 
               {/* Phone */}
               <label style={labelStyle}>
                 Phone
-                <input 
-                  type="tel" 
-                  className="form-control" 
+                <input
+                  type="tel"
+                  className="form-control"
                   style={inputStyle}
-                  name="phone" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
-                  required 
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
                 />
               </label>
 
               {/* Message */}
-              <label style={labelStyle}>
+              <label height="300px" style={labelStyle}>
                 Your Message
-                <textarea 
-                  className="form-control" 
-                  style={inputStyle}
-                  name="message" 
-                  value={formData.message} 
-                  onChange={handleChange} 
-                  required 
+                <textarea
+                  className="form-control"
+                  style={{ ...inputStyle, height: "90px" }}
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                 />
               </label>
 
@@ -164,6 +189,32 @@ const ContactForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialog Box for Success or Error Message */}
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        PaperProps={{
+          style: {
+            minHeight: "200px",
+            minWidth: "300px",
+            borderRadius: "20px",
+            backgroundColor: "#fff",
+          },
+        }}
+      >
+        <DialogTitle>
+          {dialogStatus === "success" ? "Success" : "Error"}
+        </DialogTitle>
+        <DialogContent>
+          <p>{dialogMessage}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button className="accept" onClick={handleCloseDialog}>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

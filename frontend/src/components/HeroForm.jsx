@@ -1,16 +1,27 @@
-import React from "react";
-import { TextField, Button } from "@mui/material";
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 
 function HeroForm() {
+  const navigate = useNavigate();
+
   const steps = [
     "Choose your favorite car",
     "Pickup location and date",
     "Make a booking",
     "Sit back and relax",
   ];
+
   const descriptions = [
     "Select your favorite car from the endless options in our car inventory.",
     "Select your location for pick-up and drop-off to start your journey.",
@@ -18,12 +29,54 @@ function HeroForm() {
     "Your booking is confirmed! Sit back and relax until your pickup date.",
   ];
 
+  const [formData, setFormData] = useState({
+    pickupLocation: "",
+    dropOffLocation: "",
+    pickupDate: "",
+    dropOffDate: "",
+  });
+
+  const [error, setError] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    if (id === "pickupDate" && value < currentDate) {
+      setError("Pickup date cannot be in the past.");
+      setOpenDialog(true);
+    } else if (id === "dropOffDate" && value < formData.pickupDate) {
+      setError("Drop-off date cannot be before the pickup date.");
+      setOpenDialog(true);
+    } else {
+      setFormData({ ...formData, [id]: value });
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    for (const key in formData) {
+      if (formData[key] === "") {
+        setError(
+          `Please fill in the ${key.replace(/([A-Z])/g, " $1").toLowerCase()}`
+        );
+        setOpenDialog(true);
+        return;
+      }
+    }
+    navigate("/BookCar", { state: { formData } });
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <div className="form-container">
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <div className="input-box">
           <TextField
-            id="outlined-pickup-location"
+            id="pickupLocation"
             label="Pick up Location"
             type="search"
             placeholder="Search Places"
@@ -33,11 +86,13 @@ function HeroForm() {
             InputLabelProps={{
               shrink: true,
             }}
+            value={formData.pickupLocation}
+            onChange={handleChange}
           />
         </div>
         <div className="input-box">
           <TextField
-            id="outlined-dropoff-location"
+            id="dropOffLocation"
             label="Drop-off Location"
             type="search"
             placeholder="Search Places"
@@ -47,32 +102,38 @@ function HeroForm() {
             InputLabelProps={{
               shrink: true,
             }}
+            value={formData.dropOffLocation}
+            onChange={handleChange}
           />
         </div>
         <div className="input-box">
           <TextField
-            id="outlined-pickup-date"
+            id="pickupDate"
             label="Pick-up Date"
-            type="datetime-local"
+            type="date"
             variant="outlined"
             size="small"
             sx={{ width: "270px", marginRight: "20px" }}
             InputLabelProps={{
               shrink: true,
             }}
+            value={formData.pickupDate}
+            onChange={handleChange}
           />
         </div>
         <div className="input-box">
           <TextField
-            id="outlined-dropoff-date"
+            id="dropOffDate"
             label="Drop-off Date"
-            type="datetime-local"
+            type="date"
             variant="outlined"
             size="small"
             sx={{ width: "270px", marginRight: "20px" }}
             InputLabelProps={{
               shrink: true,
             }}
+            value={formData.dropOffDate}
+            onChange={handleChange}
           />
         </div>
         <br />
@@ -89,6 +150,7 @@ function HeroForm() {
           Find a Vehicle
         </Button>
       </form>
+
       <div className="step">
         <Stepper
           sx={{
@@ -133,6 +195,15 @@ function HeroForm() {
           ))}
         </Stepper>
       </div>
+
+      {/* Error Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>{error}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>OK</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

@@ -13,12 +13,18 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Moved from above
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!email.endsWith("@gmail.com")) {
+      setError("Only Gmail accounts are allowed.");
+      return;
+    }
+
     Axios.post("http://localhost:8000/auth/signup", {
       username,
       email,
@@ -131,6 +137,7 @@ function Signup() {
             >
               Sign up
             </Button>
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <p className="switch">
               Already have an account?
               <Link to="/login" className="signup-switch">

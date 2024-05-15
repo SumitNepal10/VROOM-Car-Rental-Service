@@ -8,14 +8,19 @@
     "@fontsource/roboto": "^5.0.12",
     "@mui/icons-material": "^5.15.14",
     "@mui/lab": "^5.0.0-alpha.169",
-    "@mui/material": "^5.15.14",
+    "@mui/material": "^5.15.17",
     "@mui/x-date-pickers": "^7.1.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
+    "mui": "^0.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+<<<<<<< HEAD
+=======
+    "react-icons": "^5.2.1",
+>>>>>>> 87dc5e623083ed613e14b42b8e7c2a40771aa7d4
     "react-router-dom": "^6.23.1",
     "vite": "^5.2.8",
     "web-vitals": "^2.1.4"

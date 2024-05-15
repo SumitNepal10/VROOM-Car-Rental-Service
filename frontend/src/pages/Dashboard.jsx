@@ -1,158 +1,128 @@
-import React from "react";
-import Appbar from "../components/Appbar";
-import { Card, CardContent, Button } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import React, { useState, useEffect } from "react";
+import AppBar from "../components/Appbar"; // Assuming the correct component name
+import { Card, CardContent, CardMedia } from "@mui/material";
+import Navigation from "../components/Navigation";
+import ActivityLog from "../components/ActivityLog";
+import axios from "axios";
 
-const cardData = [
-  {
-    title: "Total Cars",
-    value: 250,
-    textColor: "#192A53",
-    backgroundColor: "#D9EEF7",
-  },
-  {
-    title: "Total Registered Users",
-    value: 250,
-    textColor: "white",
-    backgroundColor: "#5DB75D",
-  },
-  {
-    title: "Active rentals",
-    value: 250,
-    textColor: "white",
-    backgroundColor: "#EDAD4F",
-  },
-];
-
-const CardComponent = ({ title, value, textColor, backgroundColor }) => (
-  <Card sx={{ width: 250, height: 100, backgroundColor, marginLeft: 2 }}>
-    <CardContent style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-      <div>
-        <h style={{ color: textColor, fontSize: "30px", fontWeight: "bold" }}>
+const CardComponent = ({ title, value, textColor, backgroundColor, image }) => (
+  <Card
+    sx={{
+      width: 250,
+      height: 100,
+      backgroundColor,
+      marginLeft: 2,
+      marginTop: -130,
+      display: "flex",
+      textAlign: "center",
+      color: textColor,
+    }}
+  >
+    <CardContent style={{ display: "flex", gap: "50px", alignItems: "center" }}>
+      <div style={{ flex: 1 }}>
+        <CardMedia
+          component="img"
+          image={image}
+          sx={{ width: "50px", height: "50px", margin: "auto" }}
+          alt={title} // Provide a descriptive alt text
+        />
+      </div>
+      <div style={{ flex: 3, marginTop: "20px", textAlign: "center" }}>
+        <h1
+          style={{ fontSize: "30px", marginTop: "-10px", fontWeight: "bold" }}
+        >
           {value}
-        </h>
-        <p style={{ color: textColor, fontSize: "17px", marginTop: "0px" }}>
-          {title}
-        </p>
+        </h1>
+        <p style={{ fontSize: "17px", marginTop: "-20px" }}>{title}</p>
       </div>
     </CardContent>
   </Card>
 );
 
-function createData(bookingId, renterName, vehicle, date, amount, status) {
-  return { bookingId, renterName, vehicle, date, amount, status };
-}
-
-const rows = [
-  createData(
-    "N12345",
-    "Harry Potter",
-    "SUV Electric",
-    "2024-03-19",
-    "NPR 4000",
-    "Paid"
-  ),
-  createData(
-    "N129",
-    "Arya Shrestha",
-    "Honda Civic",
-    "2024-04-07",
-    "NPR 6500",
-    "Pending"
-  ),
-];
-
 function Dashboard() {
+  const [userData, setUserData] = useState({});
+  const [carData, setCarData] = useState({});
+  const [availableData, setAvailableData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [userResponse, carResponse, availableResponse] =
+          await Promise.all([
+            axios.get("http://localhost:8000/auth/totalUser"),
+            axios.get("http://localhost:8000/car/totalCar"),
+            axios.get("http://localhost:8000/car/availableCar"),
+          ]);
+
+        setUserData({ totalUsers: userResponse.data });
+        setCarData({ totalCars: carResponse.data });
+        setAvailableData({ activeRentals: availableResponse.data });
+
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching data");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <>
-      <Appbar />
       <div
-        className="heading"
+        className="main-dashboard"
+        style={{ height: "700px", overflow: "hidden", marginBottom: "30px" }}
       >
-        <h style={{ marginRight: "850px" , fontSize:"20px"}}>Dashboard</h>
-      </div>
-      <div
-        className="card-main"
-        style={{
-          flex: 1,
-          display: "flex",
-          marginTop: "20px",
-        }}
-      >
-        {cardData.map((card, index) => (
+        <header>
+          <Navigation />
+        </header>
+        <AppBar />
+        <div
+          className="card-main"
+          style={{
+            flex: 1,
+            display: "flex",
+            marginTop: "80px",
+            marginLeft: "20px",
+            justifyContent: "center",
+            alignItems: "center",
+            flexWrap: "wrap", // Allow cards to wrap to next line if needed
+          }}
+        >
           <CardComponent
-            key={index}
-            title={card.title}
-            value={card.value}
-            textColor={card.textColor}
-            backgroundColor={card.backgroundColor}
+            title="Total Cars"
+            value={carData.totalCars}
+            textColor="#192A53"
+            backgroundColor="#D9EEF7"
+            image="/image/car.png"
           />
-        ))}
-      </div>
-      <div className="table">
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Booking ID</TableCell>
-                <TableCell align="right">Car Renter's Name</TableCell>
-                <TableCell align="right">Vehicle</TableCell>
-                <TableCell align="right">Date</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.bookingId}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.bookingId}
-                  </TableCell>
-                  <TableCell align="right">{row.renterName}</TableCell>
-                  <TableCell align="right">{row.vehicle}</TableCell>
-                  <TableCell align="right">{row.date}</TableCell>
-                  <TableCell align="right">{row.amount}</TableCell>
-                  <TableCell align="right">
-                    {row.status === "Pending" ? (
-                      <div
-                        style={{
-                          backgroundColor: "orange",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          color: "white",
-                          textAlign: "center",
-                        }}
-                      >
-                        Pending
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          backgroundColor: "green",
-                          padding: "5px 10px",
-                          borderRadius: "5px",
-                          color: "white",
-                          textAlign: "center",
-                        }}
-                      >
-                        Paid
-                      </div>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+          <CardComponent
+            title="Total Users"
+            value={userData.totalUsers}
+            textColor="white"
+            backgroundColor="#5DB75D"
+            image="/image/team.png"
+          />
+          <CardComponent
+            title="Active Rental"
+            value={availableData.activeRentals}
+            textColor="white"
+            backgroundColor="#EDAD4F"
+            image="/image/car-rental.png"
+          />
+        </div>
+        <ActivityLog />
       </div>
     </>
   );
