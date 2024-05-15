@@ -37,7 +37,7 @@ function App() {
         <Route path="/ConfirmBooking" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
-        <Route path="/FAQ'S" element = {<FAQ/>}/>
+        <Route path="/faqs" element = {<FAQ/>}/>
       </Routes>
     </>
   );
