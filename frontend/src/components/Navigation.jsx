@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Tabs,
   Tab,
@@ -21,6 +21,7 @@ const theme = createTheme({
 });
 
 function Navigation() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
 
@@ -48,8 +49,12 @@ function Navigation() {
 
   const adminItem =
     isLoggedIn && isAdmin ? [{ label: "Dashboard", path: "/dashboard" }] : [];
+  const userItem =
+    isLoggedIn && !isAdmin
+      ? [{ label: "User Dashboard", path: "/UserDashboard" }]
+      : [];
 
-  const combinedNavItem = [...navItem, ...adminItem];
+  const combinedNavItem = [...navItem, ...adminItem, ...userItem];
 
   useEffect(() => {
     const activeIdx = combinedNavItem.findIndex(
@@ -67,6 +72,7 @@ function Navigation() {
     setIsLoggedIn(false);
     setUsername("");
     setIsAdmin(false);
+    navigate("/")
 
     const currentDate = new Date();
     const date = currentDate.toISOString();

@@ -114,5 +114,55 @@ renterRouter.get("/getRenter/:userToBook", async (req, res) => {
   }
 });
 
+// router to update the paid status
+renterRouter.post("/updatePaidStatus/:carId", async (req, res) => {
+  const { carId } = req.params;
+
+  try {
+    // Find the renter by carId and update its status to paid
+    const updatedRenter = await Renter.findOneAndUpdate(
+      { carId: carId },
+      { $set: { isPaid: true } },
+      { new: true }
+    );
+
+    if (!updatedRenter) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Renter not found" });
+    }
+
+    res.json({
+      status: true,
+      message: "Renter status updated successfully",
+      renter: updatedRenter,
+    });
+  } catch (error) {
+    console.error("Error updating Renter payment status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+
+// Route to get payment status
+renterRouter.get("/paymentStatus/:carId", async (req, res) => {
+  const { carId } = req.params; // Corrected to carId
+  console.log(carId);
+
+  try {
+    // Check if payment exists and is paid for the given carId
+    const payment = await Renter.findOne({ carId, isPaid: true });
+
+    if (payment) {
+      // Payment exists and is paid, return true
+      return res.json({ status: true });
+    } else {
+      // Payment doesn't exist or is not paid, return false
+      return res.json({ status: false });
+    }
+  } catch (error) {
+    console.error("Error checking payment status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
 
 export { renterRouter as renterRoute };

@@ -69,6 +69,35 @@ function ConfirmBooking() {
     }
   }, [bookingDetails]);
 
+  useEffect(() => {
+    fetchCarData();
+  }, []);
+
+  const fetchCarData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/car/getCar/${carId}`
+      );
+      setCarData(response.data);
+    } catch (error) {
+      console.error("Error fetching car data:", error);
+    }
+  };
+
+  const [carData, setCarData] = useState([]);
+
+  useEffect(() => {
+    const checkCarStatus = async () => {
+      if (carData.length > 0 && carData[0].status === "Rented") {
+        openSecondDialog(
+          "This car is already booked. Please select another one."
+        );
+      }
+    };
+
+    checkCarStatus();
+  }, [carData, navigate]);
+
   const handleChange = (event) => {
     const { name, value, checked, files } = event.target;
 
@@ -126,6 +155,13 @@ function ConfirmBooking() {
       return;
     }
 
+    // Function to calculate total price based on pickup and drop-off dates
+    const amount = calculateTotalPrice(
+      renterInfo.pickupDate,
+      renterInfo.dropOffDate,
+      carData.length > 0 ? carData[0].price : 0
+    );
+
     const formData = new FormData();
     formData.append("fullName", renterInfo.fullName);
     formData.append("email", renterInfo.email);
@@ -134,10 +170,10 @@ function ConfirmBooking() {
     formData.append("dropOffLocation", renterInfo.dropOffLocation);
     formData.append("pickupDate", renterInfo.pickupDate);
     formData.append("dropOffDate", renterInfo.dropOffDate);
-    formData.append("isPaid", renterInfo.isPaid);
+    formData.append("isPaid", false);
     formData.append("driverLicense", renterInfo.driverLicense);
     formData.append("carId", carId);
-    formData.append("amount", renterInfo.Amount);
+    formData.append("amount", amount);
     formData.append("paymentNumber", renterInfo.paymentNumber);
     formData.append("remarks", renterInfo.remarks);
 
@@ -164,7 +200,7 @@ function ConfirmBooking() {
           console.error("Error updating the car status");
         }
         if (renterInfo.isPaid) {
-          navigate(`/Payment/${carId}`);
+          navigate(`/Payment/${carId}`, { state: { amount } });
         } else {
           setThirdDialogMessage("Car booked successfully");
           setDialogThirdOpen(true);
@@ -174,6 +210,30 @@ function ConfirmBooking() {
       }
     } catch (error) {
       console.error("Error:", error);
+    }
+  };
+
+  const calculateTotalPrice = (pickupDate, dropOffDate, price) => {
+    if (!pickupDate || !dropOffDate || !price) return 0;
+
+    // Parse price to a number
+    const parsedPrice = parseFloat(price);
+
+    // Convert dates to Date objects
+    const pickup = new Date(pickupDate);
+    const dropOff = new Date(dropOffDate);
+
+    // Calculate number of days
+    const diffTime = Math.abs(dropOff - pickup);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // Calculate total price
+    const totalPrice = parsedPrice * diffDays;
+
+    if (diffDays === 0) {
+      return parsedPrice;
+    } else {
+      return totalPrice || 0;
     }
   };
 
@@ -206,34 +266,6 @@ function ConfirmBooking() {
     navigate("/UserDashboard");
   };
 
-  const [carData, setCarData] = useState([]);
-
-  const fetchCarData = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8000/car/getCar/${carId}`
-      );
-      setCarData(response.data);
-    } catch (error) {
-      console.error("Error fetching car data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCarData();
-  }, []);
-
-  useEffect(() => {
-    const checkCarStatus = async () => {
-      if (carData.length > 0 && carData[0].status === "Rented") {
-        openSecondDialog(
-          "This car is already booked. Please select another one."
-        );
-      }
-    };
-
-    checkCarStatus();
-  }, [carData, navigate]);
   return (
     <>
       <Navigation />

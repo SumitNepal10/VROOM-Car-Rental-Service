@@ -9,8 +9,10 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
 import FormControl from "@mui/material/FormControl";
+import { useNavigate } from "react-router-dom";
 
 function UserDashboard() {
+  const navigate = useNavigate();
   const [displayedContent, setDisplayedContent] = useState("dashboard");
   const [userData, setUserData] = useState({});
   const [bookings, setBookings] = useState([]);
@@ -79,7 +81,12 @@ function UserDashboard() {
 
     // Calculate total price
     const totalPrice = parsedPrice * diffDays;
-    return totalPrice || 0;
+
+    if (diffDays === 0) {
+      return parsedPrice;
+    } else {
+      return totalPrice || 0;
+    }
   };
 
   const handleProfileClick = () => {
@@ -92,6 +99,19 @@ function UserDashboard() {
 
   const handleProfilePictureUpload = () => {
     // pass
+  };
+
+  const handlePayClick = (carId, pickupDate, dropOffDate, price) => {
+    const amount = calculateTotalPrice(pickupDate, dropOffDate, price);
+
+    // Ensure totalPrice is defined and greater than 0
+    if (amount <= 0 || isNaN(amount)) {
+      console.error("Invalid total price for payment");
+      return;
+    }
+
+    // Navigate to the payment page with the necessary data
+    navigate(`/Payment/${carId}`, { state: { amount } });
   };
 
   return (
@@ -211,6 +231,30 @@ function UserDashboard() {
                           </p>
                           <p>From Location: {booking.pickupLocation}</p>
                           <p>To Location: {booking.dropOffLocation}</p>
+                          <button
+                            style={{
+                              fontSize: "13px",
+                              color: "white",
+                              marginLeft: "auto",
+                              backgroundColor: "green",
+                              cursor: "pointer",
+                              border: "none",
+                              width: "100px",
+                              height: "30px",
+                              borderRadius: "20px",
+                            }}
+                            disabled={booking.isPaid === true}
+                            onClick={() =>
+                              handlePayClick(
+                                booking.carId,
+                                booking.pickupDate,
+                                booking.dropOffDate,
+                                booking.car.price
+                              )
+                            }
+                          >
+                            {booking.isPaid ? "Already Paid" : "pay now"}
+                          </button>
                         </div>
                       </div>
                     </Card>

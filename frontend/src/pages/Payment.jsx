@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Container,
   Typography,
@@ -16,6 +16,7 @@ import axios from "axios";
 function Payment() {
   const { carId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCarImage, setSelectedCarImage] = useState("");
   const [amount, setAmount] = useState("");
@@ -28,6 +29,17 @@ function Payment() {
   const [paymentFailureDialogOpen, setPaymentFailureDialogOpen] =
     useState(false);
   const [fillDetailsDialogOpen, setFillDetailsDialogOpen] = useState(false);
+  const [alreadyPaidDialogOpen, setAlreadyPaidDialogOpen] = useState(false);
+  const [sentAmount, setSentAmount] = useState(""); // State to store the sent amount
+
+  useEffect(() => {
+    fetchData();
+    // Set the sent amount when the component mounts
+    if (location.state && location.state.amount) {
+      setAmount(location.state.amount);
+      setSentAmount(location.state.amount);
+    }
+  }, []);
 
   const getCurrentDate = () => {
     const date = new Date();
@@ -46,40 +58,54 @@ function Payment() {
     setDialogOpen(false);
   };
 
-  const handlePay = async () => {
-    if (
-      amount === "" ||
-      remarks === "" ||
-      paymentNumber === "" ||
-      username === ""
-    ) {
-      setFillDetailsDialogOpen(true);
-      return;
-    }
-
+  const fetchData = async () => {
     try {
-      let paydate = getCurrentDate();
-      const response = await axios.post(
+      const paymentStatusResponse = await axios.get(
+        `http://localhost:8000/renter/paymentStatus/${carId}`
+      );
+      if (paymentStatusResponse.data.status) {
+        // Payment has already been made
+        setAlreadyPaidDialogOpen(true);
+      }
+    } catch (error) {
+      // Handle error
+      console.error("Error fetching payment status:", error);
+    }
+  };
+
+  const handlePay = async () => {
+    try {
+      // Validate input fields
+      if (!amount || !remarks || !paymentNumber || !username) {
+        setFillDetailsDialogOpen(true);
+        return;
+      }
+
+      const paydate = getCurrentDate();
+
+      const paymentResponse = await axios.post(
         `http://localhost:8000/payment/paymentDetails`,
         {
-          carId: carId,
-          remarks: remarks,
-          amount: amount,
-          paymentNumber: paymentNumber,
-          mode: mode,
-          username: username,
+          carId,
+          remarks,
+          amount,
+          paymentNumber,
+          mode,
+          username,
           paymentDate: paydate,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 
-      if (response.data.status) {
-        setPaymentSuccessDialogOpen(true);
-        navigate(`/UserDashboard`);
+      if (paymentResponse.data.status) {
+        const updatePaidStatusResponse = await axios.post(
+          `http://localhost:8000/renter/updatePaidStatus/${carId}`
+        );
+
+        if (updatePaidStatusResponse.data.status) {
+          setPaymentSuccessDialogOpen(true);
+        } else {
+          setPaymentFailureDialogOpen(true);
+        }
       } else {
         setPaymentFailureDialogOpen(true);
       }
@@ -124,10 +150,11 @@ function Payment() {
           <TextField
             fullWidth
             label="Amount"
-            value={amount}
+            value={sentAmount}
             onChange={(e) => setAmount(e.target.value)}
             margin="normal"
             variant="outlined"
+            InputProps={{ readOnly: true }}
             required
             style={{ marginBottom: 10 }}
           />
@@ -204,6 +231,29 @@ function Payment() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setFillDetailsDialogOpen(false)}>OK</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Already Paid Dialog */}
+      <Dialog
+        open={alreadyPaidDialogOpen}
+        onClose={() => setAlreadyPaidDialogOpen(false)}
+      >
+        <DialogContent>
+          <Typography variant="h6">Payment already made</Typography>
+          <Typography>
+            The payment for this car has already been made.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setAlreadyPaidDialogOpen(false);
+              navigate(`/UserDashboard`);
+            }}
+          >
+            OK
+          </Button>
         </DialogActions>
       </Dialog>
 
