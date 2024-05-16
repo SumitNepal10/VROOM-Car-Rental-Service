@@ -18,6 +18,8 @@ import UserDashboard from "./pages/UserDashboard";
 import Users from "./pages/Users";
 import PaymentRecord from "./pages/PaymentRecord";
 import Payment from "./pages/Payment";
+import FAQPage from "./pages/FAQ";
+
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
         <Route path="/Users" element={<Users />} />
         <Route path="/Payment/:carId" element={<Payment />} />
         <Route path="/PaymentRecord" element={<PaymentRecord />} />
+        <Route path="/FAQPage" element={<FAQPage />} />
       </Routes>
     </>
   );

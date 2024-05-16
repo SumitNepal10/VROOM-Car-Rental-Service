@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 import MailIcon from "@mui/icons-material/Mail";
@@ -10,6 +11,7 @@ function Footer() {
   return (
     <div className="bottom">
       <div className="footer">
+        {/* About Us Section */}
         <div className="about-us" style={{ flex: 1 }}>
           <h2>About Us</h2>
           <p>
@@ -18,38 +20,66 @@ function Footer() {
             customers and stand out in this market.
           </p>
         </div>
+        {/* Contact Info Section */}
         <div className="contact-info" style={{ flex: 1 }}>
           <h2>Contact Info</h2>
           <p>
-            <LocationOnIcon
-              sx={{ color: "red", fontSize: "20px" }}
-            ></LocationOnIcon>{" "}
-            Naxal, Kathmandu
+            <LocationOnIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
+            <span style={{ verticalAlign: "middle" }}>Naxal, Kathmandu</span>
           </p>
           <p>
             {" "}
-            <PhoneIcon sx={{ color: "red", fontSize: "20px" }}></PhoneIcon>{" "}
-            01-5672891, 9863829183
+            <PhoneIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
+            <span style={{ verticalAlign: "middle" }}>01-5672891, 9863829183</span>
           </p>
           <p>
-            <MailIcon sx={{ color: "red", fontSize: "20px" }}></MailIcon>{" "}
-            vroom@rentalcar.org
+            <MailIcon sx={{ verticalAlign: "middle", color: "green", fontSize: "20px" }} />{" "}
+            <span style={{ verticalAlign: "middle" }}>vroom@rentalcar.org</span>
           </p>
+          {/* ISO Certification Section */}
+          <p style={{ fontWeight: "bold", textTransform: "uppercase", verticalAlign: "middle" }}>ISO CERTIFIED</p>
+          {/* Images beneath ISO Certified */}
+          <div>
+            <img src="../image/iso1.png" alt="Image 1" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
+            <img src="../image/iso_2.png" alt="Image 2" style={{ width: "50px", height: "50px", marginRight: "10px" }} />
+            <img src="../image/iso_3.png" alt="Image 3" style={{ width: "50px", height: "50px" }} />
+          </div>
         </div>
+        {/* Quick Links Section */}
         <div className="quickLinks" style={{ flex: 1 }}>
           <h2>Quick Links</h2>
-          <p>About</p>
-          <p>Vehicles</p>
-          <p>Services</p>
-          <p>Contact</p>
+          <div className="quickLinks" style={{ flex: 1 }}>
+
+  <div>
+    <Link to="/ABOUT">ABOUT</Link>
+  </div>
+  <div>
+    <Link to="/VEHICLES">VEHICLES</Link>
+  </div>
+  <div>
+    <Link to="/SERVICES">SERVICES</Link>
+  </div>
+  <div>
+    <Link to="/FAQPage">FAQ'S</Link>
+  </div>
+  <div>
+    <Link to="/CONTACT">CONTACT</Link>
+  </div>
+</div>
+
         </div>
+        {/* Social Network Section */}
         <div className="social-network" style={{ flex: 1 }}>
           <h2>Social Network</h2>
-          <FacebookIcon></FacebookIcon>
-          <InstagramIcon></InstagramIcon>
-          <LinkedInIcon></LinkedInIcon>
+          {/* Social Network Icons */}
+          <FacebookIcon sx={{ verticalAlign: "middle", color: "lightblue", fontSize: "40px" }} />
+          <InstagramIcon sx={{ verticalAlign: "middle", color: "lightpink", fontSize: "40px" }} />
+          <LinkedInIcon sx={{ verticalAlign: "middle", color: "lightgreen", fontSize: "40px" }} />
+          <p style={{ fontWeight: "bold", verticalAlign: "middle", fontSize: "18px" }}>Download</p>
+          <img src="../image/appstore.png" alt="App Store" style={{ width: "120px", height: "40px" }} />
         </div>
       </div>
+      {/* Copyright Section */}
       <div className="copyright">
         <p> Copyright 2024 - VroomCarRental</p>
       </div>
