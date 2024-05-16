@@ -20,8 +20,30 @@ function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null); // Clear any previous errors
+
+    if (email === "" || username === "" || password === "" || phone === "") {
+      setError("Fill All the Details");
+      return;
+    }
+
     if (!email.endsWith("@gmail.com")) {
       setError("Only Gmail accounts are allowed.");
+      return;
+    }
+
+    if (username === "Admin") {
+      setError("Username cannot be Admin. Choose another name.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone) || !phone.startsWith("98")) {
+      setError("Phone number must be 10 digits and start with '98'.");
       return;
     }
 
@@ -38,6 +60,9 @@ function Signup() {
       })
       .catch((err) => {
         console.log(err);
+        if (err.response && err.response.status === 400) {
+          setError("Username or email already exists");
+        }
       });
   };
 

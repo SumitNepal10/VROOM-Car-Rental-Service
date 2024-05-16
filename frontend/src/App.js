@@ -1,10 +1,11 @@
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Reset from "./pages/Reset";
 import Verification from "./pages/Verification";
 import About from "./pages/About";
-import { Route, Routes } from "react-router-dom";
 import Forgot from "./pages/Forgot";
 import Vehicles from "./pages/Vehicles";
 import Dashboard from "./pages/Dashboard";
@@ -20,8 +21,18 @@ import PaymentRecord from "./pages/PaymentRecord";
 import Payment from "./pages/Payment";
 import FAQPage from "./pages/FAQ";
 
-
 function App() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const isAdminUser = localStorage.getItem("isAdmin") === "true";
+    const isLoggedInUser = localStorage.getItem("isLoggedIn") === "true";
+
+    setIsAdmin(isAdminUser);
+    setIsLoggedIn(isLoggedInUser);
+  }, []);
+
   return (
     <>
       <Routes>
@@ -33,15 +44,70 @@ function App() {
         <Route path="/reset/:token" element={<Reset />} />
         <Route path="/Vehicles" element={<Vehicles />} />
         <Route path="/About" element={<About />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/ManageCars" element={<ManageCars />} />
-        <Route path="/Bookings" element={<Bookings />} />
+        <Route
+          path="/Dashboard"
+          element={
+            isLoggedIn ? (
+              isAdmin ? (
+                <Dashboard />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/ManageCars"
+          element={
+            isLoggedIn ? (
+              isAdmin ? (
+                <ManageCars />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/Bookings"
+          element={
+            isLoggedIn ? (
+              isAdmin ? (
+                <Bookings />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
         <Route path="/BookCar" element={<BookCar />} />
         <Route path="/ConfirmBooking/:carId" element={<ConfirmBooking />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
-        <Route path="/UserDashboard" element={<UserDashboard />} />
-        <Route path="/Users" element={<Users />} />
+        <Route
+          path="/UserDashboard"
+          element={isLoggedIn ? <UserDashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/Users"
+          element={
+            isLoggedIn ? (
+              isAdmin ? (
+                <Users />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
         <Route path="/Payment/:carId" element={<Payment />} />
         <Route path="/PaymentRecord" element={<PaymentRecord />} />
         <Route path="/FAQPage" element={<FAQPage />} />

@@ -34,11 +34,12 @@ function ConfirmBooking() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogSecondOpen, setDialogSecondOpen] = useState(false);
   const [dialogThirdOpen, setDialogThirdOpen] = useState(false);
+  const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [secondDialogMessage, setSecondDialogMessage] = useState("");
   const [thirdDialogMessage, setThirdDialogMessage] = useState("");
+  const [userDialogMessage, setUserDialogMessage] = useState("");
   const [fileDisplayName, setFileDisplayName] = useState("");
-  const bookingDetails = location.state ? location.state.bookingDetails : null;
   const [renterInfo, setRenterInfo] = useState({
     fullName: "",
     email: "",
@@ -54,11 +55,12 @@ function ConfirmBooking() {
     paymentNumber: null,
     driverLicense: null,
   });
+  const [carData, setCarData] = useState([]);
 
   useEffect(() => {
-    if (bookingDetails) {
+    if (location.state && location.state.bookingDetails) {
       const { pickupLocation, dropOffLocation, pickupDate, dropOffDate } =
-        bookingDetails;
+        location.state.bookingDetails;
       setRenterInfo((prevInfo) => ({
         ...prevInfo,
         pickupLocation,
@@ -67,11 +69,9 @@ function ConfirmBooking() {
         dropOffDate,
       }));
     }
-  }, [bookingDetails]);
-
-  useEffect(() => {
     fetchCarData();
-  }, []);
+    isLoggedIn();
+  }, [location.state]);
 
   const fetchCarData = async () => {
     try {
@@ -83,20 +83,6 @@ function ConfirmBooking() {
       console.error("Error fetching car data:", error);
     }
   };
-
-  const [carData, setCarData] = useState([]);
-
-  useEffect(() => {
-    const checkCarStatus = async () => {
-      if (carData.length > 0 && carData[0].status === "Rented") {
-        openSecondDialog(
-          "This car is already booked. Please select another one."
-        );
-      }
-    };
-
-    checkCarStatus();
-  }, [carData, navigate]);
 
   const handleChange = (event) => {
     const { name, value, checked, files } = event.target;
@@ -242,25 +228,32 @@ function ConfirmBooking() {
     setDialogOpen(true);
   };
 
-  const openSecondDialog = (message) => {
-    setSecondDialogMessage(message);
-    setDialogSecondOpen(true);
-  };
-
-  const openThirdDialog = (message) => {
-    setThirdDialogMessage(message);
-    setDialogThirdOpen(true);
-  };
-
   const closeDialog = () => {
     setDialogOpen(false);
   };
 
+  const isLoggedIn = async () => {
+    const loggedUsername = localStorage.getItem("username");
+
+    if (!loggedUsername) {
+      openUserDialog("Please login to continue journey with us!!");
+    }
+  };
+
+  const openUserDialog = (message) => {
+    setUserDialogMessage(message);
+    setUserDialogOpen(true);
+  };
+
+  const closeUserDialog = () => {
+    setUserDialogOpen(false);
+    navigate("/login");
+  };
+  
   const closeSecondDialog = () => {
     setDialogSecondOpen(false);
     navigate("/");
   };
-
   const closeThirdDialog = () => {
     setDialogThirdOpen(false);
     navigate("/UserDashboard");
@@ -571,6 +564,16 @@ function ConfirmBooking() {
         <DialogContent>{secondDialogMessage}</DialogContent>
         <DialogActions>
           <Button onClick={closeSecondDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={userDialogOpen} onClose={closeUserDialog}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{userDialogMessage}</DialogContent>
+        <DialogActions>
+          <Button onClick={closeUserDialog} color="primary">
             OK
           </Button>
         </DialogActions>
