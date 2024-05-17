@@ -12,6 +12,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Box from "@mui/material/Box";
 import Axios from "axios";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 function EditCar() {
   const [open, setOpen] = useState(false);
@@ -23,6 +25,7 @@ function EditCar() {
     system: "",
     airConditioning: false,
     picture: null,
+    status: "available",
   });
 
   const handleClickOpen = () => {
@@ -66,7 +69,7 @@ function EditCar() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Axios.post("http://localhost:8000/car/editCar", {})
+    Axios.post("http://localhost:8000/car/editCar", carInfo) 
       .then((response) => {
         if (response.data.status) {
           window.location.reload();
@@ -153,6 +156,19 @@ function EditCar() {
                   value={carInfo.system}
                   onChange={handleInputChange}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <Select
+                  id="status"
+                  name="status"
+                  label="Status"
+                  value={carInfo.status}
+                  onChange={handleInputChange}
+                  fullWidth
+                >
+                  <MenuItem value="available">Available</MenuItem>
+                  <MenuItem value="rented">Rented</MenuItem>
+                </Select>
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel

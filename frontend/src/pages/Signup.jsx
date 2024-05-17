@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import Axios from "axios";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError(null); // Clear any previous errors
+    setError(null);
 
     if (email === "" || username === "" || password === "" || phone === "") {
       setError("Fill All the Details");
@@ -55,7 +56,12 @@ function Signup() {
     })
       .then((response) => {
         if (response.data.status) {
-          navigate("/login");
+          toast.success("Signup Successful!");
+
+          // Wait for 2 seconds before navigating
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
         }
       })
       .catch((err) => {
@@ -163,6 +169,7 @@ function Signup() {
               Sign up
             </Button>
             {error && <p style={{ color: "red" }}>{error}</p>}
+            <ToastContainer position="bottom-center" />
             <p className="switch">
               Already have an account?
               <Link to="/login" className="signup-switch">

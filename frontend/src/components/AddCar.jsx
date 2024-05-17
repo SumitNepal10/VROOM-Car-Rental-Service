@@ -8,12 +8,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import Axios from "axios";
 
 function AddCar() {
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
-  const [dialogStatus, setDialogStatus] = useState(""); 
+  const [dialogStatus, setDialogStatus] = useState("");
   const [nextCarId, setNextCarId] = useState(1);
   const userName = "admin";
 
@@ -105,6 +107,13 @@ function AddCar() {
     });
   };
 
+  const handleSystemChange = (event) => {
+    setCarInfo({
+      ...carInfo,
+      system: event.target.value,
+    });
+  };
+
   return (
     <div className="addcar-form">
       <React.Fragment>
@@ -167,15 +176,20 @@ function AddCar() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <Select
                   id="system"
                   name="system"
                   label="System"
-                  type="text"
                   fullWidth
                   value={carInfo.system}
-                  onChange={handleInputChange}
-                />
+                  onChange={handleSystemChange}
+                  InputLabelProps={{
+                    style: { color: "black" }, 
+                  }}
+                >
+                  <MenuItem value="Auto">Auto</MenuItem>
+                  <MenuItem value="Manual">Manual</MenuItem>
+                </Select>
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel

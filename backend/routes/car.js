@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import Car from "../models/Car.js";
 import { Counter } from "../models/Counter.js";
+import mongoose from "mongoose";
 
 const carRouter = express.Router();
 
@@ -316,6 +317,34 @@ carRouter.get("/availableCars/:username", async (req, res) => {
   } catch (error) {
     console.error("Error fetching cars:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// Update car status route
+carRouter.put("/changeStatus/:carId", async (req, res) => {
+  let { status } = req.body;
+  const { carId } = req.params;
+
+  try {
+    // Find the car by ID and update its status to "Rented"
+    const updatedCar = await Car.findOneAndUpdate(
+      { carId: carId },
+      { $set: { status: status } },
+      { new: true }
+    );
+
+    if (!updatedCar) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Car status updated successfully",
+      car: updatedCar,
+    });
+  } catch (error) {
+    console.error("Error updating car status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
 

@@ -24,6 +24,7 @@ import FAQPage from "./pages/FAQ";
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const isAdminUser = localStorage.getItem("isAdmin") === "true";
@@ -31,7 +32,13 @@ function App() {
 
     setIsAdmin(isAdminUser);
     setIsLoggedIn(isLoggedInUser);
-  }, []);
+    setIsLoading(false); 
+
+  }, []); 
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

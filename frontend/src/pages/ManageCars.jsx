@@ -15,6 +15,7 @@ import {
   TextField,
   FormControlLabel,
   Switch,
+  Alert,
 } from "@mui/material";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -29,8 +30,8 @@ const ManageCars = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editCarData, setEditCarData] = useState(null);
   const [deleteCarID, setDeleteCarID] = useState(null);
+  const [error, setError] = useState("");
 
-  // Fetch car data on component mount
   useEffect(() => {
     const fetchCars = async () => {
       try {
@@ -39,12 +40,11 @@ const ManageCars = () => {
           `http://localhost:8000/car/getCars/${username}`
         );
         setCarsData(response.data);
-        console.log(response.data);
       } catch (error) {
+        setError("Error fetching cars");
         console.error("Error fetching cars:", error);
       }
     };
-
     fetchCars();
   }, []);
 
@@ -68,6 +68,7 @@ const ManageCars = () => {
       );
       setEditDialogOpen(false);
     } catch (error) {
+      setError("Error editing car");
       console.error("Error editing car:", error);
     }
   };
@@ -80,10 +81,33 @@ const ManageCars = () => {
   const handleDeleteCar = async () => {
     try {
       await axios.delete(`http://localhost:8000/car/deleteCar/${deleteCarID}`);
-      setCarsData(carsData.filter((car) => car.carId !== deleteCarID));
+      setCarsData((prevCars) =>
+        prevCars.filter((car) => car.carId !== deleteCarID)
+      );
       setDeleteDialogOpen(false);
     } catch (error) {
+      setError("Error deleting car");
       console.error("Error deleting car:", error);
+    }
+  };
+
+  const handleStatusChange = async (carId, newStatus) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/car/changeStatus/${carId}`,
+        { status: newStatus }
+      );
+      const updatedCar = response.data;
+      window.location.reload();
+
+      setCarsData((prevCars) =>
+        prevCars.map((car) =>
+          car.carId === carId ? { ...car, status: updatedCar.status } : car
+        )
+      );
+    } catch (error) {
+      setError("Error changing status");
+      console.error("Error changing status:", error);
     }
   };
 
@@ -92,6 +116,7 @@ const ManageCars = () => {
       <Navigation />
       <Appbar />
       <AddCar />
+      {error && <Alert severity="error">{error}</Alert>}
       <div className="cars">
         <Grid container spacing={5} justifyContent="center" marginTop="-200px">
           {carsData.map((car) => (
@@ -106,7 +131,6 @@ const ManageCars = () => {
                   position: "relative",
                 }}
               >
-                {/* Status Box */}
                 <Box
                   sx={{
                     position: "absolute",
@@ -121,7 +145,6 @@ const ManageCars = () => {
                 >
                   {car.status === "Rented" ? "Rented" : "Available"}
                 </Box>
-
                 <CardMedia
                   sx={{ width: 300, height: 150, margin: 2 }}
                   image={`data:${car.picture.contentType};base64,${car.picture.data}`}
@@ -179,20 +202,42 @@ const ManageCars = () => {
                   >
                     <Button
                       variant="outlined"
-                      sx={{ marginLeft: "120px" }}
-                      // color="primary"
+                      sx={{ marginLeft: "10px", height: "30px" }}
                       onClick={() => handleEditCar(car)}
                     >
                       Edit
                     </Button>
-
                     <Button
                       variant="outlined"
+                      sx={{ height: "30px" }}
                       color="primary"
                       onClick={() => handleDeleteDialogOpen(car.carId)}
                     >
                       Delete
                     </Button>
+                    {car.status === "Rented" ? (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "green",
+                          color: "white",
+                          height: "30px",
+                        }}
+                        onClick={() =>
+                          handleStatusChange(car.carId, "Available")
+                        }
+                      >
+                        Make Available
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: "red", color: "white" }}
+                        onClick={() => handleStatusChange(car.carId, "Rented")}
+                      >
+                        Make Rented
+                      </Button>
+                    )}
                   </Box>
                 </CardContent>
               </Card>
@@ -212,12 +257,12 @@ const ManageCars = () => {
                   fullWidth
                   style={{ marginTop: "20px" }}
                   value={editCarData?.modelName || ""}
-                  onChange={(e) => {
+                  onChange={(e) =>
                     setEditCarData({
                       ...editCarData,
                       modelName: e.target.value,
-                    });
-                  }}
+                    })
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -225,12 +270,9 @@ const ManageCars = () => {
                   label="Price"
                   fullWidth
                   value={editCarData?.price || ""}
-                  onChange={(e) => {
-                    setEditCarData({
-                      ...editCarData,
-                      price: e.target.value,
-                    });
-                  }}
+                  onChange={(e) =>
+                    setEditCarData({ ...editCarData, price: e.target.value })
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -238,12 +280,9 @@ const ManageCars = () => {
                   label="Seats"
                   fullWidth
                   value={editCarData?.seats || ""}
-                  onChange={(e) => {
-                    setEditCarData({
-                      ...editCarData,
-                      seats: e.target.value,
-                    });
-                  }}
+                  onChange={(e) =>
+                    setEditCarData({ ...editCarData, seats: e.target.value })
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -251,12 +290,12 @@ const ManageCars = () => {
                   control={
                     <Switch
                       checked={editCarData?.haveAc || false}
-                      onChange={() => {
+                      onChange={() =>
                         setEditCarData((prev) => ({
                           ...prev,
                           haveAc: !prev.haveAc,
-                        }));
-                      }}
+                        }))
+                      }
                     />
                   }
                   label="Air Conditioning"
